@@ -1,7 +1,12 @@
 /// A manifest of all currently available Minecraft Versions. Also has latest
 /// release and snapshot versions.
 class VersionManifest {
-  String latestRelease, latestSnapshot;
+  /// The latest available stable release of Minecraft: Java Edition.
+  String latestRelease;
+  
+  /// The latest available beta snapshot of Minecraft: Java Edition.
+  String latestSnapshot;
+  
   /// A list of all available versions.
   List<Version> versions;
   
@@ -15,9 +20,28 @@ class VersionManifest {
 
 /// A Minecraft Version.
 class Version {
-  String id, type, url, time, releaseTime;
+  /// The Minecraft Version ID, e.g. "1.16.3"
+  String id;
 
+  /// The type of this Minecraft Version, e.g. "snapshot" or "release";
+  String type;
+
+  /// The URL to the manifest of this version. This manifest includes
+  /// libraries, command line arguments and more configuration for this
+  /// version.
+  String url;
+
+  /// Some time that is usually just minutes after [releaseTime].
+  String time;
+  
+  /// The time this version was release at.
+  String releaseTime;
+
+  /// Some time that is usually just minutes after [releaseTime]
+  /// as a DateTime object.
   DateTime get getTime => DateTime.parse(time);
+
+  /// The time this version was release at as a DateTime object.
   DateTime get getReleaseTime => DateTime.parse(releaseTime);
 
   Version._();

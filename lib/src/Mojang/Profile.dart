@@ -2,7 +2,10 @@ import 'dart:convert';
 
 /// A Minecraft user including their skin/cape.
 class Profile {
-  String _id, _name, _textures, _signatures;
+  String _id;
+  String _name;
+  String _textures;
+  String _signatures;
 
   Profile._();
 
@@ -20,13 +23,16 @@ class Profile {
   /// Returns a ProfileTextures including this players' skin and cape textures.
   ProfileTextures get getTextures => ProfileTextures.fromJson(json.decode(utf8.decode(base64.decode(_textures))));
 
-  /// This is a yggdrasil-only feature. It is basically useless towards a player or dev.
+  /// This is a yggdrasil-server-only feature. It is basically useless towards a player or dev.
   String get getSignature => utf8.decode(base64.decode(_signatures ?? ''));
 }
 
 class ProfileTextures {
   int _timestamp;
-  String _profileId, _profileName, _skinUrl, _capeUrl;
+  String _profileId;
+  String _profileName;
+  String _skinUrl;
+  String _capeUrl;
   // bool _signatureRequired;
 
   ProfileTextures._();
@@ -56,13 +62,17 @@ class ProfileTextures {
                ^ int.parse(_profileId[15], radix: 16)
                ^ int.parse(_profileId[23], radix: 16)
                ^ int.parse(_profileId[31], radix: 16);
+      // TODO: Maybe return the textures.minecraft.net URLs to the default skins?
       return lsbs.isOdd ? 'alex' : 'steve';
     }
   }
 
+  /// Get the url to the cape texture.
   String getCapeUrl() => _capeUrl;
 
+  /// Get the timestamp 
   DateTime get getTimestamp => DateTime.fromMillisecondsSinceEpoch(_timestamp);
 
+  /// Get the player's name
   String get getName => _profileName;
 }

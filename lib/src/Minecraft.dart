@@ -8,7 +8,7 @@ class Minecraft {
   static const String _launcherContent = 'https://launchercontent.mojang.com';
   static const String _launcherMeta    = 'https://launchermeta.mojang.com/';
 
-  /// Get's the recent news for Minecraft.
+  /// Returns a List of the most recent news for Minecraft.
   /// 
   /// This data can be found on the "News" page in the official
   /// Minecraft Launcher.
@@ -22,7 +22,7 @@ class Minecraft {
     return news;
   }
 
-  /// Get's a list of all patch notes.
+  /// Returns a List of the most recent patch notes for Minecraft: Java Edition.
   /// 
   /// These can also be found in the official Minecraft Launcher under
   /// the "patch notes" page.
@@ -36,7 +36,8 @@ class Minecraft {
     return patches;
   }
 
-  /// Get's all versions (including snapshot and alpha/beta versions) and the latest version.
+  /// Returns a Manifest with all Minecraft: Java Edition Versions, 
+  /// including alpha/beta and snapshot versions.
   Future<VersionManifest> getVersions() async {
     final response = (await WebUtil.get(_launcherMeta, 'mc/game/version_manifest.json'));
     final data = await WebUtil.getJsonFromResponse(response);

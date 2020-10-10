@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-/// Web utilities for making HTTP requests
+/// Web utility for making HTTP requests
 class WebUtil {
   static final HttpClient _client = HttpClient();
 
@@ -46,6 +46,7 @@ class WebUtil {
     return request.close();
   }
 
+  /// Get's the payload of given [response] and returns it as a String.
   static Future<String> getResponseBody(HttpClientResponse response) {
     final contents = StringBuffer();
     final completer = Completer<String>();
@@ -56,7 +57,7 @@ class WebUtil {
     return completer.future;
   }
 
-  /// Parses the `response`'s body into a Map<String, dynamic> or List<dynamic>.
+  /// Parses the [response]'s body into a Map<String, dynamic> or List<dynamic>.
   static Future<dynamic> getJsonFromResponse(HttpClientResponse response) async {
     return json.decode(await getResponseBody(response));
   }

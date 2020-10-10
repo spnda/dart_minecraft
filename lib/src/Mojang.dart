@@ -4,21 +4,21 @@ import 'package:dart_minecraft/src/Minecraft/MinecraftStatistics.dart';
 import 'package:dart_minecraft/src/Mojang/MojangAccount.dart';
 import 'package:dart_minecraft/src/Mojang/Name.dart';
 import 'package:dart_minecraft/src/Mojang/Profile.dart';
-import 'package:dart_minecraft/src/Mojang/Status/MojangStatus.dart';
+import 'package:dart_minecraft/src/Mojang/MojangStatus.dart';
 import 'package:dart_minecraft/src/utilities/Pair.dart';
 import 'package:dart_minecraft/src/utilities/WebUtil.dart';
 import 'package:uuid/uuid.dart';
 
-/// Includes all Mojang specific functionality.
+/// Mojang API specific functionality.
 /// 
-/// This includes account managing and status information.
+/// Mojang account, authentication and status APIs.
 class Mojang {
   static const String _statusApi  = 'https://status.mojang.com/';
   static const String _mojangApi  = 'https://api.mojang.com/';
   static const String _sessionApi = 'https://sessionserver.mojang.com/';
   static const String _authserver = 'https://authserver.mojang.com';
 
-  /// Gets the API Status
+  /// Returns the Mojang and Minecraft API and website status
   static Future<MojangStatus> checkStatus() async {
     final response = await WebUtil.get(_statusApi, 'check');
     final list = await WebUtil.getJsonFromResponse(response);
@@ -29,10 +29,10 @@ class Mojang {
     }
   }
 
-  /// Returns the UUID for player `username`.
+  /// Returns the UUID for player [username].
   /// 
-  /// A `timestamp` can be passed to retrieve the UUID for the player with `username`
-  /// at `timestamp`.
+  /// A [timestamp] can be passed to retrieve the UUID for the player with [username]
+  /// at that point in time.
   static Future<Pair<String, String>> getUuid(String username, {DateTime timestamp}) async {
     final time = timestamp == null ? '' : '?at=${timestamp.millisecondsSinceEpoch}';
     final response = await WebUtil.get(_mojangApi, 'users/profiles/minecraft/$username$time');
@@ -42,10 +42,9 @@ class Mojang {
     return Pair<String, String>(username, map['id']);
   }
 
-  /// Gets a List of player UUIDs by a List of player names.
+  /// Returns a List of player UUIDs by a List of player names.
   /// 
-  /// - usernames are case corrected.
-  /// - invalid usernames are not returned.
+  /// Usernames are not case sensitive and ones which are invalid or not found are ommitted.
   static Future<List<Pair<String, String>>> getUuids(List<String> usernames) async {
     final response = await WebUtil.post(_mojangApi, 'profiles/minecraft', usernames, {'Content-Type': 'application/json'});
     final list = await WebUtil.getJsonFromResponse(response);
@@ -56,7 +55,7 @@ class Mojang {
     }
   }
 
-  /// Gets the name history for a `uuid`.
+  /// Returns the name history for the account with [uuid].
   static Future<List<Name>> getNameHistory(String uuid) async {
     final response = await WebUtil.get(_mojangApi, 'user/profiles/$uuid/names');
     final list = await WebUtil.getJsonFromResponse(response);
@@ -65,7 +64,9 @@ class Mojang {
     return ret;
   }
 
-  /// Get's the user profile including skin/cape.
+  /// Returns the user profile including skin/cape information.
+  /// 
+  /// Using [getProfile(uuid).getTextures] both skin and cape textures can be obtained.
   static Future<Profile> getProfile(String uuid) async {
     final response = await WebUtil.get(_sessionApi, 'session/minecraft/profile/$uuid');
     final map = await WebUtil.getJsonFromResponse(response);
@@ -73,7 +74,7 @@ class Mojang {
     return profile;
   }
 
-  /// Changes the Mojang acccount name to `newName`.
+  /// Changes the Mojang acccount name to [newName].
   // TODO: Improved return type including error message. Or just throw an error?
   static Future<bool> changeName(String uuid, String newName, String accessToken, String password) async {
     final body = <String, String>{
@@ -99,7 +100,7 @@ class Mojang {
     }
   }
 
-  /// Reserves the `newName` for your Mojang Account.
+  /// Reserves the [newName] for this Mojang Account.
   // TODO: Improved return type including error message. Or just throw an error?
   static Future<bool> reserveName(String newName, String accessToken) async {
     final headers = {
@@ -121,7 +122,7 @@ class Mojang {
     }
   }
 
-  /// Reset's the skin.
+  /// Reset's the player's skin.
   static Future<void> resetSkin(String uuid, String accessToken) async {
     final headers = {
       'Authorization': 'Bearer $accessToken',
@@ -145,7 +146,7 @@ class Mojang {
     return MinecraftStatistics.fromJson(data);
   }
 
-  /// Authenticates a user with given credentials `username` and `password`.
+  /// Authenticates a user with given credentials [username] and [password].
   static Future<MojangAccount> authenticate(String username, String password) async {
     final payload = {
       'agent': {
@@ -163,7 +164,7 @@ class Mojang {
   }
 
 
-  /// Refreshes the `account`. Data, like the access token, stored in the previous `account` will be invalidated.
+  /// Refreshes the [account]. Data, like the access token, stored in the previous [account] will be invalidated.
   static Future refresh(MojangAccount account) async {
     final payload = {
       'accessToken': account.accessToken,
@@ -192,10 +193,10 @@ class Mojang {
     }
   }
 
-  /// Checks if given `accessToken` and `clientToken` are still valid.
+  /// Checks if given [accessToken] and [clientToken] are still valid.
   /// 
-  /// `clientToken` is optional, though if provided should match the `clientToken`
-  /// that was used to obtained given `accessToken`.
+  /// [clientToken] is optional, though if provided should match the client token
+  /// that was used to obtained given [accessToken].
   static Future<bool> validate(String accessToken, {String clientToken}) async {
     final payload = {
       'accessToken': accessToken,
@@ -216,7 +217,7 @@ class Mojang {
     return data?.isEmpty;
   }
 
-  /// Invalidates the accessToken of given `mojangAccount`.
+  /// Invalidates the accessToken of given [mojangAccount].
   static Future<bool> invalidate(MojangAccount mojangAccount) async {
     final payload = {
       'accessToken': mojangAccount.accessToken,

@@ -1,10 +1,21 @@
 /// A MojangAccount with data as returned by /authenticate.
-/// 
-/// After a refresh, some of these values might be null.
 class MojangAccount {
-  String accessToken, clientToken;
+  /// The access token used to access APIs and authenticate to Minecraft Servers.
+  /// 
+  /// This token is a replacement for logging in using a username and password each time, 
+  /// so keep good track of it!
+  String accessToken;
+  
+  /// This account's client token.
+  String clientToken;
+  
+  /// This account's user.
   MojangUser user;
+
+  /// The currently selected user profile.
   MojangProfile selectedProfile;
+
+  /// All available profiles.
   List<MojangProfile> availableProfiles;
 
   MojangAccount._();
@@ -16,6 +27,7 @@ class MojangAccount {
     ..clientToken = data['clientToken'];
 }
 
+/// A Mojang User. One MojangAccount always has one MojangUser.
 class MojangUser {
   String username;
   String id;
@@ -29,7 +41,8 @@ class MojangUser {
   bool suspended;
   bool blocked;
   bool secured;
-  /// Seems to be always false, no matter if the user has migrated or not. See https://bugs.mojang.com/browse/WEB-1461
+  /// Seems to be always false, no matter if the user has migrated or not. 
+  /// See https://bugs.mojang.com/browse/WEB-1461
   bool migrated;
   bool emailVerified;
   bool legacyUser;
@@ -59,6 +72,7 @@ class MojangUser {
     ..twitchOAuthToken = (data['properties'] as List)?.where((f) => (f as Map)['name'] == 'twitch_access_token')?.first;
 }
 
+/// A Mojang Profile
 class MojangProfile {
   /// The name of the player.
   String name;

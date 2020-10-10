@@ -10,10 +10,13 @@ class MinecraftStatistics {
     .._last24h = response['last24h']
     .._salesPerSecond = response['saleVelocityPerSeconds'];
 
+  /// The total amount of sales since release.
   int get getTotalSales => _total;
 
+  /// The total amount of sales in the last 24 hours.
   int get getSalesLast24h => _last24h;
 
+  /// The amount of sales per second in the last 24 hours.
   double get getSalesPerSecond => _salesPerSecond;
 
   @override
@@ -32,6 +35,7 @@ enum MinecraftStatisticsItem {
 
 /// Extension on MinecraftStatisticsItem to give each enum value a string value.
 extension MinecraftStatisticsItemExt on MinecraftStatisticsItem {
+  /// Returns the API version of this item.
   String get name {
     switch (this) {
       case MinecraftStatisticsItem.MinecraftItemsSold: return 'item_sold_minecraft';

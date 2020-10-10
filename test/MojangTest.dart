@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dart_minecraft/src/Mojang/Status/MojangStatus.dart';
+import 'package:dart_minecraft/src/Mojang/MojangStatus.dart';
 import 'package:test/test.dart';
 import 'package:dart_minecraft/minecraft.dart';
 
