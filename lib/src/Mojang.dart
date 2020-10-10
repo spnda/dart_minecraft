@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:dart_minecraft/src/Minecraft/MinecraftStatistics.dart';
+import 'package:dart_minecraft/src/Mojang/MojangAccount.dart';
 import 'package:dart_minecraft/src/Mojang/Name.dart';
 import 'package:dart_minecraft/src/Mojang/Profile.dart';
 import 'package:dart_minecraft/src/Mojang/Status/MojangStatus.dart';
 import 'package:dart_minecraft/src/utilities/Pair.dart';
 import 'package:dart_minecraft/src/utilities/WebUtil.dart';
+import 'package:uuid/uuid.dart';
 
 /// Includes all Mojang specific functionality.
 /// 
@@ -14,6 +16,7 @@ class Mojang {
   static const String _statusApi  = 'https://status.mojang.com/';
   static const String _mojangApi  = 'https://api.mojang.com/';
   static const String _sessionApi = 'https://sessionserver.mojang.com/';
+  static const String _authserver = 'https://authserver.mojang.com';
 
   /// Gets the API Status
   static Future<MojangStatus> checkStatus() async {
@@ -139,7 +142,88 @@ class Mojang {
     final headers = <String, String>{'Content-Type': 'application/json'};
     final response = await WebUtil.post(_mojangApi, 'orders/statistics', payload, headers);
     final data = await WebUtil.getJsonFromResponse(response);
-    print(data);
     return MinecraftStatistics.fromJson(data);
+  }
+
+  /// Authenticates a user with given credentials `username` and `password`.
+  static Future<MojangAccount> authenticate(String username, String password) async {
+    final payload = {
+      'agent': {
+        'name': 'Minecraft',
+        'version ': 1
+      },
+      'username': username,
+      'password': password,
+      'clientToken': Uuid().v4(), 
+      'requestUser': true
+    };
+    final response = await WebUtil.post(_authserver, 'authenticate', payload, {});
+    final data = await WebUtil.getJsonFromResponse(response);
+    return MojangAccount.fromJson(data);
+  }
+
+
+  /// Refreshes the `account`. Data, like the access token, stored in the previous `account` will be invalidated.
+  static Future refresh(MojangAccount account) async {
+    final payload = {
+      'accessToken': account.accessToken,
+      'clientToken': account.clientToken,
+      'selectedProfile': {
+        'id': account.selectedProfile.id,
+        'name': account.selectedProfile.name,
+      },
+      'requestUser': true,
+    };
+    final response = await WebUtil.post(_authserver, 'refresh', payload, {});
+    final data = await WebUtil.getJsonFromResponse(response);
+    if (data['error'] != null) throw Exception(data['errorMessage']);
+
+    // Insert the data into our old account object.
+    account..accessToken = data['accessToken']
+           ..clientToken = data['clientToken'];
+    if (data['selectedProfile'] != null) {
+      account.selectedProfile..id = data['selectedProfile']['id']
+                             ..name = data['selectedProfile']['name'];
+    }
+    if (data['user'] != null) {
+      account.user..id = data['user']['id']
+                  ..preferredLanguage = (data['user']['properties'] as List)?.where((f) => (f as Map)['name'] == 'preferredLanguage')  ?.first
+                  ..twitchOAuthToken  = (data['user']['properties'] as List)?.where((f) => (f as Map)['name'] == 'twitch_access_token')?.first;
+    }
+  }
+
+  /// Checks if given `accessToken` and `clientToken` are still valid.
+  /// 
+  /// `clientToken` is optional, though if provided should match the `clientToken`
+  /// that was used to obtained given `accessToken`.
+  static Future<bool> validate(String accessToken, {String clientToken}) async {
+    final payload = {
+      'accessToken': accessToken,
+    };
+    if (clientToken != null) payload.putIfAbsent('clientToken', () => clientToken);
+    final response = await WebUtil.post(_authserver, 'validate', payload, {});
+    return response?.statusCode == 204;
+  }
+
+  /// Signs the user out and invalidates the accessToken.
+  static Future<bool> signout(String username, String password) async {
+    final payload = {
+      'username': username,
+      'password': password,
+    };
+    final response = await WebUtil.post(_authserver, 'signout', payload, {});
+    final data = await WebUtil.getResponseBody(response);
+    return data?.isEmpty;
+  }
+
+  /// Invalidates the accessToken of given `mojangAccount`.
+  static Future<bool> invalidate(MojangAccount mojangAccount) async {
+    final payload = {
+      'accessToken': mojangAccount.accessToken,
+      'clientToken': mojangAccount.clientToken,
+    };
+    final response = await WebUtil.post(_authserver, 'invalidate', payload, {});
+    final data = await WebUtil.getResponseBody(response);
+    return data?.isEmpty;
   }
 }

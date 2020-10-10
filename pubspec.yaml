@@ -2,11 +2,11 @@ name: dart_minecraft
 description: Brings Minecraft and Mojang APIs to Dart.
 version: 1.0.0
 # homepage: https://www.example.com
-
 environment:
   sdk: '>=2.10.0 <3.0.0'
 
-#dependencies:
+dependencies:
+  uuid: ^2.2.2
 #  path: ^1.7.0
 
 dev_dependencies:

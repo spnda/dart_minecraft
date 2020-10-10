@@ -9,3 +9,4 @@ build/
 doc/api/
 
 *.lock
+test_data.json
