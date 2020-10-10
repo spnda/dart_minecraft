@@ -1,9 +1,12 @@
+/// The status of a site.
+/// See `MojangStatus.parse("str")`.
 enum MojangSiteStatus {
-  Available,
-  SomeIssues,
-  Unavailable,
+  Available,   /// "green"
+  SomeIssues,  /// "yellow"
+  Unavailable, /// "red"
 }
 
+/// Contains the MojangSiteStatus of all Minecraft and Mojang sites.
 class MojangStatus {
   MojangSiteStatus minecraft,
                    minecraftSession,
@@ -38,8 +41,9 @@ class MojangStatus {
     return status;
   }
 
-  /// Gets the [MojangSiteStatus] from given [data].
-  /// [data] should be 'red', 'yellow', 'green'.
+  /// Gets the `MojangSiteStatus` from given `data`.
+  /// `data` should be 'red', 'yellow', 'green'. Otherwise,
+  /// `MojangSiteStatus.Unavailable` will be returned.
   static MojangSiteStatus parse(String data) {
     switch (data) {
       case 'red': return MojangSiteStatus.Unavailable;

@@ -1,3 +1,5 @@
+/// A Name helper class used for `Mojang.getNameHistory()`. 
+/// It contains the name and the date it was changed to.
 class Name {
   String _name;
   int _changedToAt;
@@ -10,19 +12,19 @@ class Name {
     .._name = json['name']
     .._changedToAt = json['changedToAt'] ?? 0;
 
+  /// Get's the name.
   String get getName => _name;
 
   /// Get's the date this name was set at.
   /// 
-  /// If this is the original Name for the player, this will default to 1970-01-01.
+  /// If this is the original Name for the player, this will default to `1970-01-01`.
   DateTime get getChangedAtDate => DateTime.fromMillisecondsSinceEpoch(_changedToAt);
 
-  /// Compares if two Names or a Name and a String are equal.
+  /// Compares if two Names are equal.
   /// 
-  /// If compared with a String, it will be compared with the [_name].
-  /// If compared with another instance of [Name], they will be compared by [_name].
+  /// If compared with another instance of `Name`, they will be compared by `_name` and `_changedToAt`.
   @override
-  bool operator ==(dynamic other) => other is Name && other._name == _name;
+  bool operator ==(dynamic other) => other is Name && (other._name == _name && other._changedToAt == _changedToAt);
 
   @override
   int get hashCode => _name.hashCode;

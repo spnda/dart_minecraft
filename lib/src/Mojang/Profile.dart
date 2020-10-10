@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+/// A Minecraft user including their skin/cape.
 class Profile {
   String _id, _name, _textures, _signatures;
 
@@ -10,10 +11,13 @@ class Profile {
     .._name = json['name']
     .._textures = json['properties'][0]['value'];
 
+  /// The UUID of this player.
   String get getUuid => _id;
 
+  /// This player's name.
   String get getName => _name;
 
+  /// Returns a ProfileTextures including this players' skin and cape textures.
   ProfileTextures get getTextures => ProfileTextures.fromJson(json.decode(utf8.decode(base64.decode(_textures))));
 
   /// This is a yggdrasil-only feature. It is basically useless towards a player or dev.
@@ -23,7 +27,7 @@ class Profile {
 class ProfileTextures {
   int _timestamp;
   String _profileId, _profileName, _skinUrl, _capeUrl;
-  bool _signatureRequired;
+  // bool _signatureRequired;
 
   ProfileTextures._();
 
@@ -33,7 +37,7 @@ class ProfileTextures {
       .._timestamp = json['timestamp']
       .._profileId = json['profileId']
       .._profileName = json['profileName']
-      .._signatureRequired = json['signatureRequired'] ?? false
+      // .._signatureRequired = json['signatureRequired'] ?? false
       .._skinUrl = skin['url']
       .._capeUrl = cape['url'];
   }

@@ -3,7 +3,6 @@ dart_minecraft
 
 [![Pub Package](https://img.shields.io/pub/v/dart_minecraft.svg)](https://pub.dev/packages/dart_minecraft)
 [![GitHub Issues](https://img.shields.io/github/issues/spnda/dart_minecraft.svg)](https://github.com/spnda/dart_minecraft/issues)
-[![GitHub Forks](https://img.shields.io/github/forks/spnda/dart_minecraft.svg)](https://github.com/spnda/dart_minecraft/network)
 [![GitHub Stars](https://img.shields.io/github/stars/spnda/dart_minecraft.svg)](https://github.com/spnda/dart_minecraft/stargazers)
 [![GitHub License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/spnda/dart_minecraft/main/LICENSE)
 
@@ -35,9 +34,9 @@ void main() async {
 Planned
 --------
 
-- Support for all the Minecraft and Minecraft Launcher APIs.
-- Support for launching Minecraft itself.
-- Support for seeing and joining a Minecraft Server.
+- [x] Support for all the Minecraft and Minecraft Launcher APIs.
+- [ ] Support for launching Minecraft itself.
+- [ ] Support for seeing and joining a Minecraft Server.
 
 License
 --------
