@@ -14,7 +14,7 @@ class WebUtil {
   }
 
   /// HTTP POST request.
-  static Future<HttpClientResponse> post(String base, String api, dynamic body, Map<String, dynamic> headers) async {
+  static Future<HttpClientResponse> post(String base, String api, dynamic body, [Map<String, dynamic> headers = const {}]) async {
     if (!base.endsWith('/')) base += '/';
     if (!(body is List) && !(body is Map)) throw Exception('body must be a List or Map');
     final request = await _client.postUrl(Uri.parse('$base$api'));
@@ -26,7 +26,7 @@ class WebUtil {
   }
 
   /// HTTP PUT request.
-  static Future<HttpClientResponse> put(String base, String api, dynamic body, Map<String, dynamic> headers) async {
+  static Future<HttpClientResponse> put(String base, String api, dynamic body, [Map<String, dynamic> headers = const {}]) async {
     if (!base.endsWith('/')) base += '/';
     final request = await _client.putUrl(Uri.parse('$base$api'));
     for (MapEntry e in headers.entries) {
@@ -37,7 +37,7 @@ class WebUtil {
   }
 
   /// HTTP DELETE request.
-  static Future<HttpClientResponse> delete(String base, String api, Map<String, dynamic> headers) async {
+  static Future<HttpClientResponse> delete(String base, String api, [Map<String, dynamic> headers = const {}]) async {
     if (!base.endsWith('/')) base += '/';
     final request = await _client.deleteUrl(Uri.parse('$base$api'));
     for (MapEntry e in headers.entries) {
@@ -46,14 +46,18 @@ class WebUtil {
     return request.close();
   }
 
-  /// Parses the `response`'s body into a Map<String, dynamic> or List<dynamic>.
-  static Future<dynamic> getJsonFromResponse(HttpClientResponse response) {
+  static Future<String> getResponseBody(HttpClientResponse response) {
     final contents = StringBuffer();
-    final completer = Completer<dynamic>();
+    final completer = Completer<String>();
     response.transform(utf8.decoder).listen(
-      (data) => contents.write(data), 
-      onDone: () => completer.complete(json.decode(contents.toString()))
+      (data) => contents.write(data),
+      onDone: () => completer.complete(contents.toString()),
     );
     return completer.future;
+  }
+
+  /// Parses the `response`'s body into a Map<String, dynamic> or List<dynamic>.
+  static Future<dynamic> getJsonFromResponse(HttpClientResponse response) async {
+    return json.decode(await getResponseBody(response));
   }
 }
