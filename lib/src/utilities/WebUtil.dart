@@ -21,6 +21,28 @@ class WebUtil {
     for (MapEntry e in headers.entries) {
       request.headers.add(e.key, e.value);
     }
+    request.add(utf8.encode(json.encode(body)));
+    return request.close();
+  }
+
+  /// HTTP PUT request.
+  static Future<HttpClientResponse> put(String base, String api, dynamic body, Map<String, dynamic> headers) async {
+    if (!base.endsWith('/')) base += '/';
+    final request = await _client.putUrl(Uri.parse('$base$api'));
+    for (MapEntry e in headers.entries) {
+      request.headers.add(e.key, e.value);
+    }
+    request.add(utf8.encode(json.encode(body)));
+    return request.close();
+  }
+
+  /// HTTP DELETE request.
+  static Future<HttpClientResponse> delete(String base, String api, Map<String, dynamic> headers) async {
+    if (!base.endsWith('/')) base += '/';
+    final request = await _client.deleteUrl(Uri.parse('$base$api'));
+    for (MapEntry e in headers.entries) {
+      request.headers.add(e.key, e.value);
+    }
     return request.close();
   }
 

@@ -2,6 +2,7 @@ library minecraft;
 
 export 'src/Minecraft/MinecraftNews.dart';
 export 'src/Minecraft/MinecraftPatch.dart';
+export 'src/Minecraft/MinecraftStatistics.dart';
 export 'src/Minecraft/VersionManifest.dart';
 export 'src/Minecraft.dart';
 

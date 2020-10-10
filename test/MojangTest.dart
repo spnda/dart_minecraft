@@ -22,6 +22,16 @@ void main() {
     expect(skin, 'http://textures.minecraft.net/texture/38ed123c7e0d849e24b04b1e8a99b7d4f15bd9f3dfae95deec25835c22041341');
   });
 
+  test('Gets Minecraft sale statistics', () async {
+    final statistics = await Mojang.getStatistics([MinecraftStatisticsItem.MinecraftItemsSold, MinecraftStatisticsItem.MinecraftPrepaidCardsRedeemed]);
+    print(statistics);
+  });
+
+  test('Gets Minecraft Dungeons sale statistics', () async {
+    final statistics = await Mojang.getStatistics([MinecraftStatisticsItem.DungeonsItemsSold]);
+    print(statistics);
+  });
+
   test('API should return a list of names', () async {
     //final nameHistory = await Mojang.getNameHistory(uuid);
     //nameHistory.forEach((Name f) => print(f));
