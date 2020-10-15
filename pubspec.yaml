@@ -1,6 +1,6 @@
 name: dart_minecraft
 description: Brings Minecraft and Mojang APIs to Dart.
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/spnda/dart_minecraft
 
 environment:

@@ -12,7 +12,7 @@ class Minecraft {
   /// 
   /// This data can be found on the "News" page in the official
   /// Minecraft Launcher.
-  Future<List<MinecraftNews>> getNews() async {
+  static Future<List<MinecraftNews>> getNews() async {
     final response = (await WebUtil.get(_launcherContent, 'javaNews.json'));
     final data = await WebUtil.getJsonFromResponse(response);
     final news = <MinecraftNews>[];
@@ -26,7 +26,7 @@ class Minecraft {
   /// 
   /// These can also be found in the official Minecraft Launcher under
   /// the "patch notes" page.
-  Future<List<MinecraftPatch>> getPatchNotes() async {
+  static Future<List<MinecraftPatch>> getPatchNotes() async {
     final response = (await WebUtil.get(_launcherContent, 'javaPatchNotes.json'));
     final data = await WebUtil.getJsonFromResponse(response);
     final patches = <MinecraftPatch>[];
@@ -38,7 +38,7 @@ class Minecraft {
 
   /// Returns a Manifest with all Minecraft: Java Edition Versions, 
   /// including alpha/beta and snapshot versions.
-  Future<VersionManifest> getVersions() async {
+  static Future<VersionManifest> getVersions() async {
     final response = (await WebUtil.get(_launcherMeta, 'mc/game/version_manifest.json'));
     final data = await WebUtil.getJsonFromResponse(response);
     return VersionManifest.fromJson(data);
