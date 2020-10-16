@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dart_minecraft/src/Mojang/MojangStatus.dart';
-import 'package:test/test.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:test/test.dart';
 
 void main() {
   final test_data = json.decode(File('./test_data.json').readAsStringSync());

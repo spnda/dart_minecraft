@@ -1,7 +1,7 @@
-import 'package:dart_minecraft/src/Minecraft/MinecraftNews.dart';
-import 'package:dart_minecraft/src/Minecraft/MinecraftPatch.dart';
-import 'package:dart_minecraft/src/Minecraft/VersionManifest.dart';
-import 'package:dart_minecraft/src/utilities/WebUtil.dart';
+import 'package:dart_minecraft/src/minecraft/minecraft_news.dart';
+import 'package:dart_minecraft/src/minecraft/minecraft_patch.dart';
+import 'package:dart_minecraft/src/minecraft/version_manifest.dart';
+import 'package:dart_minecraft/src/utilities/web_util.dart';
 
 /// Includes all Minecraft and Minecraft Launcher specific functionality.
 class Minecraft {

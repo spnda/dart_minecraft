@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:dart_minecraft/src/Minecraft/MinecraftStatistics.dart';
-import 'package:dart_minecraft/src/Mojang/MojangAccount.dart';
-import 'package:dart_minecraft/src/Mojang/Name.dart';
-import 'package:dart_minecraft/src/Mojang/Profile.dart';
-import 'package:dart_minecraft/src/Mojang/MojangStatus.dart';
-import 'package:dart_minecraft/src/utilities/Pair.dart';
-import 'package:dart_minecraft/src/utilities/WebUtil.dart';
+import 'package:dart_minecraft/src/minecraft/minecraft_statistics.dart';
+import 'package:dart_minecraft/src/mojang/mojang_account.dart';
+import 'package:dart_minecraft/src/mojang/name.dart';
+import 'package:dart_minecraft/src/mojang/profile.dart';
+import 'package:dart_minecraft/src/mojang/mojang_status.dart';
+import 'package:dart_minecraft/src/utilities/pair.dart';
+import 'package:dart_minecraft/src/utilities/web_util.dart';
 import 'package:uuid/uuid.dart';
 
 /// Mojang API specific functionality.
