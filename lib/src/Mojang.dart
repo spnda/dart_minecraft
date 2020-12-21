@@ -17,6 +17,7 @@ class Mojang {
   static const String _mojangApi  = 'https://api.mojang.com/';
   static const String _sessionApi = 'https://sessionserver.mojang.com/';
   static const String _authserver = 'https://authserver.mojang.com';
+  static const String _minecraftServices = 'https://api.minecraftservices.com/';
 
   /// Returns the Mojang and Minecraft API and website status
   static Future<MojangStatus> checkStatus() async {
@@ -85,7 +86,7 @@ class Mojang {
       'Authorization': 'Bearer $accessToken',
       'Content-Type': 'application/json'
     };
-    final response = await WebUtil.post(_mojangApi, 'user/profile/$uuid/name', body, headers);
+    final response = await WebUtil.post(_minecraftServices, 'user/profile/$uuid/name', body, headers);
     if (response.statusCode != 204) {
       return false;
       /* switch (response.statusCode) {
