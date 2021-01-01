@@ -16,7 +16,9 @@ class WebUtil {
   /// HTTP POST request.
   static Future<HttpClientResponse> post(String base, String api, dynamic body, [Map<String, dynamic> headers = const {}]) async {
     if (!base.endsWith('/')) base += '/';
-    if (!(body is List) && !(body is Map)) throw Exception('body must be a List or Map');
+    if (!(body is List) && !(body is Map)) {
+      throw Exception('body must be a List or Map');
+    }
     final request = await _client.postUrl(Uri.parse('$base$api'));
     for (MapEntry e in headers.entries) {
       request.headers.add(e.key, e.value);
@@ -51,9 +53,9 @@ class WebUtil {
     final contents = StringBuffer();
     final completer = Completer<String>();
     response.transform(utf8.decoder).listen(
-      (data) => contents.write(data),
-      onDone: () => completer.complete(contents.toString()),
-    );
+          (data) => contents.write(data),
+          onDone: () => completer.complete(contents.toString()),
+        );
     return completer.future;
   }
 

@@ -3,19 +3,21 @@
 class VersionManifest {
   /// The latest available stable release of Minecraft: Java Edition.
   String latestRelease;
-  
+
   /// The latest available beta snapshot of Minecraft: Java Edition.
   String latestSnapshot;
-  
+
   /// A list of all available versions.
   List<Version> versions;
-  
+
   VersionManifest._();
 
-  factory VersionManifest.fromJson(Map<String, dynamic> data) => VersionManifest._()
-    ..latestRelease = data['latest']['release']
-    ..latestSnapshot = data['latest']['snapshot']
-    ..versions = data['versions'].map((Map<String, dynamic> d) => Version.fromJson(d));
+  factory VersionManifest.fromJson(Map<String, dynamic> data) =>
+      VersionManifest._()
+        ..latestRelease = data['latest']['release']
+        ..latestSnapshot = data['latest']['snapshot']
+        ..versions = data['versions']
+            .map((Map<String, dynamic> d) => Version.fromJson(d));
 }
 
 /// A Minecraft Version.
@@ -33,7 +35,7 @@ class Version {
 
   /// Some time that is usually just minutes after [releaseTime].
   String time;
-  
+
   /// The time this version was release at.
   String releaseTime;
 

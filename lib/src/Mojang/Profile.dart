@@ -21,7 +21,8 @@ class Profile {
   String get getName => _name;
 
   /// Returns a ProfileTextures including this players' skin and cape textures.
-  ProfileTextures get getTextures => ProfileTextures.fromJson(json.decode(utf8.decode(base64.decode(_textures))));
+  ProfileTextures get getTextures => ProfileTextures.fromJson(
+      json.decode(utf8.decode(base64.decode(_textures))));
 
   /// This is a yggdrasil-server-only feature. It is basically useless towards a player or dev.
   String get getSignature => utf8.decode(base64.decode(_signatures ?? ''));
@@ -38,7 +39,8 @@ class ProfileTextures {
   ProfileTextures._();
 
   factory ProfileTextures.fromJson(Map<String, dynamic> json) {
-    Map skin = json['textures']['SKIN'] ?? {}, cape = json['textures']['CAPE'] ?? {};
+    Map skin = json['textures']['SKIN'] ?? {},
+        cape = json['textures']['CAPE'] ?? {};
     return ProfileTextures._()
       .._timestamp = json['timestamp']
       .._profileId = json['profileId']
@@ -48,7 +50,7 @@ class ProfileTextures {
       .._capeUrl = cape['url'];
   }
 
-  /// Get the Url for the skin of this player. 
+  /// Get the Url for the skin of this player.
   /// If the player does not have a skin, this function will return "steve" or "alex".
   String getSkinUrl() {
     if (_skinUrl != null) {
@@ -58,10 +60,10 @@ class ProfileTextures {
       /// Minecraft uses [uuid.hashCode() & 1] for the Alex Skin.
       /// That can be compacted to counting the LSBs of every 4th byte in the Uuid.
       /// XOR-ing all the LSBs gives us 1 for alex and 0 for steve.
-      var lsbs = int.parse(_profileId[7], radix: 16) 
-               ^ int.parse(_profileId[15], radix: 16)
-               ^ int.parse(_profileId[23], radix: 16)
-               ^ int.parse(_profileId[31], radix: 16);
+      var lsbs = int.parse(_profileId[7], radix: 16) ^
+          int.parse(_profileId[15], radix: 16) ^
+          int.parse(_profileId[23], radix: 16) ^
+          int.parse(_profileId[31], radix: 16);
       // TODO: Maybe return the textures.minecraft.net URLs to the default skins?
       return lsbs.isOdd ? 'alex' : 'steve';
     }
@@ -70,7 +72,7 @@ class ProfileTextures {
   /// Get the url to the cape texture.
   String getCapeUrl() => _capeUrl;
 
-  /// Get the timestamp 
+  /// Get the timestamp
   DateTime get getTimestamp => DateTime.fromMillisecondsSinceEpoch(_timestamp);
 
   /// Get the player's name

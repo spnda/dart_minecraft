@@ -11,7 +11,7 @@ class MinecraftNews {
 
   /// The id of this news item.
   String id;
-  
+
   /// The shortened url to the patch's image.
   /// Can be properly obtained from [getImageUrl].
   String _imageUrl;

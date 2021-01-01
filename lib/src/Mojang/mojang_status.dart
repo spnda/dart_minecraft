@@ -1,24 +1,29 @@
 /// The status of a site.
-/// 
+///
 /// See `MojangStatus.parse("str")`.
 enum MojangSiteStatus {
-  Available,   /// "green"
-  SomeIssues,  /// "yellow"
-  Unavailable, /// "red"
+  /// "green"
+  Available,
+
+  /// "yellow"
+  SomeIssues,
+
+  /// "red"
+  Unavailable,
 }
 
 /// Contains the MojangSiteStatus of all Minecraft and Mojang sites.
 class MojangStatus {
   MojangSiteStatus minecraft,
-                   minecraftSession,
-                   mojangAccount,
-                   mojangAuth,
-                   minecraftSkins,
-                   mojangAuthserver,
-                   mojangSessionserver,
-                   mojangApi,
-                   minecraftTextures,
-                   mojang;
+      minecraftSession,
+      mojangAccount,
+      mojangAuth,
+      minecraftSkins,
+      mojangAuthserver,
+      mojangSessionserver,
+      mojangApi,
+      minecraftTextures,
+      mojang;
 
   MojangStatus._();
 
@@ -27,17 +32,37 @@ class MojangStatus {
     data.forEach((element) {
       final entry = element.entries.first;
       switch (entry.key) {
-        case 'minecraft.net':             status.minecraft = parse(entry.value);            break;
-        case 'session.minecraft.net':     status.minecraftSession = parse(entry.value);     break;
-        case 'account.mojang.com':        status.mojangAccount = parse(entry.value);        break;
-        case 'auth.mojang.com':           status.mojangAuth = parse(entry.value);           break;
-        case 'skins.minecraft.net':       status.minecraftSkins = parse(entry.value);       break;
-        case 'authserver.mojang.com':     status.mojangAuthserver = parse(entry.value);     break;
-        case 'sessionserver.mojang.com':  status.mojangSessionserver = parse(entry.value);  break;
-        case 'api.mojang.com':            status.mojangApi = parse(entry.value);            break;
-        case 'textures.minecraft.net':    status.minecraftTextures = parse(entry.value);    break;
-        case 'mojang.com':                status.mojang = parse(entry.value);               break;
-      } 
+        case 'minecraft.net':
+          status.minecraft = parse(entry.value);
+          break;
+        case 'session.minecraft.net':
+          status.minecraftSession = parse(entry.value);
+          break;
+        case 'account.mojang.com':
+          status.mojangAccount = parse(entry.value);
+          break;
+        case 'auth.mojang.com':
+          status.mojangAuth = parse(entry.value);
+          break;
+        case 'skins.minecraft.net':
+          status.minecraftSkins = parse(entry.value);
+          break;
+        case 'authserver.mojang.com':
+          status.mojangAuthserver = parse(entry.value);
+          break;
+        case 'sessionserver.mojang.com':
+          status.mojangSessionserver = parse(entry.value);
+          break;
+        case 'api.mojang.com':
+          status.mojangApi = parse(entry.value);
+          break;
+        case 'textures.minecraft.net':
+          status.minecraftTextures = parse(entry.value);
+          break;
+        case 'mojang.com':
+          status.mojang = parse(entry.value);
+          break;
+      }
     });
     return status;
   }
@@ -47,10 +72,14 @@ class MojangStatus {
   /// [MojangSiteStatus.Unavailable] will be returned.
   static MojangSiteStatus parse(String data) {
     switch (data) {
-      case 'red': return MojangSiteStatus.Unavailable;
-      case 'yellow': return MojangSiteStatus.SomeIssues;
-      case 'green': return MojangSiteStatus.Available;
-      default: return MojangSiteStatus.Unavailable;
+      case 'red':
+        return MojangSiteStatus.Unavailable;
+      case 'yellow':
+        return MojangSiteStatus.SomeIssues;
+      case 'green':
+        return MojangSiteStatus.Available;
+      default:
+        return MojangSiteStatus.Unavailable;
     }
   }
 }

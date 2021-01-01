@@ -10,11 +10,11 @@ import 'package:dart_minecraft/src/utilities/web_util.dart';
 import 'package:uuid/uuid.dart';
 
 /// Mojang API specific functionality.
-/// 
+///
 /// Mojang account, authentication and status APIs.
 class Mojang {
-  static const String _statusApi  = 'https://status.mojang.com/';
-  static const String _mojangApi  = 'https://api.mojang.com/';
+  static const String _statusApi = 'https://status.mojang.com/';
+  static const String _mojangApi = 'https://api.mojang.com/';
   static const String _sessionApi = 'https://sessionserver.mojang.com/';
   static const String _authserver = 'https://authserver.mojang.com';
   static const String _minecraftServices = 'https://api.minecraftservices.com/';
@@ -24,35 +24,46 @@ class Mojang {
     final response = await WebUtil.get(_statusApi, 'check');
     final list = await WebUtil.getJsonFromResponse(response);
     if (!(list is List)) {
-      throw Exception('Content returned from the server is in an unexpected format.');
+      throw Exception(
+          'Content returned from the server is in an unexpected format.');
     } else {
       return MojangStatus.fromJson(list);
     }
   }
 
   /// Returns the UUID for player [username].
-  /// 
+  ///
   /// A [timestamp] can be passed to retrieve the UUID for the player with [username]
   /// at that point in time.
   static Future<Pair<String, String>> getUuid(String username, {DateTime timestamp}) async {
-    final time = timestamp == null ? '' : '?at=${timestamp.millisecondsSinceEpoch}';
-    final response = await WebUtil.get(_mojangApi, 'users/profiles/minecraft/$username$time');
-    final map =  await WebUtil.getJsonFromResponse(response);
-    if (!(map is Map)) throw Exception('Content returned from the server is in an unexpected format.');
+    final time =
+        timestamp == null ? '' : '?at=${timestamp.millisecondsSinceEpoch}';
+    final response = await WebUtil.get(
+        _mojangApi, 'users/profiles/minecraft/$username$time');
+    final map = await WebUtil.getJsonFromResponse(response);
+    if (!(map is Map)) {
+      throw Exception(
+          'Content returned from the server is in an unexpected format.');
+    }
     if (map['error'] != null) throw Exception(map['errorMessage']);
     return Pair<String, String>(username, map['id']);
   }
 
   /// Returns a List of player UUIDs by a List of player names.
-  /// 
+  ///
   /// Usernames are not case sensitive and ones which are invalid or not found are ommitted.
   static Future<List<Pair<String, String>>> getUuids(List<String> usernames) async {
-    final response = await WebUtil.post(_mojangApi, 'profiles/minecraft', usernames, {'Content-Type': 'application/json'});
+    final response = await WebUtil.post(_mojangApi, 'profiles/minecraft',
+        usernames, {'Content-Type': 'application/json'});
     final list = await WebUtil.getJsonFromResponse(response);
     if (!(list is List<Map>)) {
-      throw Exception('Content returned from the server is in an unexpected format.');
+      throw Exception(
+          'Content returned from the server is in an unexpected format.');
     } else {
-      return list.map<Pair<String, String>>((Map v) => Pair<String, String>(v['name'], v['id'])).toList();
+      return list
+          .map<Pair<String, String>>(
+              (Map v) => Pair<String, String>(v['name'], v['id']))
+          .toList();
     }
   }
 
@@ -66,10 +77,11 @@ class Mojang {
   }
 
   /// Returns the user profile including skin/cape information.
-  /// 
+  ///
   /// Using [getProfile(uuid).getTextures] both skin and cape textures can be obtained.
   static Future<Profile> getProfile(String uuid) async {
-    final response = await WebUtil.get(_sessionApi, 'session/minecraft/profile/$uuid');
+    final response =
+        await WebUtil.get(_sessionApi, 'session/minecraft/profile/$uuid');
     final map = await WebUtil.getJsonFromResponse(response);
     final profile = Profile.fromJson(map);
     return profile;
@@ -78,15 +90,13 @@ class Mojang {
   /// Changes the Mojang acccount name to [newName].
   // TODO: Improved return type including error message. Or just throw an error?
   static Future<bool> changeName(String uuid, String newName, String accessToken, String password) async {
-    final body = <String, String>{
-      'name': newName, 
-      'password': password
-    };
+    final body = <String, String>{'name': newName, 'password': password};
     final headers = <String, String>{
       'Authorization': 'Bearer $accessToken',
       'Content-Type': 'application/json'
     };
-    final response = await WebUtil.post(_minecraftServices, 'user/profile/$uuid/name', body, headers);
+    final response = await WebUtil.post(
+        _minecraftServices, 'user/profile/$uuid/name', body, headers);
     if (response.statusCode != 204) {
       return false;
       /* switch (response.statusCode) {
@@ -108,7 +118,8 @@ class Mojang {
       'Authorization': 'Bearer $accessToken',
       'Origin': 'https://checkout.minecraft.net',
     };
-    final response = await WebUtil.put(_mojangApi, 'user/profile/agent/minecraft/name/$newName', {}, headers);
+    final response = await WebUtil.put(
+        _mojangApi, 'user/profile/agent/minecraft/name/$newName', {}, headers);
     if (response.statusCode != 204) {
       return false;
       /* switch (response.statusCode) {
@@ -128,7 +139,7 @@ class Mojang {
     final headers = {
       'Authorization': 'Bearer $accessToken',
     };
-    final _ = await WebUtil.delete(_mojangApi, 'user/profile/$uuid/skin', headers);
+    await WebUtil.delete(_mojangApi, 'user/profile/$uuid/skin', headers);
   }
 
   /// Get's Minecraft: Java Edition, Minecraft Dungeons, Cobalt and Scrolls purchase statistics.
@@ -142,7 +153,8 @@ class Mojang {
       ]
     };
     final headers = <String, String>{'Content-Type': 'application/json'};
-    final response = await WebUtil.post(_mojangApi, 'orders/statistics', payload, headers);
+    final response =
+        await WebUtil.post(_mojangApi, 'orders/statistics', payload, headers);
     final data = await WebUtil.getJsonFromResponse(response);
     return MinecraftStatistics.fromJson(data);
   }
@@ -150,20 +162,17 @@ class Mojang {
   /// Authenticates a user with given credentials [username] and [password].
   static Future<MojangAccount> authenticate(String username, String password) async {
     final payload = {
-      'agent': {
-        'name': 'Minecraft',
-        'version ': 1
-      },
+      'agent': {'name': 'Minecraft', 'version ': 1},
       'username': username,
       'password': password,
-      'clientToken': Uuid().v4(), 
+      'clientToken': Uuid().v4(),
       'requestUser': true
     };
-    final response = await WebUtil.post(_authserver, 'authenticate', payload, {});
+    final response =
+        await WebUtil.post(_authserver, 'authenticate', payload, {});
     final data = await WebUtil.getJsonFromResponse(response);
     return MojangAccount.fromJson(data);
   }
-
 
   /// Refreshes the [account]. Data, like the access token, stored in the previous [account] will be invalidated.
   static Future refresh(MojangAccount account) async {
@@ -181,28 +190,37 @@ class Mojang {
     if (data['error'] != null) throw Exception(data['errorMessage']);
 
     // Insert the data into our old account object.
-    account..accessToken = data['accessToken']
-           ..clientToken = data['clientToken'];
+    account
+      ..accessToken = data['accessToken']
+      ..clientToken = data['clientToken'];
     if (data['selectedProfile'] != null) {
-      account.selectedProfile..id = data['selectedProfile']['id']
-                             ..name = data['selectedProfile']['name'];
+      account.selectedProfile
+        ..id = data['selectedProfile']['id']
+        ..name = data['selectedProfile']['name'];
     }
     if (data['user'] != null) {
-      account.user..id = data['user']['id']
-                  ..preferredLanguage = (data['user']['properties'] as List)?.where((f) => (f as Map)['name'] == 'preferredLanguage')  ?.first
-                  ..twitchOAuthToken  = (data['user']['properties'] as List)?.where((f) => (f as Map)['name'] == 'twitch_access_token')?.first;
+      account.user
+        ..id = data['user']['id']
+        ..preferredLanguage = (data['user']['properties'] as List)
+            ?.where((f) => (f as Map)['name'] == 'preferredLanguage')
+            ?.first
+        ..twitchOAuthToken = (data['user']['properties'] as List)
+            ?.where((f) => (f as Map)['name'] == 'twitch_access_token')
+            ?.first;
     }
   }
 
   /// Checks if given [accessToken] and [clientToken] are still valid.
-  /// 
+  ///
   /// [clientToken] is optional, though if provided should match the client token
   /// that was used to obtained given [accessToken].
   static Future<bool> validate(String accessToken, {String clientToken}) async {
     final payload = {
       'accessToken': accessToken,
     };
-    if (clientToken != null) payload.putIfAbsent('clientToken', () => clientToken);
+    if (clientToken != null) {
+      payload.putIfAbsent('clientToken', () => clientToken);
+    }
     final response = await WebUtil.post(_authserver, 'validate', payload, {});
     return response?.statusCode == 204;
   }

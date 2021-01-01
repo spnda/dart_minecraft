@@ -8,7 +8,7 @@ class MinecraftPatch {
 
   /// The actual version id of this patch.
   String version;
-  
+
   /// A string id of this version.
   String id;
 
@@ -24,15 +24,16 @@ class MinecraftPatch {
 
   MinecraftPatch._();
 
-  factory MinecraftPatch.fromJson(Map<String, dynamic> data) => MinecraftPatch._()
-    ..title = data['title']
-    ..type = data['type']
-    ..version = data['version']
-    ..body = data['body']
-    ..id = data['id']
-    .._imageUrl = data['image']['url']
-    ..imageTitle = data['image']['title'];
-    
+  factory MinecraftPatch.fromJson(Map<String, dynamic> data) =>
+      MinecraftPatch._()
+        ..title = data['title']
+        ..type = data['type']
+        ..version = data['version']
+        ..body = data['body']
+        ..id = data['id']
+        .._imageUrl = data['image']['url']
+        ..imageTitle = data['image']['title'];
+
   /// The url to the patch's image.
   String get getImageUrl => 'https://launchercontent.mojang.com/' + _imageUrl;
 }

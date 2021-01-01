@@ -4,12 +4,13 @@ import 'dart:io';
 import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:test/test.dart';
 
-void main() {
-  final test_data = json.decode(File('./test_data.json').readAsStringSync());
+void main() async {
+  final test_data =
+      json.decode(File('./test/test_data.json').readAsStringSync());
   final username = test_data['username'];
   final password = test_data['password'];
   final uuid = test_data['uuid'];
-  
+
   test('API should return UUID for username', () async {
     var tuuid = (await Mojang.getUuid(username)).getSecond;
     expect(tuuid, equals(uuid));
@@ -27,12 +28,16 @@ void main() {
   });
 
   test('Gets Minecraft sale statistics', () async {
-    final statistics = await Mojang.getStatistics([MinecraftStatisticsItem.MinecraftItemsSold, MinecraftStatisticsItem.MinecraftPrepaidCardsRedeemed]);
+    final statistics = await Mojang.getStatistics([
+      MinecraftStatisticsItem.MinecraftItemsSold,
+      MinecraftStatisticsItem.MinecraftPrepaidCardsRedeemed
+    ]);
     print(statistics);
   });
 
   test('Gets Minecraft Dungeons sale statistics', () async {
-    final statistics = await Mojang.getStatistics([MinecraftStatisticsItem.DungeonsItemsSold]);
+    final statistics =
+        await Mojang.getStatistics([MinecraftStatisticsItem.DungeonsItemsSold]);
     print(statistics);
   });
 

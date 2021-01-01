@@ -1,14 +1,14 @@
 /// A MojangAccount with data as returned by /authenticate.
 class MojangAccount {
   /// The access token used to access APIs and authenticate to Minecraft Servers.
-  /// 
-  /// This token is a replacement for logging in using a username and password each time, 
+  ///
+  /// This token is a replacement for logging in using a username and password each time,
   /// so keep good track of it!
   String accessToken;
-  
+
   /// This account's client token.
   String clientToken;
-  
+
   /// This account's user.
   MojangUser user;
 
@@ -41,7 +41,8 @@ class MojangUser {
   bool suspended;
   bool blocked;
   bool secured;
-  /// Seems to be always false, no matter if the user has migrated or not. 
+
+  /// Seems to be always false, no matter if the user has migrated or not.
   /// See https://bugs.mojang.com/browse/WEB-1461
   bool migrated;
   bool emailVerified;
@@ -68,21 +69,25 @@ class MojangUser {
     ..emailVerified = data['emailVerified']
     ..legacyUser = data['legacyUser']
     ..verifiedByParent = data['verifiedByParent']
-    ..preferredLanguage = (data['properties'] as List)?.where((f) => (f as Map)['name'] == 'preferredLanguage')?.first
-    ..twitchOAuthToken = (data['properties'] as List)?.where((f) => (f as Map)['name'] == 'twitch_access_token')?.first;
+    ..preferredLanguage = (data['properties'] as List)
+        ?.where((f) => (f as Map)['name'] == 'preferredLanguage')
+        ?.first
+    ..twitchOAuthToken = (data['properties'] as List)
+        ?.where((f) => (f as Map)['name'] == 'twitch_access_token')
+        ?.first;
 }
 
 /// A Mojang Profile
 class MojangProfile {
   /// The name of the player.
   String name;
-  
+
   /// The player's Uuid without dashes.
   String id;
-  
+
   /// Hex string
   String userId;
-  
+
   /// The agent, e.g. 'minecraft'
   String agent;
 
