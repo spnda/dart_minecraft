@@ -1,6 +1,6 @@
 name: dart_minecraft
 description: Utilities to access all Minecraft and Mojang APIs, including skins, name history and account management
-version: 0.1.2
+version: 0.1.2+1
 homepage: https://github.com/spnda/dart_minecraft
 
 environment:
