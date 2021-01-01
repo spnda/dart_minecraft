@@ -59,6 +59,8 @@ class WebUtil {
 
   /// Parses the [response]'s body into a Map<String, dynamic> or List<dynamic>.
   static Future<dynamic> getJsonFromResponse(HttpClientResponse response) async {
-    return json.decode(await getResponseBody(response));
+    var body = await getResponseBody(response);
+    if (body.isEmpty) return null; // Avoid throwing errors in json.decode
+    return json.decode(body);
   }
 }
