@@ -1,10 +1,10 @@
 dart_minecraft
 ==============
 
-[![Pub Package](https://img.shields.io/pub/v/dart_minecraft.svg)](https://pub.dev/packages/dart_minecraft)
-[![GitHub Issues](https://img.shields.io/github/issues/spnda/dart_minecraft.svg)](https://github.com/spnda/dart_minecraft/issues)
-[![GitHub Stars](https://img.shields.io/github/stars/spnda/dart_minecraft.svg)](https://github.com/spnda/dart_minecraft/stargazers)
-[![GitHub License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/spnda/dart_minecraft/main/LICENSE)
+[![Pub Package](https://img.shields.io/pub/v/dart_minecraft.svg?style=for-the-badge&logo=Dart)](https://pub.dev/packages/dart_minecraft)
+[![GitHub Issues](https://img.shields.io/github/issues/spnda/dart_minecraft.svg?style=for-the-badge&logo=GitHub)](https://github.com/spnda/dart_minecraft/issues)
+[![GitHub Stars](https://img.shields.io/github/stars/spnda/dart_minecraft.svg?style=for-the-badge&logo=GitHub)](https://github.com/spnda/dart_minecraft/stargazers)
+[![GitHub License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge&logo=GitHub)](https://raw.githubusercontent.com/spnda/dart_minecraft/main/LICENSE)
 
 A simple Dart library for interfacing with the Mojang and Minecraft APIs.
 
