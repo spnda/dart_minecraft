@@ -25,8 +25,8 @@ void main() async {
 
 ```dart
 void main() async {
-    String uuid = await Mojang.getUuid('<your username>');
-    List<Name> history = await Mojang.getNameHistory(uuid);
+    Pair uuid = await Mojang.getUuid('<your username>');
+    List<Name> history = await Mojang.getNameHistory(uuid.getSecond);
     history.forEach((Name name) => print(name.getName));
 }
 ```
