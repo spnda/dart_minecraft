@@ -9,4 +9,5 @@ export 'src/mojang.dart';
 export 'src/mojang/mojang_status.dart';
 export 'src/mojang/name.dart';
 export 'src/mojang/profile.dart';
+export 'src/nbt/nbt_file.dart';
 export 'src/utilities/pair.dart';

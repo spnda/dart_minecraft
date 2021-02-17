@@ -10,3 +10,7 @@ doc/api/
 
 *.lock
 test_data.json
+
+# NBT Files for testing
+*.nbt
+*.dat

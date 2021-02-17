@@ -31,10 +31,26 @@ void main() async {
 }
 ```
 
+### Reading NBT data
+
+```dart
+void main() async {
+    // You can create a NbtFile object from a File object or
+    // from a String path.
+    final nbtFile = NbtFile.fromFile(File('yourfile.nbt'));
+    await nbtFile.readFile();
+    NbtCompound rootNode = nbtFile.root;
+    // You can now read information from your [rootNode].
+    // for example, rootNode["servers"] will return a child,
+    // if it exists.
+}
+```
+
 Planned
 --------
 
 - [x] Support for all the Minecraft and Minecraft Launcher APIs.
+- [x] Support for reading and writing NBT files.
 - [ ] Support for launching Minecraft itself.
 - [ ] Support for seeing and joining a Minecraft Server.
 
