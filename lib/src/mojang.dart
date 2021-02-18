@@ -1,13 +1,14 @@
 import 'dart:async';
 
-import 'package:dart_minecraft/src/minecraft/minecraft_statistics.dart';
-import 'package:dart_minecraft/src/mojang/mojang_account.dart';
-import 'package:dart_minecraft/src/mojang/name.dart';
-import 'package:dart_minecraft/src/mojang/profile.dart';
-import 'package:dart_minecraft/src/mojang/mojang_status.dart';
-import 'package:dart_minecraft/src/utilities/pair.dart';
-import 'package:dart_minecraft/src/utilities/web_util.dart';
 import 'package:uuid/uuid.dart';
+
+import 'minecraft/minecraft_statistics.dart';
+import 'mojang/mojang_account.dart';
+import 'mojang/mojang_status.dart';
+import 'mojang/name.dart';
+import 'mojang/profile.dart';
+import 'utilities/pair.dart';
+import 'utilities/web_util.dart';
 
 /// Mojang API specific functionality.
 ///
@@ -62,7 +63,7 @@ class Mojang {
     } else {
       return list
           .map<Pair<String, String>>(
-              (Map v) => Pair<String, String>(v['name'], v['id']))
+              (v) => Pair<String, String>(v['name'], v['id']))
           .toList();
     }
   }

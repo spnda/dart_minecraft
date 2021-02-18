@@ -12,12 +12,14 @@ class VersionManifest {
 
   VersionManifest._();
 
+  /// Creates a minecraft [VersionManifest] from JSON data, containing
+  /// all available [Version]s and the latest releases and snapshots.
   factory VersionManifest.fromJson(Map<String, dynamic> data) =>
       VersionManifest._()
         ..latestRelease = data['latest']['release']
         ..latestSnapshot = data['latest']['snapshot']
         ..versions = data['versions']
-            .map((Map<String, dynamic> d) => Version.fromJson(d));
+            .map((d) => Version.fromJson(d));
 }
 
 /// A Minecraft Version.
@@ -48,6 +50,7 @@ class Version {
 
   Version._();
 
+  /// Creates a minecraft [Version] from JSON data.
   factory Version.fromJson(Map<String, dynamic> data) => Version._()
     ..id = data['id']
     ..type = data['type']

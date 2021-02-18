@@ -1,14 +1,18 @@
 import 'dart:collection';
 
-import 'package:dart_minecraft/src/nbt/tags/nbt_tag.dart';
-
 import '../nbt_tags.dart';
+import 'nbt_tag.dart';
 
 /// The base of any array or list nbt tag. Uses the [ListMixin] 
 /// to inherit all methods and properties of a [List].
+// ignore: prefer_mixin
 abstract class NbtArray<T> extends NbtTag with ListMixin<T> {
+
+  /// The list of children this array has. All functions implemented with
+  /// [ListMixin] are referencing of of this [List].
   final List<T> children = <T>[];
 
+  /// Creates a base NbtArray with [parent] and [nbtTagType].
   NbtArray(NbtTag parent, NbtTagType nbtTagType) : super(parent, nbtTagType);
 
   @override

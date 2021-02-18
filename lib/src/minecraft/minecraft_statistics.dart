@@ -26,12 +26,21 @@ class MinecraftStatistics {
 
 /// Statistics items that can be selected.
 enum MinecraftStatisticsItem {
-  MinecraftItemsSold,
-  MinecraftPrepaidCardsRedeemed,
-  CobaltItemsSold,
-  ScrollsItemsSold,
-  CobaltPrepaidCardsRedeemed,
-  DungeonsItemsSold,
+  /// The total amount of Minecraft Sales.
+  minecraftItemsSold,
+  
+  minecraftPrepaidCardsRedeemed,
+
+  /// The total amount of Cobalt Sales.
+  cobaltItemsSold,
+
+  /// The total amount of Scrolls Sales.
+  scrollsItemsSold,
+
+  cobaltPrepaidCardsRedeemed,
+
+  /// The total amount of Minecraft: Dungeons Sales.
+  dungeonsItemsSold,
 }
 
 /// Extension on MinecraftStatisticsItem to give each enum value a string value.
@@ -39,17 +48,17 @@ extension MinecraftStatisticsItemExt on MinecraftStatisticsItem {
   /// Returns the API version of this item.
   String get name {
     switch (this) {
-      case MinecraftStatisticsItem.MinecraftItemsSold:
+      case MinecraftStatisticsItem.minecraftItemsSold:
         return 'item_sold_minecraft';
-      case MinecraftStatisticsItem.MinecraftPrepaidCardsRedeemed:
+      case MinecraftStatisticsItem.minecraftPrepaidCardsRedeemed:
         return 'prepaid_card_redeemed_minecraft';
-      case MinecraftStatisticsItem.CobaltItemsSold:
+      case MinecraftStatisticsItem.cobaltItemsSold:
         return 'item_sold_cobalt';
-      case MinecraftStatisticsItem.ScrollsItemsSold:
+      case MinecraftStatisticsItem.scrollsItemsSold:
         return 'item_sold_scrolls';
-      case MinecraftStatisticsItem.CobaltPrepaidCardsRedeemed:
+      case MinecraftStatisticsItem.cobaltPrepaidCardsRedeemed:
         return 'prepaid_card_redeemed_cobalt';
-      case MinecraftStatisticsItem.DungeonsItemsSold:
+      case MinecraftStatisticsItem.dungeonsItemsSold:
         return 'item_sold_dungeons';
       default:
         return null;

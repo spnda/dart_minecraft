@@ -2,10 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dart_minecraft/src/nbt/tags/nbt_tag.dart';
-
 import 'nbt_compression.dart';
 import 'tags/nbt_compound.dart';
+import 'tags/nbt_tag.dart';
 
 /// A file reader to read nbt data from a binary file.
 class NbtFileReader {
@@ -68,15 +67,15 @@ class NbtFileReader {
     _nbtCompression = _detectCompression();
 
     switch (_nbtCompression) {
-      case NbtCompression.GZIP:
+      case NbtCompression.gzip:
         _data = gzip.decode(_data);
         break;
-      case NbtCompression.ZLIB:
+      case NbtCompression.zlib:
         _data = zlib.decode(_data);
         break;
-      case NbtCompression.UNKNOWN:
+      case NbtCompression.unknown:
         throw Exception('Invalid NBT File.');
-      case NbtCompression.NONE:
+      case NbtCompression.none:
       default:
         // Don't need to do anything for no compression.
         break;
@@ -90,40 +89,40 @@ class NbtFileReader {
   }
 
   /// Reads a single byte at [readPosition].
-  int readByte([bool signed = false]) {
+  int readByte({bool signed = false}) {
     return signed ? _byteData.getInt8(_readPosition++) : _byteData.getUint8(_readPosition++);
   }
 
   /// Reads a 2 byte short starting at [readPosition].
-  int readShort([bool signed = false]) {
+  int readShort({bool signed = false}) {
     final value = signed ? _byteData.getInt16(_readPosition) : _byteData.getUint16(_readPosition);
     _readPosition += 2;
     return value;
   }
 
   /// Reads a 4 byte integer starting at [readPosition].
-  int readInt([bool signed = false]) {
+  int readInt({bool signed = false}) {
     final value = signed ? _byteData.getInt32(_readPosition) : _byteData.getUint32(_readPosition);
     _readPosition += 4;
     return value;
   }
 
   /// Reads a 8 byte integer starting at [readPosition].
-  int readLong([bool signed = false]) {
+  int readLong({bool signed = false}) {
     final value = signed ? _byteData.getInt64(_readPosition) : _byteData.getUint64(_readPosition);
     _readPosition += 8;
     return value;
   }
 
   /// Reads a 4 byte float starting at [readPosition].
-  double readFloat([bool signed = false]) {
+  double readFloat({bool signed = false}) {
     final value = _byteData.getFloat32(_readPosition);
     _readPosition += 4;
     return value;
   }
 
   /// Reads a 8 byte double starting at [readPosition].
-  double readDouble([bool signed = false]) {
+  double readDouble({bool signed = false}) {
     final value = _byteData.getFloat64(_readPosition);
     _readPosition += 8;
     return value;
@@ -133,7 +132,7 @@ class NbtFileReader {
   /// a 2 byte short for the length, then reads length-amount
   /// of bytes and decodes them as UTF-8.
   String readString() {
-    var length = readShort(false);
+    var length = readShort(signed: false);
     if (length == 0) return '';
     var string = <int>[];
     for (var i = 0; i < length; i++) {
@@ -150,16 +149,16 @@ class NbtFileReader {
       case -1: throw Exception('file is empty?');
       case 0x0A: {
         // The file begins with a NBTCompound and is therefore not compressed.
-        return NbtCompression.NONE;
+        return NbtCompression.none;
       }
       case 0x1F: { // GZip detection number
-        return NbtCompression.GZIP;
+        return NbtCompression.gzip;
       }
       case 0x78: { // ZLib header
-        return NbtCompression.ZLIB;
+        return NbtCompression.zlib;
       }
       default: {
-        return NbtCompression.UNKNOWN;
+        return NbtCompression.unknown;
       }
     }
   }

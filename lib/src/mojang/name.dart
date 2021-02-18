@@ -6,10 +6,13 @@ class Name {
 
   Name._();
 
+  /// Create a [Name] from a [name] String and a int value representing
+  /// the unix timestamp at which the name was switched to.
   factory Name(String name, int changedToAt) => Name._()
     .._name = name
     .._changedToAt = changedToAt;
 
+  /// Create a [Name] from JSON data.
   factory Name.fromJson(Map<String, dynamic> json) => Name._()
     .._name = json['name']
     .._changedToAt = json['changedToAt'] ?? 0;

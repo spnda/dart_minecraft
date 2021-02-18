@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+// ignore: avoid_classes_with_only_static_members
 /// Web utility for making HTTP requests
 class WebUtil {
   static final HttpClient _client = HttpClient();
@@ -53,7 +54,7 @@ class WebUtil {
     final contents = StringBuffer();
     final completer = Completer<String>();
     response.transform(utf8.decoder).listen(
-          (data) => contents.write(data),
+          contents.write,
           onDone: () => completer.complete(contents.toString()),
         );
     return completer.future;

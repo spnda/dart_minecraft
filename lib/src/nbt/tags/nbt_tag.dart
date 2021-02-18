@@ -1,19 +1,18 @@
-import 'package:dart_minecraft/src/nbt/tags/nbt_compound.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_int.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_long.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_string.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_list.dart';
-
 import '../nbt_file_reader.dart';
 import '../nbt_tags.dart';
 import 'nbt_byte.dart';
 import 'nbt_byte_array.dart';
+import 'nbt_compound.dart';
 import 'nbt_double.dart';
 import 'nbt_end.dart';
 import 'nbt_float.dart';
+import 'nbt_int.dart';
 import 'nbt_int_array.dart';
+import 'nbt_list.dart';
+import 'nbt_long.dart';
 import 'nbt_long_array.dart';
 import 'nbt_short.dart';
+import 'nbt_string.dart';
 
 /// Represents the base of any NBT Tag.
 abstract class NbtTag {
@@ -63,15 +62,21 @@ abstract class NbtTag {
     }
   }
 
+  /// Create a basic [NbtTag] with given [parent] and [nbtTagType]. This shouldn't be used
+  /// and please refer to implementations for all other nbt tags.
   NbtTag(this._parent, this._nbtTagType);
 
-  /// Reads the next byte and uses that value for [NbtTag.readTagForType].
+  /// Reads a single byte to get the tag type to use with [NbtTag.readTagForType]. 
+  /// If inside a [NbtList] or [NbtArray], [withName] should be set to false to avoid reading
+  /// the name of this Tag.
   factory NbtTag.readTag(NbtFileReader fileReader, NbtTag parent, {bool withName = true}) {
     final data = fileReader.readByte();
     return NbtTag.readTagForType(fileReader, data, parent);
   }
 
   /// Reads the Tag with type [tagType].
+  /// If inside a [NbtList] or [NbtArray], [withName] should be set to false to avoid reading
+  /// the name of this Tag.
   factory NbtTag.readTagForType(NbtFileReader fileReader, int tagType, NbtTag parent, {bool withName = true}) {
     switch (tagType) {
       case 0x00: return NbtEnd(parent);
@@ -89,16 +94,6 @@ abstract class NbtTag {
       case 0x0C: return NbtLongArray.readTag(fileReader, parent, withName: withName);
       default: return null;
     }
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (!(other is NbtTag)) return false;
-    final tag = other as NbtTag;
-    if (tag.nbtTagType != nbtTagType) return false; // Different IDs, different tags
-    if (name == null && tag.name != null || name != null && tag.name == null) return false; // Different names
-    if (name != null && name != tag.name) return false;
-    return true;
   }
 
   @override

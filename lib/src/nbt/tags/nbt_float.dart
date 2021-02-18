@@ -1,7 +1,6 @@
-import 'package:dart_minecraft/src/nbt/nbt_tags.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_tag.dart';
-
 import '../nbt_file_reader.dart';
+import '../nbt_tags.dart';
+import 'nbt_tag.dart';
 
 /// Represents a 4 byte single precision floating point number in a NBT file.
 class NbtFloat extends NbtTag {
@@ -15,6 +14,9 @@ class NbtFloat extends NbtTag {
     this.name = name;
   }
 
+  /// Reads a [NbtFloat] with given [fileReader] and given [parent]. 
+  /// If inside a [NbtList] or [NbtArray], [withName] should be set to false to avoid reading
+  /// the name of this Tag.
   factory NbtFloat.readTag(NbtFileReader fileReader, NbtTag parent, {bool withName = true}) {
     final name = withName ? fileReader.readString() : 'None';
     final value = fileReader.readFloat();

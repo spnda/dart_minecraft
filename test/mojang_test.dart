@@ -5,11 +5,11 @@ import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:test/test.dart';
 
 void main() async {
-  final test_data =
+  final testData =
       json.decode(File('./test/test_data.json').readAsStringSync());
-  final username = test_data['username'];
-  final password = test_data['password'];
-  final uuid = test_data['uuid'];
+  final username = testData['username'];
+  final password = testData['password'];
+  final uuid = testData['uuid'];
 
   test('API should return UUID for username', () async {
     var tuuid = (await Mojang.getUuid(username)).getSecond;
@@ -18,26 +18,26 @@ void main() async {
 
   test('API should return a list of pairs with the sites status.', () async {
     final status = await Mojang.checkStatus();
-    expect(status.minecraft, equals(MojangSiteStatus.Unavailable));
+    expect(status.minecraft, equals(MojangSiteStatus.unavailable));
   });
 
   test('API should return link to the skin of given player.', () async {
     final profile = await Mojang.getProfile(uuid);
     final skin = profile.getTextures.getSkinUrl();
-    expect(skin, test_data['skin_texture']);
+    expect(skin, testData['skin_texture']);
   });
 
   test('Gets Minecraft sale statistics', () async {
     final statistics = await Mojang.getStatistics([
-      MinecraftStatisticsItem.MinecraftItemsSold,
-      MinecraftStatisticsItem.MinecraftPrepaidCardsRedeemed
+      MinecraftStatisticsItem.minecraftItemsSold,
+      MinecraftStatisticsItem.minecraftPrepaidCardsRedeemed
     ]);
     print(statistics);
   });
 
   test('Gets Minecraft Dungeons sale statistics', () async {
     final statistics =
-        await Mojang.getStatistics([MinecraftStatisticsItem.DungeonsItemsSold]);
+        await Mojang.getStatistics([MinecraftStatisticsItem.dungeonsItemsSold]);
     print(statistics);
   });
 
@@ -49,6 +49,6 @@ void main() async {
 
   test('API should return a list of names', () async {
     final nameHistory = await Mojang.getNameHistory(uuid);
-    nameHistory.forEach((Name f) => print(f));
+    nameHistory.forEach(print);
   });
 }

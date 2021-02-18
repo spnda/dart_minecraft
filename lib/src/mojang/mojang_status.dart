@@ -2,18 +2,20 @@
 ///
 /// See `MojangStatus.parse("str")`.
 enum MojangSiteStatus {
-  /// "green"
-  Available,
+  /// If the site is available and fully operational.
+  available,
 
-  /// "yellow"
-  SomeIssues,
+  /// The site might be available, very slow or partially not working.
+  someIssues,
 
-  /// "red"
-  Unavailable,
+  /// The site is not operational and is most likely not accessible at all.
+  unavailable,
 }
 
 /// Contains the MojangSiteStatus of all Minecraft and Mojang sites.
 class MojangStatus {
+  /// The mojang site status for a single site. See [MojangSiteStatus] for more
+  /// details on possible values.
   MojangSiteStatus minecraft,
       minecraftSession,
       mojangAccount,
@@ -27,9 +29,10 @@ class MojangStatus {
 
   MojangStatus._();
 
+  /// Parse all [MojangSiteStatus]s from JSON data from the Web API.
   factory MojangStatus.fromJson(List data) {
     final status = MojangStatus._();
-    data.forEach((element) {
+    for (final element in data) {
       final entry = element.entries.first;
       switch (entry.key) {
         case 'minecraft.net':
@@ -63,7 +66,7 @@ class MojangStatus {
           status.mojang = parse(entry.value);
           break;
       }
-    });
+    };
     return status;
   }
 
@@ -73,13 +76,13 @@ class MojangStatus {
   static MojangSiteStatus parse(String data) {
     switch (data) {
       case 'red':
-        return MojangSiteStatus.Unavailable;
+        return MojangSiteStatus.unavailable;
       case 'yellow':
-        return MojangSiteStatus.SomeIssues;
+        return MojangSiteStatus.someIssues;
       case 'green':
-        return MojangSiteStatus.Available;
+        return MojangSiteStatus.available;
       default:
-        return MojangSiteStatus.Unavailable;
+        return MojangSiteStatus.unavailable;
     }
   }
 }

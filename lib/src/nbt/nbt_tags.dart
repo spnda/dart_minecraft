@@ -1,20 +1,62 @@
 /// Different tags for each Nbt Tag that exists.
 enum NbtTagType {
+  /// A NBT Tag used to indicate the end of a NbtCompound.
+  // ignore: constant_identifier_names
   TAG_END,
+
+  /// A named NBT Tag used to store a single byte.
+  // ignore: constant_identifier_names
   TAG_BYTE,
+
+  /// A named NBT Tag used to store a single big endian signed 2 byte short integer.
+  // ignore: constant_identifier_names
   TAG_SHORT,
+  
+  /// A named NBT Tag used to store a single big endian signed 4 byte integer.
+  // ignore: constant_identifier_names
   TAG_INT,
+  
+  /// A named NBT Tag to store a single big endian signed 8 byte long integer.
+  // ignore: constant_identifier_names
   TAG_LONG,
+  
+  /// A named NBT Tag used to store a single 4 byte single precision
+  /// floating point number.
+  // ignore: constant_identifier_names
   TAG_FLOAT,
+  
+  /// A named NBT Tag used to store a single 8 byte double precision 
+  /// floating point number.
+  // ignore: constant_identifier_names
   TAG_DOUBLE,
+  
+  /// A named NBT Tag used to store a list of unnamed single bytes.
+  // ignore: constant_identifier_names
   TAG_BYTE_ARRAY,
+  
+  /// A named NBT Tag used to store a single String.
+  // ignore: constant_identifier_names
   TAG_STRING,
+  
+  /// A named NBT Tag used to store a List of unnamed NBT Tags, all of which
+  /// are from the same type.
+  // ignore: constant_identifier_names
   TAG_LIST,
+  
+  /// A named NBT Tag used to store a List of named NBT Tags of any type.
+  // ignore: constant_identifier_names
   TAG_COMPOUND,
+  
+  /// A named NBT Tag used to store a list of unnamed big endian signed 4 byte integers.
+  // ignore: constant_identifier_names
   TAG_INT_ARRAY,
+  
+  /// A named NBT Tag used to store a list of unnamed big endian signed 8 byte long integers.
+  // ignore: constant_identifier_names
   TAG_LONG_ARRAY,
 }
 
+/// Extension on [NbtTagType] to give each enum value some functions.
 extension NbtTagFunctions on NbtTagType {
   /// Gets a string representation of this tag.
   /// The default toString() cannot be overriden by extensions and

@@ -3,10 +3,13 @@ class Pair<A, B> {
   final A _a;
   final B _b;
 
+  /// Creates a Pair of two values. Both can have different types
   Pair(this._a, this._b);
 
+  /// Get the left/first value in this Pair
   A get getFirst => _a;
 
+  /// Get the right/last value in this Pair
   B get getSecond => _b;
 
   @override

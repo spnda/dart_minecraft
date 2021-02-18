@@ -28,6 +28,7 @@ class Profile {
   String get getSignature => utf8.decode(base64.decode(_signatures ?? ''));
 }
 
+/// Represents all textures for a minecraft profile.
 class ProfileTextures {
   int _timestamp;
   String _profileId;

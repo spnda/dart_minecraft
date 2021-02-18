@@ -1,8 +1,9 @@
-import 'package:dart_minecraft/src/nbt/nbt_tags.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_compound.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_tag.dart';
+import '../nbt_tags.dart';
+import 'nbt_compound.dart';
+import 'nbt_tag.dart';
 
-/// Represents the end tag of a [NbtCompound] list.
+/// Represents the end tag of a [NbtCompound] list. This tag
+/// does not include any name or value.
 class NbtEnd extends NbtTag {
   @override
   String get name => '';
@@ -10,5 +11,7 @@ class NbtEnd extends NbtTag {
   @override
   int get value => 0;
 
+  /// Creates a single [NbtEnd] tag, which should be at the end of a
+  /// [NbtCompound] and does not contain any payload or name.
   NbtEnd(NbtCompound parent) : super(parent, NbtTagType.TAG_END);
 }

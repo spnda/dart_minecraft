@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'package:dart_minecraft/src/nbt/nbt_file_reader.dart';
+
 import 'package:path/path.dart' as path;
 
+import 'nbt_file_reader.dart';
 import 'tags/nbt_compound.dart';
 
 /// Represents a NBT file.
