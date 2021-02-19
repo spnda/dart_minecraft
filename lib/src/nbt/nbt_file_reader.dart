@@ -8,8 +8,8 @@ import 'tags/nbt_tag.dart';
 
 /// A file reader to read nbt data from a binary file.
 class NbtFileReader {
-  /// The original file stream
-  final Stream<List<int>> _fileStream;
+  /// The file that gets read from.
+  final File _file;
 
   /// A list of bytes from the file
   Uint8List _data;
@@ -21,10 +21,6 @@ class NbtFileReader {
   /// The current read position inside of [_byteData].
   int _readPosition = 0;
 
-  /// Wether this reader is initialized and [_byteData]
-  /// has valid data.
-  bool _initialized = false;
-
   /// The root compound of this file.
   NbtCompound root;
 
@@ -33,33 +29,14 @@ class NbtFileReader {
 
   /// Creates a [NbtFileReader]. Given FileStream will be used 
   /// to get the bytes to read.
-  NbtFileReader(this._fileStream);
-
-  /// Initialize this reader.
-  Future<bool> init() async {
-    _initialized = await _getData();
-    return _initialized;
-  }
-
-  /// Waits for all the values from [_fileStream] to resolve
-  /// and adds them to [_data];
-  Future<bool> _getData() async {
-    final _temp = <int>[];
-    await for (final list in _fileStream) {
-      for (final chunk in list) {
-        _temp.add(chunk);
-      }
-    }
-    _data = Uint8List.fromList(_temp);
-    return true;
+  NbtFileReader(this._file) {
+    _data = _file.readAsBytesSync();
   }
 
   /// Begin reading the file.
   /// 
   /// Throws [Exception] if [init] has not been called.
   Future<bool> beginRead() async {
-    if (!_initialized) throw Exception('Not initialized. Please call init() before reading.');
-
     // First detect compression if any
     nbtCompression = _detectCompression();
 

@@ -35,8 +35,7 @@ class NbtFile {
 
   /// Read the file and read all data to the [root] node.
   Future<bool> readFile() async {
-    _nbtFileReader = NbtFileReader(_file.openRead());
-    await _nbtFileReader.init();
+    _nbtFileReader = NbtFileReader(_file);
     final val = await _nbtFileReader.beginRead();
     // Save a copy of the read root NbtCompound.
     root = _nbtFileReader.root;
