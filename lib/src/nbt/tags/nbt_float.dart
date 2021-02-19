@@ -1,3 +1,5 @@
+import 'package:dart_minecraft/src/nbt/nbt_file_writer.dart';
+
 import '../nbt_file_reader.dart';
 import '../nbt_tags.dart';
 import 'nbt_tag.dart';
@@ -9,17 +11,22 @@ class NbtFloat extends NbtTag {
   @override
   double get value => _value;
 
-  /// Creates a [NbtFloat] with given name and value.
-  NbtFloat(String name, this._value, NbtTag parent) : super(parent, NbtTagType.TAG_FLOAT) {
-    this.name = name;
-  }
+  /// Creates a [NbtFloat] with given [parent].
+  NbtFloat(NbtTag parent) : super.value(parent, NbtTagType.TAG_FLOAT);
 
-  /// Reads a [NbtFloat] with given [fileReader] and given [parent]. 
-  /// If inside a [NbtList] or [NbtArray], [withName] should be set to false to avoid reading
-  /// the name of this Tag.
-  factory NbtFloat.readTag(NbtFileReader fileReader, NbtTag parent, {bool withName = true}) {
+  @override
+  NbtFloat readTag(NbtFileReader fileReader, {bool withName = true}) {
     final name = withName ? fileReader.readString() : 'None';
     final value = fileReader.readFloat();
-    return NbtFloat(name, value, parent);
+    return this..name = name.._value = value;
+  }
+
+  @override
+  void writeTag(NbtFileWriter fileWriter, {bool withName = true, bool withType = true}) {
+    if (withType) fileWriter.writeByte(nbtTagType.index);
+    if (withName) {
+      fileWriter.writeString(name);
+    }
+    fileWriter.writeFloat(_value);
   }
 }

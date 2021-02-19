@@ -1,5 +1,8 @@
+import 'package:dart_minecraft/src/nbt/nbt_file_writer.dart';
+
 import '../nbt_file_reader.dart';
 import '../nbt_tags.dart';
+import 'nbt_end.dart';
 import 'nbt_list.dart';
 import 'nbt_tag.dart';
 
@@ -12,21 +15,29 @@ class NbtCompound<T extends NbtTag> extends NbtList<T> {
   /// Get a list of children 
   List<T> getChildrenByTag(NbtTagType tagType) => where((tag) => tag.nbtTagType == tagType).toList();
 
-  /// Create a [NbtCompound] with given [name] and [parent].
-  NbtCompound(String name, NbtTag parent) : super(name, parent, NbtTagType.TAG_COMPOUND);
+  /// Create a [NbtCompound] with given [parent].
+  NbtCompound(NbtTag parent) : super(parent, NbtTagType.TAG_COMPOUND);
 
-  /// Reads a [NbtCompound] and all its children with given [fileReader] and given [parent]. 
-  /// If inside a [NbtList] or [NbtArray], [withName] should be set to false to avoid reading
-  /// the name of this Tag.
-  factory NbtCompound.readTag(NbtFileReader fileReader, NbtTag parent, {bool withName = true}) {
+  @override
+  NbtCompound readTag(NbtFileReader fileReader, {bool withName = true}) {
     final name = withName ? fileReader.readString() : 'None';
-    final nbtCompound = NbtCompound(name, parent);
-
     NbtTag tag;
-    while ((tag = NbtTag.readTag(fileReader, nbtCompound)).nbtTagType != NbtTagType.TAG_END) {
-      nbtCompound.add(tag);
+    while ((tag = NbtTag.readTagForType(fileReader, fileReader.readByte(), this)).nbtTagType != NbtTagType.TAG_END) {
+      add(tag);
     }
+    return this..name = name;
+  }
 
-    return nbtCompound;
+  @override
+  void writeTag(NbtFileWriter fileWriter, {bool withName = true, bool withType = true}) {
+    if (withType) fileWriter.writeByte(nbtTagType.index);
+    if (withName) {
+      fileWriter.writeString(name);
+    }
+    for (final val in children) {
+      val.writeTag(fileWriter, withName: true, withType: true);
+    }
+    // Write the last NbtEnd tag aswell, this one is not included in [children].
+    NbtEnd(this).writeTag(fileWriter);
   }
 }

@@ -10,10 +10,10 @@ abstract class NbtArray<T> extends NbtTag with ListMixin<T> {
 
   /// The list of children this array has. All functions implemented with
   /// [ListMixin] are referencing of of this [List].
-  final List<T> children = <T>[];
+  List<T> children = <T>[];
 
   /// Creates a base NbtArray with [parent] and [nbtTagType].
-  NbtArray(NbtTag parent, NbtTagType nbtTagType) : super(parent, nbtTagType);
+  NbtArray.value(NbtTag parent, NbtTagType nbtTagType) : super.value(parent, nbtTagType);
 
   @override
   List<T> get value => children;

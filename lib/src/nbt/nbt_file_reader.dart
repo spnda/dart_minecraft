@@ -26,17 +26,14 @@ class NbtFileReader {
   bool _initialized = false;
 
   /// The root compound of this file.
-  NbtCompound _root;
+  NbtCompound root;
 
   /// The compression of [_file].
-  NbtCompression _nbtCompression;
+  NbtCompression nbtCompression;
 
   /// Creates a [NbtFileReader]. Given FileStream will be used 
   /// to get the bytes to read.
   NbtFileReader(this._fileStream);
-
-  /// Get the root NbtCompound of this file.
-  NbtCompound get root => _root;
 
   /// Initialize this reader.
   Future<bool> init() async {
@@ -64,9 +61,9 @@ class NbtFileReader {
     if (!_initialized) throw Exception('Not initialized. Please call init() before reading.');
 
     // First detect compression if any
-    _nbtCompression = _detectCompression();
+    nbtCompression = _detectCompression();
 
-    switch (_nbtCompression) {
+    switch (nbtCompression) {
       case NbtCompression.gzip:
         _data = gzip.decode(_data);
         break;
@@ -83,7 +80,7 @@ class NbtFileReader {
 
     _byteData = _data.buffer.asByteData();
 
-    _root = NbtTag.readTag(this, null);
+    root = NbtTag.readNewTag(this, null, withName: true);
     
     return true;
   }

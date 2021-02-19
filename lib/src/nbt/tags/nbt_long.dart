@@ -1,3 +1,5 @@
+import 'package:dart_minecraft/src/nbt/nbt_file_writer.dart';
+
 import '../nbt_file_reader.dart';
 import '../nbt_tags.dart';
 import 'nbt_tag.dart';
@@ -9,17 +11,22 @@ class NbtLong extends NbtTag {
   @override
   int get value => _value;
 
-  /// Creates a [NbtInt] with given name and value.
-  NbtLong(String name, this._value, NbtTag parent) : super(parent, NbtTagType.TAG_LONG) {
-    this.name = name;
-  }
+  /// Creates a [NbtLong] with given [parent].
+  NbtLong(NbtTag parent) : super.value(parent, NbtTagType.TAG_LONG);
 
-  /// Reads a [NbtLong] with given [fileReader] and given [parent]. 
-  /// If inside a [NbtList] or [NbtArray], [withName] should be set to false to avoid reading
-  /// the name of this Tag.
-  factory NbtLong.readTag(NbtFileReader fileReader, NbtTag parent, {bool withName = true}) {
+  @override
+  NbtLong readTag(NbtFileReader fileReader, {bool withName = true}) {
     final name = withName ? fileReader.readString() : 'None';
     final value = fileReader.readLong();
-    return NbtLong(name, value, parent);
+    return this..name = name.._value = value;
+  }
+
+  @override
+  void writeTag(NbtFileWriter fileWriter, {bool withName = true, bool withType = true}) {
+    if (withType) fileWriter.writeByte(nbtTagType.index);
+    if (withName) {
+      fileWriter.writeString(name);
+    }
+    fileWriter.writeLong(_value);
   }
 }

@@ -1,3 +1,5 @@
+import 'package:dart_minecraft/src/nbt/nbt_file_writer.dart';
+
 import '../nbt_file_reader.dart';
 import '../nbt_tags.dart';
 import 'nbt_byte.dart';
@@ -19,8 +21,9 @@ abstract class NbtTag {
   /// This tags type.
   NbtTagType _nbtTagType;
 
-  /// This tags parent.
-  NbtTag _parent;
+  /// The parent of this tag. Can only be null for the root
+  /// NbtCompound.
+  NbtTag parent;
 
   /// The name of this tag. Inside of Lists or Arrays, this
   /// is 'None'.
@@ -29,10 +32,6 @@ abstract class NbtTag {
   /// The value of this tag. Can vary depending on tag type,
   /// obtainable from [nbtTagType].
   dynamic get value;
-
-  /// The parent of this tag. Can only be null for the root
-  /// NbtCompound.
-  NbtTag get parent => _parent;
 
   /// The type of this tag.
   NbtTagType get nbtTagType => _nbtTagType;
@@ -62,39 +61,51 @@ abstract class NbtTag {
     }
   }
 
+  /// Basic empty constructor
+  NbtTag();
+
   /// Create a basic [NbtTag] with given [parent] and [nbtTagType]. This shouldn't be used
   /// and please refer to implementations for all other nbt tags.
-  NbtTag(this._parent, this._nbtTagType);
+  NbtTag.value(this.parent, this._nbtTagType);
 
-  /// Reads a single byte to get the tag type to use with [NbtTag.readTagForType]. 
-  /// If inside a [NbtList] or [NbtArray], [withName] should be set to false to avoid reading
+  /// Reads a [NbtTag] from [fileReader].
+  /// If the parent is a [NbtList] or [NbtArray], [withName] should be set to false to avoid reading
   /// the name of this Tag.
-  factory NbtTag.readTag(NbtFileReader fileReader, NbtTag parent, {bool withName = true}) {
-    final data = fileReader.readByte();
-    return NbtTag.readTagForType(fileReader, data, parent);
+  NbtTag readTag(NbtFileReader fileReader, {bool withName = true});
+
+  /// Reads the next byte from the file and returns the parsed [NbtTag] corresponding to the
+  /// read tag type.
+  static NbtTag readNewTag(NbtFileReader fileReader, NbtTag parent, {bool withName = true}) {
+    final tagType = fileReader.readByte();
+    return readTagForType(fileReader, tagType, parent, withName: withName);
   }
 
   /// Reads the Tag with type [tagType].
   /// If inside a [NbtList] or [NbtArray], [withName] should be set to false to avoid reading
   /// the name of this Tag.
-  factory NbtTag.readTagForType(NbtFileReader fileReader, int tagType, NbtTag parent, {bool withName = true}) {
+  static NbtTag readTagForType(NbtFileReader fileReader, int tagType, NbtTag parent, {bool withName = true}) {
     switch (tagType) {
       case 0x00: return NbtEnd(parent);
-      case 0x01: return NbtByte.readTag(fileReader, parent, withName: withName);
-      case 0x02: return NbtShort.readTag(fileReader, parent, withName: withName);
-      case 0x03: return NbtInt.readTag(fileReader, parent, withName: withName);
-      case 0x04: return NbtLong.readTag(fileReader, parent, withName: withName);
-      case 0x05: return NbtFloat.readTag(fileReader, parent, withName: withName);
-      case 0x06: return NbtDouble.readTag(fileReader, parent, withName: withName);
-      case 0x07: return NbtByteArray.readTag(fileReader, parent, withName: withName);
-      case 0x08: return NbtString.readTag(fileReader, parent, withName: withName);
-      case 0x09: return NbtList.readTag(fileReader, parent, withName: withName);
-      case 0x0A: return NbtCompound.readTag(fileReader, parent, withName: withName);
-      case 0x0B: return NbtIntArray.readTag(fileReader, parent, withName: withName);
-      case 0x0C: return NbtLongArray.readTag(fileReader, parent, withName: withName);
+      case 0x01: return NbtByte(parent).readTag(fileReader, withName: withName);
+      case 0x02: return NbtShort(parent).readTag(fileReader, withName: withName);
+      case 0x03: return NbtInt(parent).readTag(fileReader, withName: withName);
+      case 0x04: return NbtLong(parent).readTag(fileReader, withName: withName);
+      case 0x05: return NbtFloat(parent).readTag(fileReader, withName: withName);
+      case 0x06: return NbtDouble(parent).readTag(fileReader, withName: withName);
+      case 0x07: return NbtByteArray(parent).readTag(fileReader, withName: withName);
+      case 0x08: return NbtString(parent).readTag(fileReader, withName: withName);
+      case 0x09: return NbtList(parent).readTag(fileReader, withName: withName);
+      case 0x0A: return NbtCompound(parent).readTag(fileReader, withName: withName);
+      case 0x0B: return NbtIntArray(parent).readTag(fileReader, withName: withName);
+      case 0x0C: return NbtLongArray(parent).readTag(fileReader, withName: withName);
       default: return null;
     }
   }
+
+  /// Writes a [NbtTag] from [fileReader].
+  /// If the parent is a [NbtList] or [NbtArray], [withName] should be set to false to avoid writing
+  /// any names of this Tag.
+  void writeTag(NbtFileWriter fileWriter, {bool withName = true, bool withType = true});
 
   @override
   String toString() {

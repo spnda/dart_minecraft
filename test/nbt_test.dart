@@ -1,9 +1,21 @@
+import 'dart:io';
+
+import 'package:collection/collection.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:dart_minecraft/src/nbt/nbt_compression.dart';
 import 'package:dart_minecraft/src/nbt/nbt_tags.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_byte_array.dart';
+import 'package:dart_minecraft/src/nbt/tags/nbt_compound.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_list.dart';
+import 'package:dart_minecraft/src/nbt/tags/nbt_string.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_tag.dart';
 import 'package:test/test.dart';
+
+bool compareFiles(String file1, String file2) {
+  final contents1 = File(file1).readAsBytesSync();
+  final contents2 = File(file2).readAsBytesSync();
+  return const ListEquality().equals(contents1, contents2);
+}
 
 void main() {
   test('Read servers.dat', () async {
@@ -67,5 +79,38 @@ void main() {
 
     // The second child should be a NbtDouble and have a NaN value.
     expect((fallDistance as NbtList<NbtTag>).children[1].value, isNaN);
+  });
+
+  test('Rewrite servers.dat', () async {
+    final nbtFile = NbtFile.fromPath('./test/servers.dat');
+    await nbtFile.readFile();
+
+    await nbtFile.writeFile(file: File('./test/servers2.dat'), nbtCompression: nbtFile.compression);
+
+    expect(compareFiles('./test/servers.dat', './test/servers2.dat'), isTrue);
+  });
+
+  test('Rewrite bigtest.dat', () async {
+    final nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
+    await nbtFile.readFile();
+
+    await nbtFile.writeFile(file: File('./test/bigtest2.nbt'), nbtCompression: nbtFile.compression);
+
+    expect(compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'), isTrue);
+  });
+
+  test('Rewrite level.dat', () async {
+    final nbtFile = NbtFile.fromPath('./test/level.dat');
+    await nbtFile.readFile();
+
+    await nbtFile.writeFile(file: File('./test/level2.dat'), nbtCompression: nbtFile.compression);
+
+    expect(compareFiles('./test/level.dat', './test/level2.dat'), isTrue);
+  });
+
+  test('Write test.nbt', () async {
+    final nbtFile = NbtFile.fromPath('./test/test.nbt');
+    nbtFile.root = NbtCompound(null);
+    await nbtFile.writeFile(nbtCompression: NbtCompression.none);
   });
 }
