@@ -7,7 +7,6 @@ import 'package:dart_minecraft/src/nbt/nbt_tags.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_byte_array.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_compound.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_list.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_string.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_tag.dart';
 import 'package:test/test.dart';
 

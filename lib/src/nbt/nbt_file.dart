@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:dart_minecraft/src/nbt/nbt_file_writer.dart';
 import 'package:path/path.dart' as path;
 
 import 'nbt_compression.dart';
 import 'nbt_file_reader.dart';
+import 'nbt_file_writer.dart';
 import 'tags/nbt_compound.dart';
 
 /// Represents a NBT file.
@@ -43,6 +43,7 @@ class NbtFile {
     return val;
   }
 
+  /// Write the [root] node into [_file] or given [file] with [nbtCompression].
   Future<bool> writeFile({File file, NbtCompression nbtCompression = NbtCompression.none}) async {
     _nbtFileWriter = NbtFileWriter(root);
     if (file == null) file = _file;

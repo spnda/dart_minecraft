@@ -1,6 +1,5 @@
-import 'package:dart_minecraft/src/nbt/nbt_file_writer.dart';
-
 import '../nbt_file_reader.dart';
+import '../nbt_file_writer.dart';
 import '../nbt_tags.dart';
 import 'nbt_end.dart';
 import 'nbt_list.dart';

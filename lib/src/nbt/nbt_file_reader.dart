@@ -54,7 +54,7 @@ class NbtFileReader {
     return true;
   }
 
-  /// Begin reading from the pre-
+  /// Begin reading the file.
   /// 
   /// Throws [Exception] if [init] has not been called.
   Future<bool> beginRead() async {
