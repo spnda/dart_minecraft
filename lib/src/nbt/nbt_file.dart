@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart';
 
 import 'nbt_compression.dart';
 import 'nbt_file_reader.dart';
@@ -25,16 +25,17 @@ class NbtFile {
   /// May throw [FileSystemException].
   NbtFile.fromPath(String path) {
     _file = File(path);
+    fileName = basename(_file.path);
   }
 
   /// Creates a [NbtFile] from a [File].
   /// May throw [FileSystemException].
   NbtFile.fromFile(this._file) {
-    fileName = path.basename(_file.path);
+    fileName = basename(_file.path);
   }
 
   /// Read the file and read all data to the [root] node.
-  Future<bool> readFile() async {
+  Future<bool> readFile({File file}) async {
     _nbtFileReader = NbtFileReader(_file);
     final val = await _nbtFileReader.beginRead();
     // Save a copy of the read root NbtCompound.
@@ -43,6 +44,7 @@ class NbtFile {
   }
 
   /// Write the [root] node into [_file] or given [file] with [nbtCompression].
+  /// This will override any data stored in that file.
   Future<bool> writeFile({File file, NbtCompression nbtCompression = NbtCompression.none}) async {
     _nbtFileWriter = NbtFileWriter(root);
     if (file == null) file = _file;

@@ -6,7 +6,9 @@ import 'package:dart_minecraft/src/nbt/nbt_compression.dart';
 import 'package:dart_minecraft/src/nbt/nbt_tags.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_byte_array.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_compound.dart';
+import 'package:dart_minecraft/src/nbt/tags/nbt_int.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_list.dart';
+import 'package:dart_minecraft/src/nbt/tags/nbt_string.dart';
 import 'package:dart_minecraft/src/nbt/tags/nbt_tag.dart';
 import 'package:test/test.dart';
 
@@ -105,11 +107,36 @@ void main() {
     await nbtFile.writeFile(file: File('./test/level2.dat'), nbtCompression: nbtFile.compression);
 
     expect(compareFiles('./test/level.dat', './test/level2.dat'), isTrue);
+
+    // Re-read the file and check if they're identical
+    final nbtFile2 = NbtFile.fromPath('./test/level2.dat');
+    await nbtFile2.readFile();
+    expect(nbtFile2.root.last, isTrue);
   });
 
   test('Write test.nbt', () async {
     final nbtFile = NbtFile.fromPath('./test/test.nbt');
-    nbtFile.root = NbtCompound(null);
-    await nbtFile.writeFile(nbtCompression: NbtCompression.none);
+    nbtFile.root = NbtCompound(
+      name: 'rootCompound',
+      children: <NbtTag>[
+        NbtInt(
+          name: 'intTest',
+          value: 5430834,
+        ),
+        NbtString(
+          name: 'stringTest',
+          value: 'This is a String test!'
+        ),
+      ],
+    );
+
+    // Write the data to the file.
+    await nbtFile.writeFile(nbtCompression: NbtCompression.gzip);
+
+    // Re-read the file from disk.
+    await nbtFile.readFile();
+
+    expect(nbtFile.root.children[0].value, equals(5430834));
+    expect(nbtFile.root.children[1].value, equals('This is a String test!'));
   });
 }

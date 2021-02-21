@@ -7,13 +7,12 @@ import 'nbt_tag.dart';
 /// to inherit all methods and properties of a [List].
 // ignore: prefer_mixin
 abstract class NbtArray<T> extends NbtTag with ListMixin<T> {
-
   /// The list of children this array has. All functions implemented with
   /// [ListMixin] are referencing of of this [List].
   List<T> children = <T>[];
 
   /// Creates a base NbtArray with [parent] and [nbtTagType].
-  NbtArray.value(NbtTag parent, NbtTagType nbtTagType) : super.value(parent, nbtTagType);
+  NbtArray(String name, NbtTagType nbtTagType) : super(name, nbtTagType);
 
   @override
   List<T> get value => children;

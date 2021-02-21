@@ -18,7 +18,7 @@ import 'nbt_string.dart';
 /// Represents the base of any NBT Tag.
 abstract class NbtTag {
   /// This tags type.
-  NbtTagType _nbtTagType;
+  final NbtTagType _nbtTagType;
 
   /// The parent of this tag. Can only be null for the root
   /// NbtCompound.
@@ -60,12 +60,9 @@ abstract class NbtTag {
     }
   }
 
-  /// Basic empty constructor
-  NbtTag();
-
-  /// Create a basic [NbtTag] with given [parent] and [nbtTagType]. This shouldn't be used
+  /// Create a basic [NbtTag] with given [nbtTagType]. This shouldn't be used directly
   /// and please refer to implementations for all other nbt tags.
-  NbtTag.value(this.parent, this._nbtTagType);
+  NbtTag(this.name, this._nbtTagType);
 
   /// Reads a [NbtTag] from [fileReader].
   /// If the parent is a [NbtList] or [NbtArray], [withName] should be set to false to avoid reading
@@ -85,18 +82,18 @@ abstract class NbtTag {
   static NbtTag readTagForType(NbtFileReader fileReader, int tagType, NbtTag parent, {bool withName = true}) {
     switch (tagType) {
       case 0x00: return NbtEnd(parent);
-      case 0x01: return NbtByte(parent).readTag(fileReader, withName: withName);
-      case 0x02: return NbtShort(parent).readTag(fileReader, withName: withName);
-      case 0x03: return NbtInt(parent).readTag(fileReader, withName: withName);
-      case 0x04: return NbtLong(parent).readTag(fileReader, withName: withName);
-      case 0x05: return NbtFloat(parent).readTag(fileReader, withName: withName);
-      case 0x06: return NbtDouble(parent).readTag(fileReader, withName: withName);
-      case 0x07: return NbtByteArray(parent).readTag(fileReader, withName: withName);
-      case 0x08: return NbtString(parent).readTag(fileReader, withName: withName);
-      case 0x09: return NbtList(parent).readTag(fileReader, withName: withName);
-      case 0x0A: return NbtCompound(parent).readTag(fileReader, withName: withName);
-      case 0x0B: return NbtIntArray(parent).readTag(fileReader, withName: withName);
-      case 0x0C: return NbtLongArray(parent).readTag(fileReader, withName: withName);
+      case 0x01: return NbtByte(name: null, value: null).readTag(fileReader, withName: withName);
+      case 0x02: return NbtShort(name: null, value: null).readTag(fileReader, withName: withName);
+      case 0x03: return NbtInt(name: null, value: null).readTag(fileReader, withName: withName);
+      case 0x04: return NbtLong(name: null, value: null).readTag(fileReader, withName: withName);
+      case 0x05: return NbtFloat(name: null, value: null).readTag(fileReader, withName: withName);
+      case 0x06: return NbtDouble(name: null, value: null).readTag(fileReader, withName: withName);
+      case 0x07: return NbtByteArray(name: null, children: null).readTag(fileReader, withName: withName);
+      case 0x08: return NbtString(name: null, value: null).readTag(fileReader, withName: withName);
+      case 0x09: return NbtList(name: null, children: null).readTag(fileReader, withName: withName);
+      case 0x0A: return NbtCompound(name: null, children: null).readTag(fileReader, withName: withName);
+      case 0x0B: return NbtIntArray(name: null, children: null).readTag(fileReader, withName: withName);
+      case 0x0C: return NbtLongArray(name: null, children: null).readTag(fileReader, withName: withName);
       default: return null;
     }
   }

@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../nbt_file_reader.dart';
 import '../nbt_file_writer.dart';
 import '../nbt_tags.dart';
@@ -21,8 +23,14 @@ class NbtList<T extends NbtTag> extends NbtArray<T> {
 
   /// Creates a basic [NbtList] with given [parent]. [nbtTagType] defaults to [NbtTagType.TAG_LIST] and only
   /// [NbtTagType.TAG_COMPOUND] or [NbtTagType.TAG_LIST] should be used here.
-  NbtList(NbtTag parent, [NbtTagType nbtTagType = NbtTagType.TAG_LIST]) : super.value(parent, nbtTagType) {
+  NbtList({@required String name, @required List<T> children, NbtTagType nbtTagType = NbtTagType.TAG_LIST}) : super(name, nbtTagType) {
     if (!(nbtTagType == NbtTagType.TAG_LIST || nbtTagType == NbtTagType.TAG_COMPOUND)) throw ArgumentError('nbtTagType must be TAG_LIST or TAG_COMPOUND.');
+
+    /// Assign this as the parent of all children.
+    /// Also, filter all NbtEnd tags, as they're invalid.
+    this.children = (children ?? <T>[])
+      .map((child) => child..parent = this).toList()
+      .where((child) => child.nbtTagType != NbtTagType.TAG_END).toList();
   }
 
   @override

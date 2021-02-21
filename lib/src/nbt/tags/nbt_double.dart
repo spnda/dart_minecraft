@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart';
+
 import '../nbt_file_reader.dart';
 import '../nbt_file_writer.dart';
 import '../nbt_tags.dart';
@@ -11,7 +13,7 @@ class NbtDouble extends NbtTag {
   double get value => _value;
 
   /// Creates a [NbtDouble] with given [parent].
-  NbtDouble(NbtTag parent) : super.value(parent, NbtTagType.TAG_DOUBLE);
+  NbtDouble({@required String name, @required double value}) : _value = value, super(name, NbtTagType.TAG_DOUBLE);
 
   @override
   NbtDouble readTag(NbtFileReader fileReader, {bool withName = true}) {

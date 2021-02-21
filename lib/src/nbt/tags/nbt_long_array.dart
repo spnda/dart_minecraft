@@ -1,13 +1,16 @@
+import 'package:meta/meta.dart';
+
 import '../nbt_file_reader.dart';
 import '../nbt_file_writer.dart';
 import '../nbt_tags.dart';
 import 'nbt_array.dart';
-import 'nbt_tag.dart';
 
 /// Represents a array of 8 byte long integers in a NBT file.
 class NbtLongArray extends NbtArray<int> {
   /// Create a [NbtLongArray] with given [parent].
-  NbtLongArray(NbtTag parent) : super.value(parent, NbtTagType.TAG_LONG_ARRAY);
+  NbtLongArray({@required String name, @required List<int> children}) : super(name, NbtTagType.TAG_LONG_ARRAY) {
+    this.children = children ?? <int>[];
+  }
   
   @override
   NbtLongArray readTag(NbtFileReader fileReader, {bool withName = true}) {
