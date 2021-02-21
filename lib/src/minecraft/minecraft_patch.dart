@@ -36,5 +36,5 @@ class MinecraftPatch {
         ..imageTitle = data['image']['title'];
 
   /// The url to the patch's image.
-  String get getImageUrl => 'https://launchercontent.mojang.com/$_imageUrl';
+  String get imageUrl => 'https://launchercontent.mojang.com/$_imageUrl';
 }

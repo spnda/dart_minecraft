@@ -43,10 +43,10 @@ class Version {
 
   /// Some time that is usually just minutes after [releaseTime]
   /// as a DateTime object.
-  DateTime get getTime => DateTime.parse(time);
+  DateTime get timeDateTime => DateTime.parse(time);
 
   /// The time this version was release at as a DateTime object.
-  DateTime get getReleaseTime => DateTime.parse(releaseTime);
+  DateTime get releaseDateTiem => DateTime.parse(releaseTime);
 
   Version._();
 

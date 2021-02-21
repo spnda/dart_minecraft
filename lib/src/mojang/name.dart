@@ -18,12 +18,12 @@ class Name {
     .._changedToAt = json['changedToAt'] ?? 0;
 
   /// Returns the name.
-  String get getName => _name;
+  String get name => _name;
 
   /// Returns the date this name was set at.
   ///
   /// If this is the original Name for the player, this will default to `1970-01-01`.
-  DateTime get getChangedAtDate =>
+  DateTime get changedAtDate =>
       DateTime.fromMillisecondsSinceEpoch(_changedToAt);
 
   /// Compares if two Names are equal.
@@ -36,4 +36,9 @@ class Name {
 
   @override
   int get hashCode => _name.hashCode;
+
+  @override
+  String toString() {
+    return _name;
+  }
 }

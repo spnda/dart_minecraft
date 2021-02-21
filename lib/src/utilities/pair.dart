@@ -7,10 +7,10 @@ class Pair<A, B> {
   Pair(this._a, this._b);
 
   /// Get the left/first value in this Pair
-  A get getFirst => _a;
+  A get first => _a;
 
   /// Get the right/last value in this Pair
-  B get getSecond => _b;
+  B get second => _b;
 
   @override
   int get hashCode => _a.hashCode ^ _b.hashCode;

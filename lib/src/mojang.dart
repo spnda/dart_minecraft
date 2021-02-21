@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:uuid/uuid.dart';
 
+import 'exceptions/auth_exception.dart';
 import 'minecraft/minecraft_statistics.dart';
 import 'mojang/mojang_account.dart';
 import 'mojang/mojang_status.dart';
@@ -17,7 +19,7 @@ class Mojang {
   static const String _statusApi = 'https://status.mojang.com/';
   static const String _mojangApi = 'https://api.mojang.com/';
   static const String _sessionApi = 'https://sessionserver.mojang.com/';
-  static const String _authserver = 'https://authserver.mojang.com';
+  static const String _authserver = 'https://authserver.mojang.com/';
   static const String _minecraftServices = 'https://api.minecraftservices.com/';
 
   /// Returns the Mojang and Minecraft API and website status
@@ -42,6 +44,9 @@ class Mojang {
     final response = await WebUtil.get(
         _mojangApi, 'users/profiles/minecraft/$username$time');
     final map = await WebUtil.getJsonFromResponse(response);
+    if (map == null) {
+      throw ArgumentError.value(username, 'username', 'No user was found for given username');
+    }
     if (!(map is Map)) {
       throw Exception(
           'Content returned from the server is in an unexpected format.');
@@ -55,7 +60,7 @@ class Mojang {
   /// Usernames are not case sensitive and ones which are invalid or not found are ommitted.
   static Future<List<Pair<String, String>>> getUuids(List<String> usernames) async {
     final response = await WebUtil.post(_mojangApi, 'profiles/minecraft',
-        usernames, {'Content-Type': 'application/json'});
+        usernames, {HttpHeaders.contentTypeHeader: 'application/json'});
     final list = await WebUtil.getJsonFromResponse(response);
     if (!(list is List<Map>)) {
       throw Exception(
@@ -89,24 +94,24 @@ class Mojang {
   }
 
   /// Changes the Mojang acccount name to [newName].
-  // TODO: Improved return type including error message. Or just throw an error?
   static Future<bool> changeName(String uuid, String newName, String accessToken, String password) async {
     final body = <String, String>{'name': newName, 'password': password};
     final headers = <String, String>{
-      'Authorization': 'Bearer $accessToken',
-      'Content-Type': 'application/json'
+      HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+      HttpHeaders.contentTypeHeader: 'application/json'
     };
     final response = await WebUtil.post(
         _minecraftServices, 'user/profile/$uuid/name', body, headers);
-    if (response.statusCode != 204) {
-      return false;
-      /* switch (response.statusCode) {
-        case 400: throw Exception('Name is unavailable.');
-        case 401: throw Exception('Unauthorized.');
-        case 403: throw Exception('Forbidden.');
-        case 504: throw Exception('Timed out.');
+    if (response.statusCode != 200) {
+      /// https://wiki.vg/Mojang_API#Change_Name for details on the
+      /// possibly errors.
+      switch (response.statusCode) {
+        case 400: throw ArgumentError('Name is invalid, longer than 16 characters or contains characters other than (a-zA-Z0-9_)');
+        case 401: throw AuthException(AuthException.invalidCredentialsMessage);
+        case 403: throw Exception('Name is unavailable (Either taken or has not become available).');
+        case 500: throw Exception('Timed out.');
         default: throw Exception('Unexpected error occured.');
-      } */
+      }
     } else {
       return true;
     }
@@ -116,7 +121,7 @@ class Mojang {
   // TODO: Improved return type including error message. Or just throw an error?
   static Future<bool> reserveName(String newName, String accessToken) async {
     final headers = {
-      'Authorization': 'Bearer $accessToken',
+      HttpHeaders.authorizationHeader: 'Bearer $accessToken',
       'Origin': 'https://checkout.minecraft.net',
     };
     final response = await WebUtil.put(
@@ -138,9 +143,28 @@ class Mojang {
   /// Reset's the player's skin.
   static Future<void> resetSkin(String uuid, String accessToken) async {
     final headers = {
-      'Authorization': 'Bearer $accessToken',
+      HttpHeaders.authorizationHeader: 'Bearer $accessToken',
     };
     await WebUtil.delete(_mojangApi, 'user/profile/$uuid/skin', headers);
+  }
+
+  /// Change the skin with the texture of the skin at [skinUrl].
+  static Future<bool> changeSkin(Uri skinUrl, String accessToken, [SkinModel skinModel = SkinModel.classic]) async {
+    final headers = {
+      HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+    };
+    final data = {
+      'variant': skinModel.toString().replaceFirst("SkinModel", ""),
+      'url': skinUrl,
+    };
+    final response = await WebUtil.post(_minecraftServices, 'minecraft/profile/skins', data, headers);
+    switch (response.statusCode) {
+      case 401: throw AuthException(AuthException.invalidCredentialsMessage);
+      default: {
+        print(response);
+        return true;
+      }
+    }
   }
 
   /// Get's Minecraft: Java Edition, Minecraft Dungeons, Cobalt and Scrolls purchase statistics.
@@ -153,7 +177,9 @@ class Mojang {
         for (MinecraftStatisticsItem item in items) item.name,
       ]
     };
-    final headers = <String, String>{'Content-Type': 'application/json'};
+    final headers = <String, String>{
+      HttpHeaders.contentTypeHeader: 'application/json'
+    };
     final response =
         await WebUtil.post(_mojangApi, 'orders/statistics', payload, headers);
     final data = await WebUtil.getJsonFromResponse(response);
@@ -172,11 +198,13 @@ class Mojang {
     final response =
         await WebUtil.post(_authserver, 'authenticate', payload, {});
     final data = await WebUtil.getJsonFromResponse(response);
+    if (data['error'] != null) throw AuthException(data['errorMessage']);
     return MojangAccount.fromJson(data);
   }
 
-  /// Refreshes the [account]. Data, like the access token, stored in the previous [account] will be invalidated.
-  static Future refresh(MojangAccount account) async {
+  /// Refreshes the [account]. The [account] data will be overriden with the new 
+  /// refreshed data. The return value is also the same [account] object.
+  static Future<MojangAccount> refresh(MojangAccount account) async {
     final payload = {
       'accessToken': account.accessToken,
       'clientToken': account.clientToken,
@@ -188,7 +216,14 @@ class Mojang {
     };
     final response = await WebUtil.post(_authserver, 'refresh', payload, {});
     final data = await WebUtil.getJsonFromResponse(response);
-    if (data['error'] != null) throw Exception(data['errorMessage']);
+    if (data['error'] != null) {
+      switch (data['error']) {
+        case 'ForbiddenOperationException':
+          throw AuthException(AuthException.invalidCredentialsMessage);
+        default:
+          throw Exception(data['errorMessage']);
+      }
+    }
 
     // Insert the data into our old account object.
     account
@@ -209,6 +244,8 @@ class Mojang {
             ?.where((f) => (f as Map)['name'] == 'twitch_access_token')
             ?.first;
     }
+
+    return account;
   }
 
   /// Checks if given [accessToken] and [clientToken] are still valid.

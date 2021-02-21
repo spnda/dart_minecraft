@@ -11,13 +11,13 @@ class MinecraftStatistics {
     .._salesPerSecond = response['saleVelocityPerSeconds'];
 
   /// The total amount of sales since release.
-  int get getTotalSales => _total;
+  int get totalSales => _total;
 
   /// The total amount of sales in the last 24 hours.
-  int get getSalesLast24h => _last24h;
+  int get salesLast24h => _last24h;
 
   /// The amount of sales per second in the last 24 hours.
-  double get getSalesPerSecond => _salesPerSecond;
+  double get salesPerSecond => _salesPerSecond;
 
   @override
   String toString() =>

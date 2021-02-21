@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:dart_minecraft/src/exceptions/auth_exception.dart';
 import 'package:test/test.dart';
 
 void main() async {
@@ -12,18 +13,18 @@ void main() async {
   final uuid = testData['uuid'];
 
   test('API should return UUID for username', () async {
-    var tuuid = (await Mojang.getUuid(username)).getSecond;
+    var tuuid = (await Mojang.getUuid(username)).second;
     expect(tuuid, equals(uuid));
   });
 
   test('API should return a list of pairs with the sites status.', () async {
     final status = await Mojang.checkStatus();
-    expect(status.minecraft, equals(MojangSiteStatus.unavailable));
+    expect(status.minecraft, isA<MojangSiteStatus>());
   });
 
   test('API should return link to the skin of given player.', () async {
     final profile = await Mojang.getProfile(uuid);
-    final skin = profile.getTextures.getSkinUrl();
+    final skin = profile.textures.getSkinUrl();
     expect(skin, testData['skin_texture']);
   });
 
@@ -32,23 +33,29 @@ void main() async {
       MinecraftStatisticsItem.minecraftItemsSold,
       MinecraftStatisticsItem.minecraftPrepaidCardsRedeemed
     ]);
-    print(statistics);
+    expect(statistics.salesLast24h, isNotNull);
   });
 
   test('Gets Minecraft Dungeons sale statistics', () async {
     final statistics =
         await Mojang.getStatistics([MinecraftStatisticsItem.dungeonsItemsSold]);
-    print(statistics);
+    expect(statistics.salesLast24h, isNotNull);
   });
 
   test('refresh test', () async {
-    var user = await Mojang.authenticate(username, password);
-    await Mojang.refresh(user);
-    print(user.accessToken);
+    try {
+      var user = await Mojang.authenticate(username, password);
+      await Mojang.refresh(user);
+    } on AuthException catch (e) {
+      print(e.message);
+      /// We'll just manually make the test fail.
+      expect(null, isNotNull);
+    }
   });
 
   test('API should return a list of names', () async {
     final nameHistory = await Mojang.getNameHistory(uuid);
-    nameHistory.forEach(print);
+    expect(nameHistory.first.name, equals(testData['firstUsername']));
+    expect(nameHistory.last.name, equals(username));
   });
 }
