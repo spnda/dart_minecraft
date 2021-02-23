@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0
+
+- Add NBT File reading/writing.
+- Add new API functions.
+- Moved authentication API functions from `Mojang` to `Yggdrasil`.
+- Update exceptions for API functions.
+
 ## 0.1.2
 
 - Switch to Minecraft-Services API
