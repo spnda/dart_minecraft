@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:dart_minecraft/src/exceptions/auth_exception.dart';
+import 'package:dart_minecraft/src/yggdrasil.dart';
 import 'package:test/test.dart';
 
 void main() async {
@@ -44,8 +45,8 @@ void main() async {
 
   test('refresh test', () async {
     try {
-      var user = await Mojang.authenticate(username, password);
-      await Mojang.refresh(user);
+      var user = await Yggdrasil.authenticate(username, password);
+      await Yggdrasil.refresh(user);
     } on AuthException catch (e) {
       print(e.message);
       /// We'll just manually make the test fail.
@@ -57,5 +58,12 @@ void main() async {
     final nameHistory = await Mojang.getNameHistory(uuid);
     expect(nameHistory.first.name, equals(testData['firstUsername']));
     expect(nameHistory.last.name, equals(username));
+  });
+
+  test('Get list of blocked servers', () async {
+    final servers = await Mojang.getBlockedServers();
+    expect(servers, isNotEmpty);
+
+    expect(servers.where((server) => server.address != null), isNotEmpty);
   });
 }
