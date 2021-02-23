@@ -16,7 +16,7 @@ enum MojangSiteStatus {
 class MojangStatus {
   /// The mojang site status for a single site. See [MojangSiteStatus] for more
   /// details on possible values.
-  MojangSiteStatus minecraft,
+  MojangSiteStatus? minecraft,
       minecraftSession,
       mojangAccount,
       mojangAuth,
@@ -27,47 +27,43 @@ class MojangStatus {
       minecraftTextures,
       mojang;
 
-  MojangStatus._();
-
   /// Parse all [MojangSiteStatus]s from JSON data from the Web API.
-  factory MojangStatus.fromJson(List data) {
-    final status = MojangStatus._();
+  MojangStatus.fromJson(List data) {
     for (final element in data) {
       final entry = element.entries.first;
       switch (entry.key) {
         case 'minecraft.net':
-          status.minecraft = parse(entry.value);
+          minecraft = parse(entry.value);
           break;
         case 'session.minecraft.net':
-          status.minecraftSession = parse(entry.value);
+          minecraftSession = parse(entry.value);
           break;
         case 'account.mojang.com':
-          status.mojangAccount = parse(entry.value);
+          mojangAccount = parse(entry.value);
           break;
         case 'auth.mojang.com':
-          status.mojangAuth = parse(entry.value);
+          mojangAuth = parse(entry.value);
           break;
         case 'skins.minecraft.net':
-          status.minecraftSkins = parse(entry.value);
+          minecraftSkins = parse(entry.value);
           break;
         case 'authserver.mojang.com':
-          status.mojangAuthserver = parse(entry.value);
+          mojangAuthserver = parse(entry.value);
           break;
         case 'sessionserver.mojang.com':
-          status.mojangSessionserver = parse(entry.value);
+          mojangSessionserver = parse(entry.value);
           break;
         case 'api.mojang.com':
-          status.mojangApi = parse(entry.value);
+          mojangApi = parse(entry.value);
           break;
         case 'textures.minecraft.net':
-          status.minecraftTextures = parse(entry.value);
+          minecraftTextures = parse(entry.value);
           break;
         case 'mojang.com':
-          status.mojang = parse(entry.value);
+          mojang = parse(entry.value);
           break;
       }
     };
-    return status;
   }
 
   /// Gets the [MojangSiteStatus] from given [data].

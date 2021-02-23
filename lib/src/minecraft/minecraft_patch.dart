@@ -14,7 +14,7 @@ class MinecraftPatch {
 
   /// The shortened url to the patch's image.
   /// Can be properly obtained from [getImageUrl].
-  String _imageUrl;
+  final String _imageUrl;
 
   /// The title of this patch's image.
   String imageTitle;
@@ -22,18 +22,14 @@ class MinecraftPatch {
   /// A html style description of this patch.
   String body;
 
-  MinecraftPatch._();
-
-  /// Create a [MinecraftPatch] from JSON data.
-  factory MinecraftPatch.fromJson(Map<String, dynamic> data) =>
-      MinecraftPatch._()
-        ..title = data['title']
-        ..type = data['type']
-        ..version = data['version']
-        ..body = data['body']
-        ..id = data['id']
-        .._imageUrl = data['image']['url']
-        ..imageTitle = data['image']['title'];
+  MinecraftPatch.fromJson(Map<String, dynamic> data) :
+    title = data['title'],
+    type = data['type'],
+    version = data['version'],
+    body = data['body'],
+    id = data['id'],
+    _imageUrl = data['image']['url'],
+    imageTitle = data['image']['title'];
 
   /// The url to the patch's image.
   String get imageUrl => 'https://launchercontent.mojang.com/$_imageUrl';

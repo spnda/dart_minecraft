@@ -15,7 +15,7 @@ class NbtEnd extends NbtTag {
 
   /// Creates a single [NbtEnd] tag, which should be at the end of a
   /// [NbtCompound] and does not contain any payload or name.
-  NbtEnd(NbtCompound parent) : super(null, NbtTagType.TAG_END) {
+  NbtEnd(NbtCompound parent) : super('', NbtTagType.TAG_END) {
     this.parent = parent;
   }
 

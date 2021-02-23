@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import '../nbt_file_reader.dart';
 import '../nbt_file_writer.dart';
 import '../nbt_tags.dart';
@@ -13,7 +11,7 @@ class NbtFloat extends NbtTag {
   double get value => _value;
 
   /// Creates a [NbtFloat] with given [parent].
-  NbtFloat({@required String name, @required double value}) : _value = value, super(name, NbtTagType.TAG_FLOAT);
+  NbtFloat({required String name, required double value}) : _value = value, super(name, NbtTagType.TAG_FLOAT);
 
   @override
   NbtFloat readTag(NbtFileReader fileReader, {bool withName = true}) {

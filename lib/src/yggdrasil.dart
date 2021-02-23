@@ -59,11 +59,11 @@ class Yggdrasil {
       account.user
         ..id = data['user']['id']
         ..preferredLanguage = (data['user']['properties'] as List)
-            ?.where((f) => (f as Map)['name'] == 'preferredLanguage')
-            ?.first
+            .where((f) => (f as Map)['name'] == 'preferredLanguage')
+            .first
         ..twitchOAuthToken = (data['user']['properties'] as List)
-            ?.where((f) => (f as Map)['name'] == 'twitch_access_token')
-            ?.first;
+            .where((f) => (f as Map)['name'] == 'twitch_access_token')
+            .first;
     }
 
     return account;
@@ -73,7 +73,7 @@ class Yggdrasil {
   ///
   /// [clientToken] is optional, though if provided should match the client token
   /// that was used to obtained given [accessToken].
-  static Future<bool> validate(String accessToken, {String clientToken}) async {
+  static Future<bool> validate(String accessToken, {String? clientToken}) async {
     final payload = {
       'accessToken': accessToken,
     };
@@ -81,7 +81,7 @@ class Yggdrasil {
       payload.putIfAbsent('clientToken', () => clientToken);
     }
     final response = await WebUtil.post(_authserver, 'validate', payload, {});
-    return response?.statusCode == 204;
+    return response.statusCode == 204;
   }
 
   /// Signs the user out and invalidates the accessToken.
@@ -92,7 +92,7 @@ class Yggdrasil {
     };
     final response = await WebUtil.post(_authserver, 'signout', payload, {});
     final data = await WebUtil.getResponseBody(response);
-    return data?.isEmpty;
+    return data.isEmpty;
   }
 
   /// Invalidates the accessToken of given [mojangAccount].
@@ -103,6 +103,6 @@ class Yggdrasil {
     };
     final response = await WebUtil.post(_authserver, 'invalidate', payload, {});
     final data = await WebUtil.getResponseBody(response);
-    return data?.isEmpty;
+    return data.isEmpty;
   }
 }

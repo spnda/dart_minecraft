@@ -2,17 +2,16 @@ import 'dart:convert';
 
 /// A Minecraft user including their skin/cape.
 class Profile {
-  String _id;
-  String _name;
-  String _textures;
-  String _signatures;
+  final String _id;
+  final String _name;
+  final String _textures;
+  final String _signatures;
 
-  Profile._();
-
-  factory Profile.fromJson(Map<String, dynamic> json) => Profile._()
-    .._id = json['id']
-    .._name = json['name']
-    .._textures = json['properties'][0]['value'];
+  Profile.fromJson(Map<String, dynamic> json) :
+    _id = json['id'],
+    _name = json['name'],
+    _textures = json['properties'][0]['value'],
+    _signatures = json['properties'][0]['signature'] ?? '';
 
   /// The UUID of this player.
   String get uuid => _id;
@@ -25,7 +24,7 @@ class Profile {
       json.decode(utf8.decode(base64.decode(_textures))));
 
   /// This is a yggdrasil-server-only feature. It is basically useless towards a player or dev.
-  String get signature => utf8.decode(base64.decode(_signatures ?? ''));
+  String get signature => utf8.decode(base64.decode(_signatures));
 }
 
 /// The skin model of a texture
@@ -36,34 +35,32 @@ enum SkinModel {
 
 /// Represents all textures for a minecraft profile.
 class ProfileTextures {
-  int _timestamp;
-  String _profileId;
-  String _profileName;
-  String _skinUrl;
-  String _capeUrl;
+  late int _timestamp;
+  late String _profileId;
+  late String _profileName;
+  late String _skinUrl;
+  late String _capeUrl;
   // bool _signatureRequired;
 
-  SkinModel _skinModel;
+  late SkinModel _skinModel;
 
-  ProfileTextures._();
-
-  factory ProfileTextures.fromJson(Map<String, dynamic> json) {
+  ProfileTextures.fromJson(Map<String, dynamic> json) {
     Map skin = json['textures']['SKIN'] ?? {},
         cape = json['textures']['CAPE'] ?? {};
-    return ProfileTextures._()
+    this
       .._timestamp = json['timestamp']
       .._profileId = json['profileId']
       .._profileName = json['profileName']
       // .._signatureRequired = json['signatureRequired'] ?? false
-      .._skinUrl = skin['url']
+      .._skinUrl = skin['url'] ?? ''
       .._skinModel = (skin['metadata'] ?? {})['model'] == 'slim' ? SkinModel.slim : SkinModel.classic
-      .._capeUrl = cape['url'];
+      .._capeUrl = cape['url'] ?? '';
   }
 
   /// Get the Url for the skin of this player.
   /// If the player does not have a skin, this function will return the link to the steve or alex skin.
   String getSkinUrl() {
-    if (_skinUrl != null) {
+    if (_skinUrl != '') {
       return _skinUrl;
     } else {
       /// There's no skin. The player is using the default Steve or Alex Skin.

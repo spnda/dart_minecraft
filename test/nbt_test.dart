@@ -26,10 +26,10 @@ void main() {
 
     await nbtFile.readFile();
     final root = nbtFile.root;
-    expect(root, isNot(null));
+    expect(root, isNotNull);
 
     /// The root tag should always be a Compound for Java Edition NBT.
-    expect(root.nbtTagType, equals(NbtTagType.TAG_COMPOUND));
+    expect(root!.nbtTagType, equals(NbtTagType.TAG_COMPOUND));
 
     /// As we're checking the servers.dat file, the root compound only 
     /// has a single child, a TAG_List with the name 'servers'.
@@ -42,9 +42,9 @@ void main() {
     final nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
     await nbtFile.readFile();
     final root = nbtFile.root;
-    expect(root, isNot(null));
+    expect(root, isNotNull);
 
-    expect(root.getChildrenByName('stringTest').first.value, equals('HELLO WORLD THIS IS A TEST STRING ÅÄÖ!'));
+    expect(root!.getChildrenByName('stringTest').first.value, equals('HELLO WORLD THIS IS A TEST STRING ÅÄÖ!'));
 
     expect((root.getChildrenByName('byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))').first as NbtByteArray).length, equals(1000));
   });
@@ -54,9 +54,9 @@ void main() {
     final nbtFile = NbtFile.fromPath('./test/level.dat');
     await nbtFile.readFile();
     final root = nbtFile.root;
-    expect(root, isNot(null));
+    expect(root, isNotNull);
 
-    final list = (root.children.first as NbtList).where((val) => val.nbtTagType == NbtTagType.TAG_STRING);
+    final list = (root!.children.first as NbtList).where((val) => val.nbtTagType == NbtTagType.TAG_STRING);
 
     // We'll check that there should be at max 3 TAG_Strings in the list.
     // These strings are named "generatorName", "WanderingTraderId" and "LevelName".
@@ -70,9 +70,11 @@ void main() {
     final nbtFile = NbtFile.fromPath('./test/NaN-value.nbt');
     await nbtFile.readFile();
 
+    expect(nbtFile.root, isNotNull);
+
     // 'Pos' is a NbtList, where the second entry is a NaN. Check if that value exists there and if it is NaN.
     // TAG_List(Pos): 3 entries {[TAG_Double(None): 0.0, TAG_Double(None): NaN, TAG_Double(None): 0.0]}
-    final fallDistance = nbtFile.root.getChildrenByName('Pos').first;
+    final fallDistance = nbtFile.root!.getChildrenByName('Pos').first;
 
     // [fallDistance] should be a NbtList<NbtDouble>, but as NbtList<T> can be anything, we will only check
     // if it is NbtList<NbtTag>.
@@ -86,7 +88,7 @@ void main() {
     final nbtFile = NbtFile.fromPath('./test/servers.dat');
     await nbtFile.readFile();
 
-    await nbtFile.writeFile(file: File('./test/servers2.dat'), nbtCompression: nbtFile.compression);
+    await nbtFile.writeFile(file: File('./test/servers2.dat'), nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
     expect(compareFiles('./test/servers.dat', './test/servers2.dat'), isTrue);
   });
@@ -95,7 +97,7 @@ void main() {
     final nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
     await nbtFile.readFile();
 
-    await nbtFile.writeFile(file: File('./test/bigtest2.nbt'), nbtCompression: nbtFile.compression);
+    await nbtFile.writeFile(file: File('./test/bigtest2.nbt'), nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
     expect(compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'), isTrue);
   });
@@ -104,14 +106,15 @@ void main() {
     final nbtFile = NbtFile.fromPath('./test/level.dat');
     await nbtFile.readFile();
 
-    await nbtFile.writeFile(file: File('./test/level2.dat'), nbtCompression: nbtFile.compression);
+    await nbtFile.writeFile(file: File('./test/level2.dat'), nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
     expect(compareFiles('./test/level.dat', './test/level2.dat'), isTrue);
 
     // Re-read the file and check if they're identical
     final nbtFile2 = NbtFile.fromPath('./test/level2.dat');
     await nbtFile2.readFile();
-    expect(nbtFile2.root.last, isTrue);
+    expect(nbtFile2.root, isNotNull);
+    expect(nbtFile2.root!.last, isTrue);
   });
 
   test('Write test.nbt', () async {
@@ -136,7 +139,8 @@ void main() {
     // Re-read the file from disk.
     await nbtFile.readFile();
 
-    expect(nbtFile.root.children[0].value, equals(5430834));
-    expect(nbtFile.root.children[1].value, equals('This is a String test!'));
+    expect(nbtFile.root, isNotNull);
+    expect(nbtFile.root!.children[0].value, equals(5430834));
+    expect(nbtFile.root!.children[1].value, equals('This is a String test!'));
   });
 }

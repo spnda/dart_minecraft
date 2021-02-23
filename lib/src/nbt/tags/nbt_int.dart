@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import '../nbt_file_reader.dart';
 import '../nbt_file_writer.dart';
 import '../nbt_tags.dart';
@@ -13,7 +11,7 @@ class NbtInt extends NbtTag {
   int get value => _value;
 
   /// Creates a [NbtInt] with given [parent].
-  NbtInt({@required String name, @required int value}) : _value = value, super(name, NbtTagType.TAG_INT);
+  NbtInt({required String name, required int value}) : _value = value, super(name, NbtTagType.TAG_INT);
 
   @override
   NbtInt readTag(NbtFileReader fileReader, {bool withName = true}) {

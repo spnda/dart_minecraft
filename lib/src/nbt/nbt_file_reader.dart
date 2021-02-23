@@ -9,43 +9,45 @@ import 'tags/nbt_tag.dart';
 /// A file reader to read nbt data from a binary file.
 class NbtFileReader {
   /// The file that gets read from.
-  final File _file;
+  File? _file;
 
   /// A list of bytes from the file
-  Uint8List _data;
+  Uint8List? _data;
 
   /// [_data] represented as a [ByteData] to ease with the
   /// reading of various integers and floats.
-  ByteData _byteData;
+  ByteData? _byteData;
 
   /// The current read position inside of [_byteData].
   int _readPosition = 0;
 
   /// The root compound of this file.
-  NbtCompound root;
+  NbtCompound? root;
 
   /// The compression of [_file].
-  NbtCompression nbtCompression;
+  NbtCompression? nbtCompression;
 
   /// Creates a [NbtFileReader]. Given FileStream will be used 
   /// to get the bytes to read.
-  NbtFileReader(this._file) {
-    _data = _file.readAsBytesSync();
-  }
+  NbtFileReader();
 
   /// Begin reading the file.
   /// 
   /// Throws [Exception] if [init] has not been called.
-  Future<bool> beginRead() async {
+  Future<bool> beginRead(File file) async {
+    if (_file == null) _file = file;
+    _data = await _file!.readAsBytes();
+
     // First detect compression if any
     nbtCompression = _detectCompression();
 
+    if (_data == null) return false;
     switch (nbtCompression) {
       case NbtCompression.gzip:
-        _data = gzip.decode(_data);
+        _data = gzip.decode(_data!) as Uint8List;
         break;
       case NbtCompression.zlib:
-        _data = zlib.decode(_data);
+        _data = zlib.decode(_data!) as Uint8List;
         break;
       case NbtCompression.unknown:
         throw Exception('Invalid NBT File.');
@@ -55,49 +57,49 @@ class NbtFileReader {
         break;
     }
 
-    _byteData = _data.buffer.asByteData();
+    _byteData = _data!.buffer.asByteData();
 
-    root = NbtTag.readNewTag(this, null, withName: true);
+    root = NbtTag.readNewTag(this, null, withName: true) as NbtCompound;
     
     return true;
   }
 
   /// Reads a single byte at [readPosition].
   int readByte({bool signed = false}) {
-    return signed ? _byteData.getInt8(_readPosition++) : _byteData.getUint8(_readPosition++);
+    return signed ? _byteData!.getInt8(_readPosition++) : _byteData!.getUint8(_readPosition++);
   }
 
   /// Reads a 2 byte short starting at [readPosition].
   int readShort({bool signed = false}) {
-    final value = signed ? _byteData.getInt16(_readPosition) : _byteData.getUint16(_readPosition);
+    final value = signed ? _byteData!.getInt16(_readPosition) : _byteData!.getUint16(_readPosition);
     _readPosition += 2;
     return value;
   }
 
   /// Reads a 4 byte integer starting at [readPosition].
   int readInt({bool signed = false}) {
-    final value = signed ? _byteData.getInt32(_readPosition) : _byteData.getUint32(_readPosition);
+    final value = signed ? _byteData!.getInt32(_readPosition) : _byteData!.getUint32(_readPosition);
     _readPosition += 4;
     return value;
   }
 
   /// Reads a 8 byte integer starting at [readPosition].
   int readLong({bool signed = false}) {
-    final value = signed ? _byteData.getInt64(_readPosition) : _byteData.getUint64(_readPosition);
+    final value = signed ? _byteData!.getInt64(_readPosition) : _byteData!.getUint64(_readPosition);
     _readPosition += 8;
     return value;
   }
 
   /// Reads a 4 byte float starting at [readPosition].
   double readFloat({bool signed = false}) {
-    final value = _byteData.getFloat32(_readPosition);
+    final value = _byteData!.getFloat32(_readPosition);
     _readPosition += 4;
     return value;
   }
 
   /// Reads a 8 byte double starting at [readPosition].
   double readDouble({bool signed = false}) {
-    final value = _byteData.getFloat64(_readPosition);
+    final value = _byteData!.getFloat64(_readPosition);
     _readPosition += 8;
     return value;
   }
@@ -118,7 +120,7 @@ class NbtFileReader {
   /// Tries to detect the compression, wether this file was
   /// compressed with GZIP, ZLIB or wasn't compressed at all.
   NbtCompression _detectCompression() {
-    final firstByte = _data.first;
+    final firstByte = _data!.first;
     switch (firstByte) {
       case -1: throw Exception('file is empty?');
       case 0x0A: {

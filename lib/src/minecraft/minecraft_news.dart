@@ -14,21 +14,18 @@ class MinecraftNews {
 
   /// The shortened url to the patch's image.
   /// Can be properly obtained from [getImageUrl].
-  String _imageUrl;
+  final String _imageUrl;
 
   /// If this news item is only for demo users who do not own the game.
   bool forDemoUsersOnly;
 
-  MinecraftNews._();
-
-  /// Create a [MinecraftNews] from JSON data.
-  factory MinecraftNews.fromJson(Map<String, dynamic> data) => MinecraftNews._()
-    ..title = data['title']
-    ..description = data['description']
-    ..url = data['url']
-    ..id = data['id']
-    .._imageUrl = data['image']['url']
-    ..forDemoUsersOnly = data['forDemoUsersOnly'] ?? false;
+  MinecraftNews.fromJson(Map<String, dynamic> data) :
+    title = data['title'],
+    description = data['description'],
+    url = data['url'],
+    id = data['id'],
+    _imageUrl = data['image']['url'],
+    forDemoUsersOnly = data['forDemoUsersOnly'] ?? false;
 
   /// Get's the url to the image of this news item. News images are
   /// usually 1200x512 pixels in size.

@@ -37,7 +37,7 @@ class Mojang {
   ///
   /// A [timestamp] can be passed to retrieve the UUID for the player with [username]
   /// at that point in time.
-  static Future<Pair<String, String>> getUuid(String username, {DateTime timestamp}) async {
+  static Future<Pair<String, String>> getUuid(String username, {DateTime? timestamp}) async {
     final time =
         timestamp == null ? '' : '?at=${timestamp.millisecondsSinceEpoch}';
     final response = await WebUtil.get(
@@ -214,7 +214,7 @@ class Mojang {
   /// [clientToken] is optional, though if provided should match the client token
   /// that was used to obtained given [accessToken].
   @Deprecated('Use Yggradsil#validate instead')
-  static Future<bool> validate(String accessToken, {String clientToken}) async {
+  static Future<bool> validate(String accessToken, {String? clientToken}) async {
     return Yggdrasil.validate(accessToken, clientToken: clientToken);
   }
 

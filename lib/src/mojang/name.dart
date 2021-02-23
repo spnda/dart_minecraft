@@ -1,21 +1,17 @@
 /// A Name helper class used for [Mojang.getNameHistory()].
 /// It contains the name and the date it was changed to.
 class Name {
-  String _name;
-  int _changedToAt;
-
-  Name._();
+  final String _name;
+  final int _changedToAt;
 
   /// Create a [Name] from a [name] String and a int value representing
   /// the unix timestamp at which the name was switched to.
-  factory Name(String name, int changedToAt) => Name._()
-    .._name = name
-    .._changedToAt = changedToAt;
+  Name(this._name, this._changedToAt);
 
   /// Create a [Name] from JSON data.
-  factory Name.fromJson(Map<String, dynamic> json) => Name._()
-    .._name = json['name']
-    .._changedToAt = json['changedToAt'] ?? 0;
+  Name.fromJson(Map<String, dynamic> json) :
+    _name = json['name'],
+    _changedToAt = json['changedToAt'] ?? 0;
 
   /// Returns the name.
   String get name => _name;

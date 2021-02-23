@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import '../nbt_file_reader.dart';
 import '../nbt_file_writer.dart';
 import '../nbt_tags.dart';
@@ -17,14 +15,14 @@ class NbtCompound<T extends NbtTag> extends NbtList<T> {
   List<T> getChildrenByTag(NbtTagType tagType) => where((tag) => tag.nbtTagType == tagType).toList();
 
   /// Create a [NbtCompound] with given [parent].
-  NbtCompound({@required String name, @required List<T> children}) : super(name: name, children: children, nbtTagType: NbtTagType.TAG_COMPOUND);
+  NbtCompound({required String name, required List<T> children}) : super(name: name, children: children, nbtTagType: NbtTagType.TAG_COMPOUND);
 
   @override
   NbtCompound readTag(NbtFileReader fileReader, {bool withName = true}) {
     final name = withName ? fileReader.readString() : 'None';
-    NbtTag tag;
-    while ((tag = NbtTag.readTagForType(fileReader, fileReader.readByte(), this)).nbtTagType != NbtTagType.TAG_END) {
-      add(tag);
+    NbtTag? tag;
+    while ((tag = NbtTag.readTagForType(fileReader, fileReader.readByte(), this))!.nbtTagType != NbtTagType.TAG_END) {
+      if (tag != null && tag is T) add(tag);
     }
     return this..name = name;
   }

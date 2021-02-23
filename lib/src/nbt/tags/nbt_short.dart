@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import '../nbt_file_reader.dart';
 import '../nbt_file_writer.dart';
 import '../nbt_tags.dart';
@@ -13,7 +11,7 @@ class NbtShort extends NbtTag {
   int get value => _value;
 
   /// Creates a [NbtShort] with given [parent].
-  NbtShort({@required String name, @required int value}) : _value = value, super(name, NbtTagType.TAG_SHORT);
+  NbtShort({required String name, required int value}) : _value = value, super(name, NbtTagType.TAG_SHORT);
 
   @override
   NbtShort readTag(NbtFileReader fileReader, {bool withName = true}) {

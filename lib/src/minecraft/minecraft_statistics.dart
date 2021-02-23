@@ -1,14 +1,12 @@
 /// Stores Minecraft Sale Statistics.
 class MinecraftStatistics {
-  int _total, _last24h;
-  double _salesPerSecond;
+  final int _total, _last24h;
+  final double _salesPerSecond;
 
-  MinecraftStatistics._();
-
-  factory MinecraftStatistics.fromJson(Map response) => MinecraftStatistics._()
-    .._total = response['total']
-    .._last24h = response['last24h']
-    .._salesPerSecond = response['saleVelocityPerSeconds'];
+  MinecraftStatistics.fromJson(Map response) :
+    _total = response['total'],
+    _last24h = response['last24h'],
+    _salesPerSecond = response['saleVelocityPerSeconds'];
 
   /// The total amount of sales since release.
   int get totalSales => _total;
@@ -46,7 +44,7 @@ enum MinecraftStatisticsItem {
 /// Extension on MinecraftStatisticsItem to give each enum value a string value.
 extension MinecraftStatisticsItemExt on MinecraftStatisticsItem {
   /// Returns the API version of this item.
-  String get name {
+  String? get name {
     switch (this) {
       case MinecraftStatisticsItem.minecraftItemsSold:
         return 'item_sold_minecraft';
