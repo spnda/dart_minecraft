@@ -30,6 +30,11 @@ abstract class NbtArray<T> extends NbtTag with ListMixin<T> {
   void operator []=(int index, T value) {
     children[index] = value;
   }
+
+  @override
+  void add(T element) {
+    children.add(element);
+  }
   
   @override
   String toString() {
