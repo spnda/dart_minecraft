@@ -43,17 +43,6 @@ void main() async {
     expect(statistics.salesLast24h, isNotNull);
   });
 
-  test('refresh test', () async {
-    try {
-      var user = await Yggdrasil.authenticate(username, password);
-      await Yggdrasil.refresh(user);
-    } on AuthException catch (e) {
-      print(e.message);
-      /// We'll just manually make the test fail.
-      expect(null, isNotNull);
-    }
-  });
-
   test('API should return a list of names', () async {
     final nameHistory = await Mojang.getNameHistory(uuid);
     expect(nameHistory.first.name, equals(testData['firstUsername']));
@@ -65,5 +54,18 @@ void main() async {
     expect(servers, isNotEmpty);
 
     expect(servers.where((server) => server.address != null), isNotEmpty);
+  });
+
+  group('Yggdrasil Tests', () {
+    test('refresh test', () async {
+      try {
+        var user = await Yggdrasil.authenticate(username, password);
+        await Yggdrasil.refresh(user);
+      } on AuthException catch (e) {
+        print(e.message);
+        /// We'll just manually make the test fail.
+        expect(null, isNotNull);
+      }
+    });
   });
 }
