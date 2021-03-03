@@ -43,7 +43,7 @@ class NbtFile {
 
   /// Read the file and read all data to the [root] node.
   Future<bool> readFile({File? file}) async {
-    if (file == null) file = _file;
+    file ??= _file;
     _nbtFileReader = NbtFileReader();
     final val = await _nbtFileReader.beginRead(file);
     // Save a copy of the read root NbtCompound.
@@ -55,7 +55,7 @@ class NbtFile {
   /// This will override any data stored in that file.
   Future<bool> writeFile({File? file, NbtCompression nbtCompression = NbtCompression.none}) async {
     _nbtFileWriter = NbtFileWriter();
-    if (file == null) file = _file;
+    file ??= _file;
     if (root == null) throw Exception('Cannot write file, root is not defined.');
     return _nbtFileWriter.beginWrite(root!, file, nbtCompression: nbtCompression);
   }

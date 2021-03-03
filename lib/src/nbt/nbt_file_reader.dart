@@ -35,7 +35,7 @@ class NbtFileReader {
   /// 
   /// Throws [Exception] if [init] has not been called.
   Future<bool> beginRead(File file) async {
-    if (_file == null) _file = file;
+    _file ??= file;
     _data = await _file!.readAsBytes();
 
     // First detect compression if any

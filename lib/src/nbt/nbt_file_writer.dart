@@ -23,7 +23,7 @@ class NbtFileWriter {
   /// Begin writing [_root] to the given [file]. If [file] does not exist,
   /// it will be created.
   Future<bool> beginWrite(NbtCompound root, File file, {NbtCompression nbtCompression = NbtCompression.none}) async {
-    if (_root == null) _root = root;
+    _root ??= root;
     if (!file.existsSync()) {
       file.createSync();
     }

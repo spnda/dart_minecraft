@@ -153,7 +153,7 @@ class Mojang {
       HttpHeaders.authorizationHeader: 'Bearer $accessToken',
     };
     final data = {
-      'variant': skinModel.toString().replaceFirst("SkinModel", ""),
+      'variant': skinModel.toString().replaceFirst('SkinModel', ''),
       'url': skinUrl,
     };
     final response = await WebUtil.post(_minecraftServices, 'minecraft/profile/skins', data, headers);
@@ -188,7 +188,7 @@ class Mojang {
   /// Returns a list of blocked servers.
   static Future<List<BlockedServer>> getBlockedServers() async {
     final response = await WebUtil.get(_sessionApi, 'blockedservers');
-    final data = (await WebUtil.getResponseBody(response)).split("\n");
+    final data = (await WebUtil.getResponseBody(response)).split('\n');
     final ret = <BlockedServer>[];
     for (final server in data) {
       ret.add(BlockedServer.parse(server));
