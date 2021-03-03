@@ -78,8 +78,8 @@ class Mojang {
   /// Returns the name history for the account with [uuid].
   static Future<List<Name>> getNameHistory(String uuid) async {
     final response = await WebUtil.get(_mojangApi, 'user/profiles/$uuid/names');
-    final list = await WebUtil.getJsonFromResponse(response);
-    return list.map((dynamic v) => Name.fromJson(v)).toList();
+    final list = await WebUtil.getJsonFromResponse(response) as List;
+    return Future.value(list.map((dynamic v) => Name.fromJson(v)).toList());
   }
 
   /// Returns the user profile including skin/cape information.
