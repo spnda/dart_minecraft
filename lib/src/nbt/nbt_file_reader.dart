@@ -63,7 +63,7 @@ class NbtFileReader {
 
     try {
       root = NbtTag.readNewTag(this, null, withName: true) as NbtCompound;
-    } on Exception catch (e) {
+    } on Exception {
       throw NbtFileReadException('Could not read file.');
     } finally {
       return true;
