@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dart_minecraft/src/exceptions/nbt_file_read_exception.dart';
+
 import 'nbt_compression.dart';
 import 'tags/nbt_compound.dart';
 import 'tags/nbt_tag.dart';
@@ -59,9 +61,13 @@ class NbtFileReader {
 
     _byteData = _data!.buffer.asByteData();
 
-    root = NbtTag.readNewTag(this, null, withName: true) as NbtCompound;
-
-    return true;
+    try {
+      root = NbtTag.readNewTag(this, null, withName: true) as NbtCompound;
+    } on Exception catch (e) {
+      throw NbtFileReadException('Could not read file.');
+    } finally {
+      return true;
+    }
   }
 
   /// Reads a single byte at [readPosition].
@@ -128,10 +134,15 @@ class NbtFileReader {
   /// Tries to detect the compression, wether this file was
   /// compressed with GZIP, ZLIB or wasn't compressed at all.
   NbtCompression _detectCompression() {
-    final firstByte = _data!.first;
+    final firstByte;
+    try {
+      firstByte = _data!.first;
+    } on Error {
+      throw NbtFileReadException('Could not read from file.');
+    }
     switch (firstByte) {
       case -1:
-        throw Exception('file is empty?');
+        throw NbtFileReadException('File is invalid or empty.');
       case 0x0A:
         // The file begins with a NBTCompound and is therefore not compressed.
         return NbtCompression.none;
