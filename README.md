@@ -17,7 +17,7 @@ Examples
 void main() async {
     Pair player = await Mojang.getUuid('<your username>');
     Profile profile = await Mojang.getProfile(player.getSecond);
-    String url = profile.getTextures.getSkinUrl();
+    String url = profile.textures.getSkinUrl();
 }
 ```
 
@@ -27,7 +27,7 @@ void main() async {
 void main() async {
     Pair uuid = await Mojang.getUuid('<your username>');
     List<Name> history = await Mojang.getNameHistory(uuid.getSecond);
-    history.forEach((Name name) => print(name.getName));
+    history.forEach((name) => print(name.name));
 }
 ```
 
@@ -41,8 +41,8 @@ void main() async {
     await nbtFile.readFile();
     NbtCompound rootNode = nbtFile.root;
     // You can now read information from your [rootNode].
-    // for example, rootNode["servers"] will return a child,
-    // if it exists.
+    // for example, rootNode[0] will return the first child,
+    // if present.
 }
 ```
 
