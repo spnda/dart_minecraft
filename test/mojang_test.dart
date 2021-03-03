@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
-import 'package:dart_minecraft/src/exceptions/auth_exception.dart';
-import 'package:dart_minecraft/src/yggdrasil.dart';
 import 'package:test/test.dart';
 
 void main() async {

@@ -2,14 +2,6 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
-import 'package:dart_minecraft/src/nbt/nbt_compression.dart';
-import 'package:dart_minecraft/src/nbt/nbt_tags.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_byte_array.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_compound.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_int.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_list.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_string.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_tag.dart';
 import 'package:test/test.dart';
 
 bool compareFiles(String file1, String file2) {
@@ -48,13 +40,12 @@ void main() {
       expect(root!.getChildrenByName('stringTest').first.value,
           equals('HELLO WORLD THIS IS A TEST STRING ÅÄÖ!'));
 
-      expect(
-          (root
-                  .getChildrenByName(
-                      'byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))')
-                  .first as NbtByteArray)
-              .length,
-          equals(1000));
+      final nbtByteArray = root
+          .getChildrenByName(
+              'byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))')
+          .first as NbtByteArray;
+
+      expect(nbtByteArray.length, equals(1000));
     });
 
     test('Read level.dat', () async {

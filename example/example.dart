@@ -1,9 +1,6 @@
 import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
-import 'package:dart_minecraft/src/exceptions/nbt_file_read_exception.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_compound.dart';
-import 'package:dart_minecraft/src/nbt/tags/nbt_string.dart';
 
 Future<int> main() async {
   /// In this example we'll read content from a NBT File,
@@ -25,9 +22,9 @@ Future<int> main() async {
     name: '',
     children: [
       NbtString(
-        name: 'uuid',
-        value: '069a79f444e94726a5befca90e38aaf5' // This is Notch's UUID.
-      )
+          name: 'uuid',
+          value: '069a79f444e94726a5befca90e38aaf5' // This is Notch's UUID.
+          )
     ],
   );
 
