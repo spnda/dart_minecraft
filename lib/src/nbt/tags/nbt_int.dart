@@ -11,17 +11,22 @@ class NbtInt extends NbtTag {
   int get value => _value;
 
   /// Creates a [NbtInt] with given [parent].
-  NbtInt({required String name, required int value}) : _value = value, super(name, NbtTagType.TAG_INT);
+  NbtInt({required String name, required int value})
+      : _value = value,
+        super(name, NbtTagType.TAG_INT);
 
   @override
   NbtInt readTag(NbtFileReader fileReader, {bool withName = true}) {
     final name = withName ? fileReader.readString() : 'None';
     final value = fileReader.readInt();
-    return this..name = name.._value = value;
+    return this
+      ..name = name
+      .._value = value;
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter, {bool withName = true, bool withType = true}) {
+  void writeTag(NbtFileWriter fileWriter,
+      {bool withName = true, bool withType = true}) {
     if (withType) fileWriter.writeByte(nbtTagType.index);
     if (withName) {
       fileWriter.writeString(name);

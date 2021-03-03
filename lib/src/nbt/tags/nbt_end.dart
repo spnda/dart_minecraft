@@ -26,7 +26,8 @@ class NbtEnd extends NbtTag {
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter, {bool withName = true, bool withType = true}) {
+  void writeTag(NbtFileWriter fileWriter,
+      {bool withName = true, bool withType = true}) {
     fileWriter.writeByte(0x00);
   }
 }

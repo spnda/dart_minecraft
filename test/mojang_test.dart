@@ -63,6 +63,7 @@ void main() async {
         await Yggdrasil.refresh(user);
       } on AuthException catch (e) {
         print(e.message);
+
         /// We'll just manually make the test fail.
         expect(null, isNotNull);
       }

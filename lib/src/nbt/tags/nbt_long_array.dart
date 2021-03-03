@@ -6,13 +6,16 @@ import 'nbt_array.dart';
 /// Represents a array of 8 byte long integers in a NBT file.
 class NbtLongArray extends NbtArray<int> {
   /// Create a [NbtLongArray] with given [parent].
-  NbtLongArray({required String name, required List<int> children}) : super(name, NbtTagType.TAG_LONG_ARRAY) {
+  NbtLongArray({required String name, required List<int> children})
+      : super(name, NbtTagType.TAG_LONG_ARRAY) {
     this.children = children;
   }
-  
+
   @override
   NbtLongArray readTag(NbtFileReader fileReader, {bool withName = true}) {
-    final name = withName ? fileReader.readString() : 'None'; // On the root node, this should be a empty string
+    final name = withName
+        ? fileReader.readString()
+        : 'None'; // On the root node, this should be a empty string
     final length = fileReader.readInt(signed: true);
     for (var i = 0; i < length; i++) {
       add(fileReader.readLong(signed: true));
@@ -21,7 +24,8 @@ class NbtLongArray extends NbtArray<int> {
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter, {bool withName = true, bool withType = true}) {
+  void writeTag(NbtFileWriter fileWriter,
+      {bool withName = true, bool withType = true}) {
     if (withType) fileWriter.writeByte(nbtTagType.index);
     if (withName) {
       fileWriter.writeString(name);

@@ -8,7 +8,8 @@ class Yggdrasil {
   static const String _authserver = 'https://authserver.mojang.com/';
 
   /// Authenticates a user with given credentials [username] and [password].
-  static Future<MojangAccount> authenticate(String username, String password) async {
+  static Future<MojangAccount> authenticate(
+      String username, String password) async {
     final payload = {
       'agent': {'name': 'Minecraft', 'version ': 1},
       'username': username,
@@ -23,7 +24,7 @@ class Yggdrasil {
     return MojangAccount.fromJson(data);
   }
 
-  /// Refreshes the [account]. The [account] data will be overriden with the new 
+  /// Refreshes the [account]. The [account] data will be overriden with the new
   /// refreshed data. The return value is also the same [account] object.
   static Future<MojangAccount> refresh(MojangAccount account) async {
     final payload = {
@@ -37,6 +38,7 @@ class Yggdrasil {
     };
     final response = await WebUtil.post(_authserver, 'refresh', payload, {});
     final data = await WebUtil.getJsonFromResponse(response);
+    print(data);
     if (data['error'] != null) {
       switch (data['error']) {
         case 'ForbiddenOperationException':
@@ -73,7 +75,8 @@ class Yggdrasil {
   ///
   /// [clientToken] is optional, though if provided should match the client token
   /// that was used to obtained given [accessToken].
-  static Future<bool> validate(String accessToken, {String? clientToken}) async {
+  static Future<bool> validate(String accessToken,
+      {String? clientToken}) async {
     final payload = {
       'accessToken': accessToken,
     };

@@ -3,10 +3,10 @@ class MinecraftStatistics {
   final int _total, _last24h;
   final double _salesPerSecond;
 
-  MinecraftStatistics.fromJson(Map response) :
-    _total = response['total'],
-    _last24h = response['last24h'],
-    _salesPerSecond = response['saleVelocityPerSeconds'];
+  MinecraftStatistics.fromJson(Map response)
+      : _total = response['total'],
+        _last24h = response['last24h'],
+        _salesPerSecond = response['saleVelocityPerSeconds'];
 
   /// The total amount of sales since release.
   int get totalSales => _total;
@@ -26,7 +26,7 @@ class MinecraftStatistics {
 enum MinecraftStatisticsItem {
   /// The total amount of Minecraft Sales.
   minecraftItemsSold,
-  
+
   minecraftPrepaidCardsRedeemed,
 
   /// The total amount of Cobalt Sales.

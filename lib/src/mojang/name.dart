@@ -9,9 +9,9 @@ class Name {
   Name(this._name, this._changedToAt);
 
   /// Create a [Name] from JSON data.
-  Name.fromJson(Map<String, dynamic> json) :
-    _name = json['name'],
-    _changedToAt = json['changedToAt'] ?? 0;
+  Name.fromJson(Map<String, dynamic> json)
+      : _name = json['name'],
+        _changedToAt = json['changedToAt'] ?? 0;
 
   /// Returns the name.
   String get name => _name;

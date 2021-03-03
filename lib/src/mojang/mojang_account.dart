@@ -18,11 +18,11 @@ class MojangAccount {
   /// All available profiles.
   List<MojangProfile> availableProfiles = <MojangProfile>[];
 
-  MojangAccount.fromJson(Map<String, dynamic> data) :
-    user = MojangUser.fromJson(data['user'] ?? {}),
-    selectedProfile = MojangProfile.fromJson(data['selectedProfile'] ?? {}),
-    accessToken = data['accessToken'],
-    clientToken = data['clientToken'];
+  MojangAccount.fromJson(Map<String, dynamic> data)
+      : user = MojangUser.fromJson(data['user'] ?? {}),
+        selectedProfile = MojangProfile.fromJson(data['selectedProfile'] ?? {}),
+        accessToken = data['accessToken'],
+        clientToken = data['clientToken'];
 }
 
 /// A Mojang User. One MojangAccount always has one MojangUser.
@@ -49,29 +49,29 @@ class MojangUser {
   String preferredLanguage;
   String twitchOAuthToken;
 
-  MojangUser.fromJson(Map<String, dynamic> data) :
-    username = data['username'],
-    id = data['id'],
-    email = data['email'],
-    registerIp = data['registerIp'],
-    migratedFrom = data['migratedFrom'],
-    migratedAt = data['migratedAt'],
-    registeredAt = data['registeredAt'],
-    passwordChangedAt = data['passwordChangedAt'],
-    dateOfBirth = data['dateOfBirth'],
-    suspended = data['suspended'],
-    blocked = data['blocked'],
-    secured = data['secured'],
-    migrated = data['migrated'],
-    emailVerified = data['emailVerified'],
-    legacyUser = data['legacyUser'],
-    verifiedByParent = data['verifiedByParent'],
-    preferredLanguage = (data['properties'] as List)
-        .where((f) => (f as Map)['name'] == 'preferredLanguage')
-        .first,
-    twitchOAuthToken = (data['properties'] as List)
-        .where((f) => (f as Map)['name'] == 'twitch_access_token')
-        .first;
+  MojangUser.fromJson(Map<String, dynamic> data)
+      : username = data['username'],
+        id = data['id'],
+        email = data['email'],
+        registerIp = data['registerIp'],
+        migratedFrom = data['migratedFrom'],
+        migratedAt = data['migratedAt'],
+        registeredAt = data['registeredAt'],
+        passwordChangedAt = data['passwordChangedAt'],
+        dateOfBirth = data['dateOfBirth'],
+        suspended = data['suspended'],
+        blocked = data['blocked'],
+        secured = data['secured'],
+        migrated = data['migrated'],
+        emailVerified = data['emailVerified'],
+        legacyUser = data['legacyUser'],
+        verifiedByParent = data['verifiedByParent'],
+        preferredLanguage = (data['properties'] as List)
+            .where((f) => (f as Map)['name'] == 'preferredLanguage')
+            .first,
+        twitchOAuthToken = (data['properties'] as List)
+            .where((f) => (f as Map)['name'] == 'twitch_access_token')
+            .first;
 }
 
 /// A Mojang Profile
@@ -100,13 +100,13 @@ class MojangProfile {
   /// If this profile is suspended. (It most likely isn't.)
   bool suspended;
 
-  MojangProfile.fromJson(Map<String, dynamic> data) :
-    name = data['name'],
-    id = data['id'],
-    userId = data['userId'],
-    agent = data['agent'],
-    createdAt = data['createdAt'],
-    legacy = data['legacyProfile'],
-    paid = data['paid'],
-    suspended = data['suspended'];
+  MojangProfile.fromJson(Map<String, dynamic> data)
+      : name = data['name'],
+        id = data['id'],
+        userId = data['userId'],
+        agent = data['agent'],
+        createdAt = data['createdAt'],
+        legacy = data['legacyProfile'],
+        paid = data['paid'],
+        suspended = data['suspended'];
 }

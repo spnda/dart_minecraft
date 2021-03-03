@@ -11,17 +11,22 @@ class NbtDouble extends NbtTag {
   double get value => _value;
 
   /// Creates a [NbtDouble] with given [parent].
-  NbtDouble({required String name, required double value}) : _value = value, super(name, NbtTagType.TAG_DOUBLE);
+  NbtDouble({required String name, required double value})
+      : _value = value,
+        super(name, NbtTagType.TAG_DOUBLE);
 
   @override
   NbtDouble readTag(NbtFileReader fileReader, {bool withName = true}) {
     final name = withName ? fileReader.readString() : 'None';
     final value = fileReader.readDouble();
-    return this..name = name.._value = value;
+    return this
+      ..name = name
+      .._value = value;
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter, {bool withName = true, bool withType = true}) {
+  void writeTag(NbtFileWriter fileWriter,
+      {bool withName = true, bool withType = true}) {
     if (withType) fileWriter.writeByte(nbtTagType.index);
     if (withName) {
       fileWriter.writeString(name);

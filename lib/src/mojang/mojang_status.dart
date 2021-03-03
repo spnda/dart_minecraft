@@ -63,7 +63,7 @@ class MojangStatus {
           mojang = parse(entry.value);
           break;
       }
-    };
+    }
   }
 
   /// Gets the [MojangSiteStatus] from given [data].

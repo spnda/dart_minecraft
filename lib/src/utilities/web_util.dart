@@ -15,7 +15,8 @@ class WebUtil {
   }
 
   /// HTTP POST request.
-  static Future<HttpClientResponse> post(String base, String api, dynamic body, [Map<String, dynamic> headers = const {}]) async {
+  static Future<HttpClientResponse> post(String base, String api, dynamic body,
+      [Map<String, dynamic> headers = const {}]) async {
     if (!base.endsWith('/')) base += '/';
     if (!(body is List) && !(body is Map)) {
       throw Exception('body must be a List or Map');
@@ -29,7 +30,8 @@ class WebUtil {
   }
 
   /// HTTP PUT request.
-  static Future<HttpClientResponse> put(String base, String api, dynamic body, [Map<String, dynamic> headers = const {}]) async {
+  static Future<HttpClientResponse> put(String base, String api, dynamic body,
+      [Map<String, dynamic> headers = const {}]) async {
     if (!base.endsWith('/')) base += '/';
     final request = await _client.putUrl(Uri.parse('$base$api'));
     for (MapEntry e in headers.entries) {
@@ -40,7 +42,8 @@ class WebUtil {
   }
 
   /// HTTP DELETE request.
-  static Future<HttpClientResponse> delete(String base, String api, [Map<String, dynamic> headers = const {}]) async {
+  static Future<HttpClientResponse> delete(String base, String api,
+      [Map<String, dynamic> headers = const {}]) async {
     if (!base.endsWith('/')) base += '/';
     final request = await _client.deleteUrl(Uri.parse('$base$api'));
     for (MapEntry e in headers.entries) {
@@ -61,7 +64,8 @@ class WebUtil {
   }
 
   /// Parses the [response]'s body into a Map<String, dynamic> or List<dynamic>.
-  static Future<dynamic> getJsonFromResponse(HttpClientResponse response) async {
+  static Future<dynamic> getJsonFromResponse(
+      HttpClientResponse response) async {
     var body = await getResponseBody(response);
     if (body.isEmpty) return null; // Avoid throwing errors in json.decode
     return json.decode(body);

@@ -32,7 +32,7 @@ void main() {
       /// The root tag should always be a Compound for Java Edition NBT.
       expect(root!.nbtTagType, equals(NbtTagType.TAG_COMPOUND));
 
-      /// As we're checking the servers.dat file, the root compound only 
+      /// As we're checking the servers.dat file, the root compound only
       /// has a single child, a TAG_List with the name 'servers'.
       expect(root.getChildrenByName('servers').length, equals(1));
     });
@@ -45,9 +45,16 @@ void main() {
       final root = nbtFile.root;
       expect(root, isNotNull);
 
-      expect(root!.getChildrenByName('stringTest').first.value, equals('HELLO WORLD THIS IS A TEST STRING ÅÄÖ!'));
+      expect(root!.getChildrenByName('stringTest').first.value,
+          equals('HELLO WORLD THIS IS A TEST STRING ÅÄÖ!'));
 
-      expect((root.getChildrenByName('byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))').first as NbtByteArray).length, equals(1000));
+      expect(
+          (root
+                  .getChildrenByName(
+                      'byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))')
+                  .first as NbtByteArray)
+              .length,
+          equals(1000));
     });
 
     test('Read level.dat', () async {
@@ -57,7 +64,8 @@ void main() {
       final root = nbtFile.root;
       expect(root, isNotNull);
 
-      final list = (root!.children.first as NbtList).where((val) => val.nbtTagType == NbtTagType.TAG_STRING);
+      final list = (root!.children.first as NbtList)
+          .where((val) => val.nbtTagType == NbtTagType.TAG_STRING);
 
       // We'll check that there should be at max 3 TAG_Strings in the list.
       // These strings are named "generatorName", "WanderingTraderId" and "LevelName".
@@ -66,19 +74,19 @@ void main() {
 
     test('Read NaN double value', () async {
       // Player-nan-value.dat is a NBT file with a TAG_Double with a NaN (Not a Number).
-      // It's also 
       // This checks if the parser can detect this issue and handles the value accordingly.
       final nbtFile = NbtFile.fromPath('./test/NaN-value.nbt');
       await nbtFile.readFile();
 
       expect(nbtFile.root, isNotNull);
 
-      // 'Pos' is a NbtList, where the second entry is a NaN. Check if that value exists there and if it is NaN.
+      // 'Pos' is a NbtList, where the second entry is a NaN. Check if that
+      // value exists there and if it is NaN.
       // TAG_List(Pos): 3 entries {[TAG_Double(None): 0.0, TAG_Double(None): NaN, TAG_Double(None): 0.0]}
       final fallDistance = nbtFile.root!.getChildrenByName('Pos').first;
 
-      // [fallDistance] should be a NbtList<NbtDouble>, but as NbtList<T> can be anything, we will only check
-      // if it is NbtList<NbtTag>.
+      // [fallDistance] should be a NbtList<NbtDouble>, but as NbtList<T> can be
+      // anything, we will only check if it is NbtList<NbtTag>.
       expect(fallDistance, isA<NbtList<NbtTag>>());
 
       // The second child should be a NbtDouble and have a NaN value.
@@ -91,7 +99,9 @@ void main() {
       final nbtFile = NbtFile.fromPath('./test/servers.dat');
       await nbtFile.readFile();
 
-      await nbtFile.writeFile(file: File('./test/servers2.dat'), nbtCompression: nbtFile.compression ?? NbtCompression.none);
+      await nbtFile.writeFile(
+          file: File('./test/servers2.dat'),
+          nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
       expect(compareFiles('./test/servers.dat', './test/servers2.dat'), isTrue);
     });
@@ -100,7 +110,9 @@ void main() {
       final nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
       await nbtFile.readFile();
 
-      await nbtFile.writeFile(file: File('./test/bigtest2.nbt'), nbtCompression: nbtFile.compression ?? NbtCompression.none);
+      await nbtFile.writeFile(
+          file: File('./test/bigtest2.nbt'),
+          nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
       expect(compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'), isTrue);
     });
@@ -109,7 +121,9 @@ void main() {
       final nbtFile = NbtFile.fromPath('./test/level.dat');
       await nbtFile.readFile();
 
-      await nbtFile.writeFile(file: File('./test/level2.dat'), nbtCompression: nbtFile.compression ?? NbtCompression.none);
+      await nbtFile.writeFile(
+          file: File('./test/level2.dat'),
+          nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
       expect(compareFiles('./test/level.dat', './test/level2.dat'), isTrue);
 
@@ -130,10 +144,7 @@ void main() {
           name: 'intTest',
           value: 5430834,
         ),
-        NbtString(
-          name: 'stringTest',
-          value: 'This is a String test!'
-        ),
+        NbtString(name: 'stringTest', value: 'This is a String test!'),
       ],
     );
 

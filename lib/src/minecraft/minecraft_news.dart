@@ -19,13 +19,13 @@ class MinecraftNews {
   /// If this news item is only for demo users who do not own the game.
   bool forDemoUsersOnly;
 
-  MinecraftNews.fromJson(Map<String, dynamic> data) :
-    title = data['title'],
-    description = data['description'],
-    url = data['url'],
-    id = data['id'],
-    _imageUrl = data['image']['url'],
-    forDemoUsersOnly = data['forDemoUsersOnly'] ?? false;
+  MinecraftNews.fromJson(Map<String, dynamic> data)
+      : title = data['title'],
+        description = data['description'],
+        url = data['url'],
+        id = data['id'],
+        _imageUrl = data['image']['url'],
+        forDemoUsersOnly = data['forDemoUsersOnly'] ?? false;
 
   /// Get's the url to the image of this news item. News images are
   /// usually 1200x512 pixels in size.

@@ -3,7 +3,7 @@ import 'dart:collection';
 import '../nbt_tags.dart';
 import 'nbt_tag.dart';
 
-/// The base of any array or list nbt tag. Uses the [ListMixin] 
+/// The base of any array or list nbt tag. Uses the [ListMixin]
 /// to inherit all methods and properties of a [List].
 // ignore: prefer_mixin
 abstract class NbtArray<T> extends NbtTag with ListMixin<T> {
@@ -35,7 +35,7 @@ abstract class NbtArray<T> extends NbtTag with ListMixin<T> {
   void add(T element) {
     children.add(element);
   }
-  
+
   @override
   String toString() {
     return '${nbtTagType.asString()}($name): ${children.length} entries {$value}';

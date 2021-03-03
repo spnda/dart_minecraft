@@ -37,14 +37,16 @@ class Mojang {
   ///
   /// A [timestamp] can be passed to retrieve the UUID for the player with [username]
   /// at that point in time.
-  static Future<Pair<String, String>> getUuid(String username, {DateTime? timestamp}) async {
+  static Future<Pair<String, String>> getUuid(String username,
+      {DateTime? timestamp}) async {
     final time =
         timestamp == null ? '' : '?at=${timestamp.millisecondsSinceEpoch}';
     final response = await WebUtil.get(
         _mojangApi, 'users/profiles/minecraft/$username$time');
     final map = await WebUtil.getJsonFromResponse(response);
     if (map == null) {
-      throw ArgumentError.value(username, 'username', 'No user was found for given username');
+      throw ArgumentError.value(
+          username, 'username', 'No user was found for given username');
     }
     if (!(map is Map)) {
       throw Exception(
@@ -57,7 +59,8 @@ class Mojang {
   /// Returns a List of player UUIDs by a List of player names.
   ///
   /// Usernames are not case sensitive and ones which are invalid or not found are ommitted.
-  static Future<List<Pair<String, String>>> getUuids(List<String> usernames) async {
+  static Future<List<Pair<String, String>>> getUuids(
+      List<String> usernames) async {
     final response = await WebUtil.post(_mojangApi, 'profiles/minecraft',
         usernames, {HttpHeaders.contentTypeHeader: 'application/json'});
     final list = await WebUtil.getJsonFromResponse(response);
@@ -76,9 +79,7 @@ class Mojang {
   static Future<List<Name>> getNameHistory(String uuid) async {
     final response = await WebUtil.get(_mojangApi, 'user/profiles/$uuid/names');
     final list = await WebUtil.getJsonFromResponse(response);
-    final ret = <Name>[];
-    list.forEach((dynamic v) => ret.add(Name.fromJson(v)));
-    return ret;
+    return list.map((dynamic v) => Name.fromJson(v)).toList();
   }
 
   /// Returns the user profile including skin/cape information.
@@ -88,12 +89,12 @@ class Mojang {
     final response =
         await WebUtil.get(_sessionApi, 'session/minecraft/profile/$uuid');
     final map = await WebUtil.getJsonFromResponse(response);
-    final profile = Profile.fromJson(map);
-    return profile;
+    return Profile.fromJson(map);
   }
 
   /// Changes the Mojang acccount name to [newName].
-  static Future<bool> changeName(String uuid, String newName, String accessToken, String password) async {
+  static Future<bool> changeName(
+      String uuid, String newName, String accessToken, String password) async {
     final body = <String, String>{'name': newName, 'password': password};
     final headers = <String, String>{
       HttpHeaders.authorizationHeader: 'Bearer $accessToken',
@@ -105,11 +106,18 @@ class Mojang {
       /// https://wiki.vg/Mojang_API#Change_Name for details on the
       /// possibly errors.
       switch (response.statusCode) {
-        case 400: throw ArgumentError('Name is invalid, longer than 16 characters or contains characters other than (a-zA-Z0-9_)');
-        case 401: throw AuthException(AuthException.invalidCredentialsMessage);
-        case 403: throw Exception('Name is unavailable (Either taken or has not become available).');
-        case 500: throw Exception('Timed out.');
-        default: throw Exception('Unexpected error occured.');
+        case 400:
+          throw ArgumentError(
+              'Name is invalid, longer than 16 characters or contains characters other than (a-zA-Z0-9_)');
+        case 401:
+          throw AuthException(AuthException.invalidCredentialsMessage);
+        case 403:
+          throw Exception(
+              'Name is unavailable (Either taken or has not become available).');
+        case 500:
+          throw Exception('Timed out.');
+        default:
+          throw Exception('Unexpected error occured.');
       }
     } else {
       return true;
@@ -148,7 +156,8 @@ class Mojang {
   }
 
   /// Change the skin with the texture of the skin at [skinUrl].
-  static Future<bool> changeSkin(Uri skinUrl, String accessToken, [SkinModel skinModel = SkinModel.classic]) async {
+  static Future<bool> changeSkin(Uri skinUrl, String accessToken,
+      [SkinModel skinModel = SkinModel.classic]) async {
     final headers = {
       HttpHeaders.authorizationHeader: 'Bearer $accessToken',
     };
@@ -156,13 +165,16 @@ class Mojang {
       'variant': skinModel.toString().replaceFirst('SkinModel', ''),
       'url': skinUrl,
     };
-    final response = await WebUtil.post(_minecraftServices, 'minecraft/profile/skins', data, headers);
+    final response = await WebUtil.post(
+        _minecraftServices, 'minecraft/profile/skins', data, headers);
     switch (response.statusCode) {
-      case 401: throw AuthException(AuthException.invalidCredentialsMessage);
-      default: {
-        print(response);
-        return true;
-      }
+      case 401:
+        throw AuthException(AuthException.invalidCredentialsMessage);
+      default:
+        {
+          print(response);
+          return true;
+        }
     }
   }
 
@@ -170,7 +182,8 @@ class Mojang {
   ///
   /// Returns total statistics for ALL games included. To get individual statistics, call this
   /// function for each MinecraftStatisticsItem or each game.
-  static Future<MinecraftStatistics> getStatistics(List<MinecraftStatisticsItem> items) async {
+  static Future<MinecraftStatistics> getStatistics(
+      List<MinecraftStatisticsItem> items) async {
     final payload = {
       'metricKeys': [
         for (MinecraftStatisticsItem item in items) item.name,
@@ -198,11 +211,12 @@ class Mojang {
 
   /// Authenticates a user with given credentials [username] and [password].
   @Deprecated('Use Yggradsil#authenticate instead')
-  static Future<MojangAccount> authenticate(String username, String password) async {
+  static Future<MojangAccount> authenticate(
+      String username, String password) async {
     return Yggdrasil.authenticate(username, password);
   }
 
-  /// Refreshes the [account]. The [account] data will be overriden with the new 
+  /// Refreshes the [account]. The [account] data will be overriden with the new
   /// refreshed data. The return value is also the same [account] object.
   @Deprecated('Use Yggradsil#refresh instead')
   static Future<MojangAccount> refresh(MojangAccount account) async {
@@ -214,7 +228,8 @@ class Mojang {
   /// [clientToken] is optional, though if provided should match the client token
   /// that was used to obtained given [accessToken].
   @Deprecated('Use Yggradsil#validate instead')
-  static Future<bool> validate(String accessToken, {String? clientToken}) async {
+  static Future<bool> validate(String accessToken,
+      {String? clientToken}) async {
     return Yggdrasil.validate(accessToken, clientToken: clientToken);
   }
 

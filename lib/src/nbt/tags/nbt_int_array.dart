@@ -6,7 +6,8 @@ import 'nbt_array.dart';
 /// Represents a array of 4 byte integers in a NBT file.
 class NbtIntArray extends NbtArray<int> {
   /// Create a [NbtIntArray] with given [parent].
-  NbtIntArray({required String name, required List<int> children}) : super(name, NbtTagType.TAG_INT_ARRAY) {
+  NbtIntArray({required String name, required List<int> children})
+      : super(name, NbtTagType.TAG_INT_ARRAY) {
     this.children = children;
   }
 
@@ -21,7 +22,8 @@ class NbtIntArray extends NbtArray<int> {
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter, {bool withName = true, bool withType = true}) {
+  void writeTag(NbtFileWriter fileWriter,
+      {bool withName = true, bool withType = true}) {
     if (withType) fileWriter.writeByte(nbtTagType.index);
     if (withName) {
       fileWriter.writeString(name);

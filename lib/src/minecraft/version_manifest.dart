@@ -10,10 +10,10 @@ class VersionManifest {
   /// A list of all available versions.
   List<Version> versions;
 
-  VersionManifest.fromJson(Map<String, dynamic> data) :
-    latestRelease = data['latest']['release'],
-    latestSnapshot = data['latest']['snapshot'],
-    versions = data['versions'].map((d) => Version.fromJson(d));
+  VersionManifest.fromJson(Map<String, dynamic> data)
+      : latestRelease = data['latest']['release'],
+        latestSnapshot = data['latest']['snapshot'],
+        versions = data['versions'].map((d) => Version.fromJson(d));
 }
 
 /// A Minecraft Version.
@@ -42,10 +42,10 @@ class Version {
   /// The time this version was release at as a DateTime object.
   DateTime get releaseDateTiem => DateTime.parse(releaseTime);
 
-  Version.fromJson(Map<String, dynamic> data) :
-    id = data['id'],
-    type = data['type'],
-    url = data['url'],
-    time = data['time'],
-    releaseTime = data['releaseTime'];
+  Version.fromJson(Map<String, dynamic> data)
+      : id = data['id'],
+        type = data['type'],
+        url = data['url'],
+        time = data['time'],
+        releaseTime = data['releaseTime'];
 }

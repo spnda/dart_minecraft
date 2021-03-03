@@ -7,11 +7,11 @@ class Profile {
   final String _textures;
   final String _signatures;
 
-  Profile.fromJson(Map<String, dynamic> json) :
-    _id = json['id'],
-    _name = json['name'],
-    _textures = json['properties'][0]['value'],
-    _signatures = json['properties'][0]['signature'] ?? '';
+  Profile.fromJson(Map<String, dynamic> json)
+      : _id = json['id'],
+        _name = json['name'],
+        _textures = json['properties'][0]['value'],
+        _signatures = json['properties'][0]['signature'] ?? '';
 
   /// The UUID of this player.
   String get uuid => _id;
@@ -28,10 +28,7 @@ class Profile {
 }
 
 /// The skin model of a texture
-enum SkinModel {
-  classic,
-  slim
-}
+enum SkinModel { classic, slim }
 
 /// Represents all textures for a minecraft profile.
 class ProfileTextures {
@@ -53,7 +50,9 @@ class ProfileTextures {
       .._profileName = json['profileName']
       // .._signatureRequired = json['signatureRequired'] ?? false
       .._skinUrl = skin['url'] ?? ''
-      .._skinModel = (skin['metadata'] ?? {})['model'] == 'slim' ? SkinModel.slim : SkinModel.classic
+      .._skinModel = (skin['metadata'] ?? {})['model'] == 'slim'
+          ? SkinModel.slim
+          : SkinModel.classic
       .._capeUrl = cape['url'] ?? '';
   }
 
@@ -67,13 +66,15 @@ class ProfileTextures {
       /// Minecraft uses [uuid.hashCode() & 1] for the Alex Skin.
       /// That can be compacted to counting the LSBs of every 4th byte in the Uuid.
       /// XOR-ing all the LSBs gives us 1 for alex and 0 for steve.
-      /// See https://github.com/crafatar/crafatar/blob/9d2fe0c45424de3ebc8e0b10f9446e7d5c3738b2/lib/skins.js#L90-L108 
+      /// See https://github.com/crafatar/crafatar/blob/9d2fe0c45424de3ebc8e0b10f9446e7d5c3738b2/lib/skins.js#L90-L108
       /// for the original implementation.
       var lsbs = int.parse(_profileId[7], radix: 16) ^
           int.parse(_profileId[15], radix: 16) ^
           int.parse(_profileId[23], radix: 16) ^
           int.parse(_profileId[31], radix: 16);
-      return lsbs.isOdd ? 'http://assets.mojang.com/SkinTemplates/alex.png' : 'http://assets.mojang.com/SkinTemplates/steve.png';
+      return lsbs.isOdd
+          ? 'http://assets.mojang.com/SkinTemplates/alex.png'
+          : 'http://assets.mojang.com/SkinTemplates/steve.png';
       // return lsbs.isOdd ? 'alex' : 'steve';
     }
   }

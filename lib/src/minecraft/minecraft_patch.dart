@@ -22,14 +22,14 @@ class MinecraftPatch {
   /// A html style description of this patch.
   String body;
 
-  MinecraftPatch.fromJson(Map<String, dynamic> data) :
-    title = data['title'],
-    type = data['type'],
-    version = data['version'],
-    body = data['body'],
-    id = data['id'],
-    _imageUrl = data['image']['url'],
-    imageTitle = data['image']['title'];
+  MinecraftPatch.fromJson(Map<String, dynamic> data)
+      : title = data['title'],
+        type = data['type'],
+        version = data['version'],
+        body = data['body'],
+        id = data['id'],
+        _imageUrl = data['image']['url'],
+        imageTitle = data['image']['title'];
 
   /// The url to the patch's image.
   String get imageUrl => 'https://launchercontent.mojang.com/$_imageUrl';
