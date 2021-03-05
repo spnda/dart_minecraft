@@ -2,13 +2,21 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:dart_minecraft/src/mojang/mojang_account.dart';
 import 'package:test/test.dart';
 
 void main() async {
-  final testData =
-      json.decode(File('./test/test_data.json').readAsStringSync());
+  final testDataFile = File('./test/test_data.json');
+  if (!testDataFile.existsSync()) {
+    /// "uuid", "username", "skin_texture" and "first_username" are required to test the API.
+    ///
+    /// If Yggradsil authentication API should be tested, please also add "email" and "password".
+    /// Note: This will log you out of your minecraft launcher.
+    throw Exception(
+        'test_data.json is required to run this test. Required fields are "username", "uuid", "skin_texture", "first_username".');
+  }
+  final testData = json.decode(testDataFile.readAsStringSync());
   final username = testData['username'];
-  final password = testData['password'];
   final uuid = testData['uuid'];
 
   test('API should return UUID for username', () async {
@@ -43,7 +51,7 @@ void main() async {
 
   test('API should return a list of names', () async {
     final nameHistory = await Mojang.getNameHistory(uuid);
-    expect(nameHistory.first.name, equals(testData['firstUsername']));
+    expect(nameHistory.first.name, equals(testData['first_username']));
     expect(nameHistory.last.name, equals(username));
   });
 
@@ -55,15 +63,26 @@ void main() async {
   });
 
   group('Yggdrasil Tests', () {
+    MojangAccount? user;
+
     test('refresh test', () async {
       try {
-        var user = await Yggdrasil.authenticate(username, password);
-        await Yggdrasil.refresh(user);
+        user = await Yggdrasil.authenticate(
+            testData['email'], testData['password']);
+        await Yggdrasil.refresh(user!);
       } on AuthException catch (e) {
-        print(e.message);
+        print(e);
+      } on Error catch (e) {
+        print(e);
+      }
+    });
 
-        /// We'll just manually make the test fail.
-        expect(null, isNotNull);
+    test('Test if access token is valid', () async {
+      try {
+        var valid = await Yggdrasil.validate(user!.accessToken, clientToken: user!.clientToken);
+        expect(valid, isTrue);
+      } on Error catch (e) {
+        print(e);
       }
     });
   });

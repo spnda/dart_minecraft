@@ -8,13 +8,17 @@ class Yggdrasil {
   static const String _authserver = 'https://authserver.mojang.com/';
 
   /// Authenticates a user with given credentials [username] and [password].
-  static Future<MojangAccount> authenticate(
-      String username, String password) async {
+  ///
+  /// [clientToken] should be identical for each request, otherwise old
+  /// access tokens will be invalidated. If ommitted, a randomly generated
+  /// version 4 UUID will be used.
+  static Future<MojangAccount> authenticate(String username, String password,
+      {String? clientToken}) async {
     final payload = {
       'agent': {'name': 'Minecraft', 'version ': 1},
       'username': username,
       'password': password,
-      'clientToken': Uuid().v4(),
+      'clientToken': clientToken ?? Uuid().v4(),
       'requestUser': true
     };
     final response =
@@ -38,11 +42,13 @@ class Yggdrasil {
     };
     final response = await WebUtil.post(_authserver, 'refresh', payload, {});
     final data = await WebUtil.getJsonFromResponse(response);
-    print(data);
     if (data['error'] != null) {
       switch (data['error']) {
         case 'ForbiddenOperationException':
           throw AuthException(AuthException.invalidCredentialsMessage);
+        case 'IllegalArgumentException':
+          /// Throws when access or client token are invalid / already in use.
+          throw ArgumentError(data['errorMessage']);
         default:
           throw Exception(data['errorMessage']);
       }
