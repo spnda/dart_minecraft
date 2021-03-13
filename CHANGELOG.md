@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1
+
+- Fix critical NBT_STRING write issue.
+- Add NBT Tag equality operators.
+
 ## 0.3.0
 
 - Support Dart null safety.
