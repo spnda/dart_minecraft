@@ -1,14 +1,7 @@
 import 'dart:io';
 
-import 'package:collection/collection.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:test/test.dart';
-
-bool compareFiles(String file1, String file2) {
-  final contents1 = File(file1).readAsBytesSync();
-  final contents2 = File(file2).readAsBytesSync();
-  return const ListEquality().equals(contents1, contents2);
-}
 
 void main() {
   group('Read files and check for values', () {
@@ -86,6 +79,14 @@ void main() {
   });
 
   group('Rewrite files and check if they remain the same.', () {
+    Future<bool> compareFiles(String file, String file2) async {
+      final nbtFile1 = NbtFile.fromPath(file);
+      await nbtFile1.readFile();
+      final nbtFile2 = NbtFile.fromPath(file2);
+      await nbtFile2.readFile();
+      return nbtFile1.root == nbtFile2.root;
+    }
+
     test('Rewrite servers.dat', () async {
       final nbtFile = NbtFile.fromPath('./test/servers.dat');
       await nbtFile.readFile();
@@ -94,7 +95,8 @@ void main() {
           file: File('./test/servers2.dat'),
           nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
-      expect(compareFiles('./test/servers.dat', './test/servers2.dat'), isTrue);
+      expect(await compareFiles('./test/servers.dat', './test/servers2.dat'),
+          isTrue);
     });
 
     test('Rewrite bigtest.dat', () async {
@@ -105,7 +107,10 @@ void main() {
           file: File('./test/bigtest2.nbt'),
           nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
-      expect(compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'), isTrue);
+      await nbtFile.readFile(file: File('./test/bigtest2.nbt'));
+
+      expect(await compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'),
+          isTrue);
     });
 
     test('Rewrite level.dat', () async {
@@ -116,13 +121,8 @@ void main() {
           file: File('./test/level2.dat'),
           nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
-      expect(compareFiles('./test/level.dat', './test/level2.dat'), isTrue);
-
-      // Re-read the file and check if they're identical
-      final nbtFile2 = NbtFile.fromPath('./test/level2.dat');
-      await nbtFile2.readFile();
-      expect(nbtFile2.root, isNotNull);
-      expect(nbtFile2.root!.last, isTrue);
+      expect(
+          await compareFiles('./test/level.dat', './test/level2.dat'), isTrue);
     });
   });
 
