@@ -36,7 +36,9 @@ class NbtFileWriter {
 
     _flush(1048576);
 
-    final bytes = compress(_bytesBuilder!.toBytes(), nbtCompression);
+    final builtBytes = _bytesBuilder!.toBytes();
+
+    final bytes = compress(builtBytes, nbtCompression);
 
     file.writeAsBytesSync(bytes);
     return true;
@@ -133,8 +135,8 @@ class NbtFileWriter {
       writeShort(0, signed: false);
       return;
     }
-    writeShort(value.length, signed: false);
     final string = utf8.encode(value);
+    writeShort(string.length, signed: false);
     for (final val in string) {
       writeByte(val, signed: false);
     }
