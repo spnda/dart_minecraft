@@ -26,12 +26,13 @@ class NbtCompound<T extends NbtTag> extends NbtList<T> {
   @override
   NbtCompound readTag(NbtFileReader fileReader, {bool withName = true}) {
     final name = withName ? fileReader.readString() : 'None';
-    NbtTag? tag;
-    while ((tag = NbtTag.readTagForType(fileReader, fileReader.readByte(),
-                parent: this))!
-            .nbtTagType !=
-        NbtTagType.TAG_END) {
-      if (tag != null && tag is T) add(tag);
+    var tag =
+        NbtTag.readTagForType(fileReader, fileReader.readByte(), parent: this);
+
+    while (tag != null && tag.nbtTagType != NbtTagType.TAG_END) {
+      if (tag is T) add(tag);
+      tag = NbtTag.readTagForType(fileReader, fileReader.readByte(),
+          parent: this);
     }
     return this..name = name;
   }

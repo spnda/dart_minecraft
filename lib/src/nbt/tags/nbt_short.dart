@@ -18,7 +18,7 @@ class NbtShort extends NbtTag {
   @override
   NbtShort readTag(NbtFileReader fileReader, {bool withName = true}) {
     final name = withName ? fileReader.readString() : 'None';
-    final value = fileReader.readShort();
+    final value = fileReader.readShort(signed: true);
     return this
       ..name = name
       .._value = value;
@@ -31,6 +31,6 @@ class NbtShort extends NbtTag {
     if (withName) {
       fileWriter.writeString(name);
     }
-    fileWriter.writeShort(_value);
+    fileWriter.writeShort(_value, signed: true);
   }
 }

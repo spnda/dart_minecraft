@@ -28,6 +28,7 @@ class NbtIntArray extends NbtArray<int> {
     if (withName) {
       fileWriter.writeString(name);
     }
+    fileWriter.writeInt(children.length, signed: true);
     for (final val in children) {
       fileWriter.writeInt(val, signed: true);
     }

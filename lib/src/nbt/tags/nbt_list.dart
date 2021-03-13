@@ -31,6 +31,10 @@ class NbtList<T extends NbtTag> extends NbtArray<T> {
       throw ArgumentError('nbtTagType must be TAG_LIST or TAG_COMPOUND.');
     }
 
+    if (children.isNotEmpty) {
+      childrenTagType = children.first.nbtTagType;
+    }
+
     /// Assign this as the parent of all children.
     /// Also, filter all NbtEnd tags, as they're invalid.
     this.children = (children)
@@ -38,6 +42,11 @@ class NbtList<T extends NbtTag> extends NbtArray<T> {
         .toList()
         .where((child) => child.nbtTagType != NbtTagType.TAG_END)
         .toList();
+  
+    /// Don't allow different types of [NbtTag] inside a [NbtList].
+    if (this.nbtTagType == NbtTagType.TAG_LIST && this.children.where((v) => v.nbtTagType == childrenTagType).length < this.children.length) {
+      throw ArgumentError.value(children, 'children', 'Children of [NbtList] must all be of the same type');
+    }
   }
 
   @override

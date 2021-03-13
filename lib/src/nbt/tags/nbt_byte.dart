@@ -31,6 +31,6 @@ class NbtByte extends NbtTag {
     if (withName) {
       fileWriter.writeString(name);
     }
-    fileWriter.writeByte(_value);
+    fileWriter.writeByte(_value, signed: true);
   }
 }

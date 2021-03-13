@@ -46,10 +46,10 @@ class NbtFileReader {
     if (_data == null) return false;
     switch (nbtCompression) {
       case NbtCompression.gzip:
-        _data = gzip.decode(_data!) as Uint8List;
+        _data = Uint8List.fromList(gzip.decode(_data!));
         break;
       case NbtCompression.zlib:
-        _data = zlib.decode(_data!) as Uint8List;
+        _data = Uint8List.fromList(zlib.decode(_data!));
         break;
       case NbtCompression.unknown:
         throw Exception('Invalid NBT File.');
@@ -126,7 +126,7 @@ class NbtFileReader {
     if (length == 0) return '';
     var string = <int>[];
     for (var i = 0; i < length; i++) {
-      string.add(readByte());
+      string.add(readByte(signed: false));
     }
     return utf8.decode(string);
   }

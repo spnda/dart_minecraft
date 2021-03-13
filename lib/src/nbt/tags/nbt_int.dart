@@ -18,7 +18,7 @@ class NbtInt extends NbtTag {
   @override
   NbtInt readTag(NbtFileReader fileReader, {bool withName = true}) {
     final name = withName ? fileReader.readString() : 'None';
-    final value = fileReader.readInt();
+    final value = fileReader.readInt(signed: true);
     return this
       ..name = name
       .._value = value;
@@ -31,6 +31,6 @@ class NbtInt extends NbtTag {
     if (withName) {
       fileWriter.writeString(name);
     }
-    fileWriter.writeInt(_value);
+    fileWriter.writeInt(_value, signed: true);
   }
 }

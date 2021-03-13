@@ -15,7 +15,7 @@ class NbtLongArray extends NbtArray<int> {
   NbtLongArray readTag(NbtFileReader fileReader, {bool withName = true}) {
     final name = withName
         ? fileReader.readString()
-        : 'None'; // On the root node, this should be a empty string
+        : 'None';
     final length = fileReader.readInt(signed: true);
     for (var i = 0; i < length; i++) {
       add(fileReader.readLong(signed: true));
@@ -30,6 +30,7 @@ class NbtLongArray extends NbtArray<int> {
     if (withName) {
       fileWriter.writeString(name);
     }
+    fileWriter.writeInt(children.length, signed: true);
     for (final val in children) {
       fileWriter.writeLong(val, signed: true);
     }
