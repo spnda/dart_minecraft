@@ -8,9 +8,13 @@ class WebUtil {
   static final HttpClient _client = HttpClient();
 
   /// HTTP GET request.
-  static Future<HttpClientResponse> get(String base, String api) async {
+  static Future<HttpClientResponse> get(String base, String api,
+      {Map<String, dynamic> headers = const {}}) async {
     if (!base.endsWith('/')) base += '/';
     final request = await _client.getUrl(Uri.parse('$base$api'));
+    for (final header in headers.entries) {
+      request.headers.add(header.key, header.value);
+    }
     return request.close();
   }
 
@@ -19,7 +23,8 @@ class WebUtil {
       [Map<String, dynamic> headers = const {}]) async {
     if (!base.endsWith('/')) base += '/';
     if (!(body is List) && !(body is Map)) {
-      throw Exception('body must be a List or Map');
+      throw ArgumentError.value(
+          body.runtimeType, 'body', 'body must be a List or Map');
     }
     final request = await _client.postUrl(Uri.parse('$base$api'));
     for (MapEntry e in headers.entries) {
