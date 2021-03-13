@@ -137,4 +137,10 @@ abstract class NbtTag {
   String toString() {
     return '${nbtTagType.asString()}($name): $value';
   }
+
+  @override
+  bool operator ==(o) => o is NbtTag && name == o.name && value == o.value;
+
+  @override
+  int get hashCode => value.hashCode;
 }

@@ -13,9 +13,7 @@ class NbtLongArray extends NbtArray<int> {
 
   @override
   NbtLongArray readTag(NbtFileReader fileReader, {bool withName = true}) {
-    final name = withName
-        ? fileReader.readString()
-        : 'None';
+    final name = withName ? fileReader.readString() : 'None';
     final length = fileReader.readInt(signed: true);
     for (var i = 0; i < length; i++) {
       add(fileReader.readLong(signed: true));

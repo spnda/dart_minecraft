@@ -42,10 +42,13 @@ class NbtList<T extends NbtTag> extends NbtArray<T> {
         .toList()
         .where((child) => child.nbtTagType != NbtTagType.TAG_END)
         .toList();
-  
+
     /// Don't allow different types of [NbtTag] inside a [NbtList].
-    if (this.nbtTagType == NbtTagType.TAG_LIST && this.children.where((v) => v.nbtTagType == childrenTagType).length < this.children.length) {
-      throw ArgumentError.value(children, 'children', 'Children of [NbtList] must all be of the same type');
+    if (this.nbtTagType == NbtTagType.TAG_LIST &&
+        this.children.where((v) => v.nbtTagType == childrenTagType).length <
+            this.children.length) {
+      throw ArgumentError.value(children, 'children',
+          'Children of [NbtList] must all be of the same type');
     }
   }
 

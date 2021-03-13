@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
+
 import '../nbt_tags.dart';
 import 'nbt_tag.dart';
 
@@ -40,4 +42,14 @@ abstract class NbtArray<T> extends NbtTag with ListMixin<T> {
   String toString() {
     return '${nbtTagType.asString()}($name): ${children.length} entries {$value}';
   }
+
+  @override
+  bool operator ==(o) {
+    if (!(o is NbtArray)) return false;
+    if (!(name == o.name)) return false;
+    return const ListEquality().equals(children, o.children);
+  }
+
+  @override
+  int get hashCode => value.hashCode;
 }
