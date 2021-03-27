@@ -1,10 +1,15 @@
+enum MinecraftPatchType {
+  release,
+  snapshot,
+}
+
 /// A Patch/Version of Minecraft, including a image and a description.
 class MinecraftPatch {
   /// The title of this patch.
   String title;
 
-  /// The type of this patch, e.g. "release" or "snapshot".
-  String type;
+  /// The type of this patch.
+  MinecraftPatchType type;
 
   /// The actual version id of this patch.
   String version;
@@ -24,7 +29,7 @@ class MinecraftPatch {
 
   MinecraftPatch.fromJson(Map<String, dynamic> data)
       : title = data['title'],
-        type = data['type'],
+        type = data['type'] == 'release' ? MinecraftPatchType.release : MinecraftPatchType.snapshot,
         version = data['version'],
         body = data['body'],
         id = data['id'],
