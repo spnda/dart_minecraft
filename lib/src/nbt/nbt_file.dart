@@ -6,6 +6,8 @@ import 'nbt_compression.dart';
 import 'nbt_file_reader.dart';
 import 'nbt_file_writer.dart';
 import 'tags/nbt_compound.dart';
+import '../exceptions/nbt_file_read_exception.dart';
+import '../exceptions/nbt_file_write_exception.dart';
 
 /// Represents a NBT file.
 class NbtFile {
@@ -44,6 +46,9 @@ class NbtFile {
   /// Read the file and read all data to the [root] node.
   Future<bool> readFile({File? file}) async {
     file ??= _file;
+    if (!file.existsSync()) {
+      throw NbtFileReadException('File does not exist.');
+    }
     _nbtFileReader = NbtFileReader();
     final val = await _nbtFileReader.beginRead(file);
     // Save a copy of the read root NbtCompound.
@@ -58,7 +63,7 @@ class NbtFile {
     _nbtFileWriter = NbtFileWriter();
     file ??= _file;
     if (root == null) {
-      throw Exception('Cannot write file, root is not defined.');
+      throw NbtFileWriteException('Cannot write file, root is not defined.');
     }
     return _nbtFileWriter.beginWrite(root!, file,
         nbtCompression: nbtCompression);
