@@ -10,7 +10,7 @@ class Yggdrasil {
   /// Authenticates a user with given credentials [username] and [password].
   ///
   /// [clientToken] should be identical for each request, otherwise old
-  /// access tokens will be invalidated. If ommitted, a randomly generated
+  /// access tokens will be invalidated. If omitted, a randomly generated
   /// version 4 UUID will be used.
   static Future<MojangAccount> authenticate(String username, String password,
       {String? clientToken}) async {
@@ -28,7 +28,7 @@ class Yggdrasil {
     return MojangAccount.fromJson(data);
   }
 
-  /// Refreshes the [account]. The [account] data will be overriden with the new
+  /// Refreshes the [account]. The [account] data will be overridden with the new
   /// refreshed data. The return value is also the same [account] object.
   static Future<MojangAccount> refresh(MojangAccount account) async {
     final payload = {

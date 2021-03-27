@@ -59,7 +59,7 @@ enum NbtTagType {
 /// Extension on [NbtTagType] to give each enum value some functions.
 extension NbtTagFunctions on NbtTagType {
   /// Gets a string representation of this tag.
-  /// The default toString() cannot be overriden by extensions and
+  /// The default toString() cannot be overridden by extensions and
   /// returns "NbtTagType.TAG_END", instead of "TAG_END" or "TAG_End",
   /// which is shorter and more helpful in the end.
   String asString() {

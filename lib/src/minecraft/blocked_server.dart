@@ -4,7 +4,7 @@ class BlockedServer {
   /// The SHA1 of the address of the server.
   final String addressSha1;
 
-  /// The adress of the server. Only available
+  /// The address of the server. Only available
   /// if the server has been 'cracked'.
   final String? address;
 
@@ -25,7 +25,7 @@ class BlockedServer {
     }
   }
 
-  /// Wether the SHA1 of this blocked server has been
+  /// Whether the SHA1 of this blocked server has been
   /// cracked and the actual address is known.
   bool get isCracked => address != null;
 
@@ -34,7 +34,7 @@ class BlockedServer {
     return (address != null) ? '$addressSha1:$address' : addressSha1;
   }
 
-  /// A list of blocked servers with actual adresses that have been cracked.
+  /// A list of blocked servers with actual addresses that have been cracked.
   /// Parsed list from https://wiki.vg/Mojang_API#Blocked_Servers.
   static const List<BlockedServer> _knownCrackedServers = <BlockedServer>[
     BlockedServer('6f2520f8bd70a718c568ab5274c56bdbbfc14ef4', '*.minetime.com'),

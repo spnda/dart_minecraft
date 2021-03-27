@@ -131,7 +131,7 @@ class NbtFileReader {
     return utf8.decode(string);
   }
 
-  /// Tries to detect the compression, wether this file was
+  /// Tries to detect the compression, whether this file was
   /// compressed with GZIP, ZLIB or wasn't compressed at all.
   NbtCompression _detectCompression() {
     final firstByte;

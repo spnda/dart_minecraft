@@ -47,7 +47,7 @@ class NbtCompound<T extends NbtTag> extends NbtList<T> {
     for (final val in children) {
       val.writeTag(fileWriter, withName: true, withType: true);
     }
-    // Write the last NbtEnd tag aswell, this one is not included in [children].
+    // Write the last NbtEnd tag as well, this one is not included in [children].
     NbtEnd(this).writeTag(fileWriter);
   }
 }

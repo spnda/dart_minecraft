@@ -40,7 +40,7 @@ class Version {
   DateTime get timeDateTime => DateTime.parse(time);
 
   /// The time this version was release at as a DateTime object.
-  DateTime get releaseDateTiem => DateTime.parse(releaseTime);
+  DateTime get releaseDateTime => DateTime.parse(releaseTime);
 
   Version.fromJson(Map<String, dynamic> data)
       : id = data['id'],

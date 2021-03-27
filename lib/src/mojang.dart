@@ -58,7 +58,7 @@ class Mojang {
 
   /// Returns a List of player UUIDs by a List of player names.
   ///
-  /// Usernames are not case sensitive and ones which are invalid or not found are ommitted.
+  /// Usernames are not case sensitive and ones which are invalid or not found are omitted.
   static Future<List<Pair<String, String>>> getUuids(
       List<String> usernames) async {
     final response = await WebUtil.post(_mojangApi, 'profiles/minecraft',
@@ -92,7 +92,7 @@ class Mojang {
     return Profile.fromJson(map);
   }
 
-  /// Changes the Mojang acccount name to [newName].
+  /// Changes the Mojang account name to [newName].
   static Future<bool> changeName(
       String uuid, String newName, String accessToken, String password) async {
     final body = <String, String>{'name': newName, 'password': password};
@@ -117,7 +117,7 @@ class Mojang {
         case 500:
           throw Exception('Timed out.');
         default:
-          throw Exception('Unexpected error occured.');
+          throw Exception('Unexpected error occurred.');
       }
     } else {
       return true;
@@ -140,7 +140,7 @@ class Mojang {
         case 401: throw Exception('Unauthorized.');
         case 403: throw Exception('Forbidden.');
         case 504: throw Exception('Timed out.');
-        default: throw Exception('Unexpected error occured.');
+        default: throw Exception('Unexpected error occurred.');
       } */
     } else {
       return true;
@@ -216,7 +216,7 @@ class Mojang {
     return Yggdrasil.authenticate(username, password);
   }
 
-  /// Refreshes the [account]. The [account] data will be overriden with the new
+  /// Refreshes the [account]. The [account] data will be overridden with the new
   /// refreshed data. The return value is also the same [account] object.
   @Deprecated('Use Yggradsil#refresh instead')
   static Future<MojangAccount> refresh(MojangAccount account) async {
