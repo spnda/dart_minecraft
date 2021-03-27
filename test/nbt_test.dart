@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:dart_minecraft/src/exceptions/nbt_exception.dart';
+import 'package:dart_minecraft/src/exceptions/nbt_file_write_exception.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -10,7 +12,12 @@ void main() {
       // As we have not yet called [readFile], the root node should be null.
       expect(nbtFile.root, isNull);
 
-      await nbtFile.readFile();
+      try {
+        await nbtFile.readFile();
+      } on NbtException catch (e) {
+        print(e);
+        return;
+      }
       final root = nbtFile.root;
       expect(root, isNotNull);
 
@@ -26,7 +33,12 @@ void main() {
       // bigtest.nbt is GZIP compressed and is therefore a special test file.
       // You can get bigtest.nbt from https://raw.github.com/Dav1dde/nbd/master/test/bigtest.nbt.
       final nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
-      await nbtFile.readFile();
+      try {
+        await nbtFile.readFile();
+      } on NbtException catch (e) {
+        print(e);
+        return;
+      }
       final root = nbtFile.root;
       expect(root, isNotNull);
 
@@ -44,7 +56,12 @@ void main() {
     test('Read level.dat', () async {
       // level.dat is simply any main minecraft world file.
       final nbtFile = NbtFile.fromPath('./test/level.dat');
-      await nbtFile.readFile();
+      try {
+        await nbtFile.readFile();
+      } on NbtException catch (e) {
+        print(e);
+        return;
+      }
       final root = nbtFile.root;
       expect(root, isNotNull);
 
@@ -60,7 +77,12 @@ void main() {
       // Player-nan-value.dat is a NBT file with a TAG_Double with a NaN (Not a Number).
       // This checks if the parser can detect this issue and handles the value accordingly.
       final nbtFile = NbtFile.fromPath('./test/NaN-value.nbt');
-      await nbtFile.readFile();
+      try {
+        await nbtFile.readFile();
+      } on NbtException catch (e) {
+        print(e);
+        return;
+      }
 
       expect(nbtFile.root, isNotNull);
 
@@ -88,41 +110,53 @@ void main() {
     }
 
     test('Rewrite servers.dat', () async {
-      final nbtFile = NbtFile.fromPath('./test/servers.dat');
-      await nbtFile.readFile();
+      try {
+        final nbtFile = NbtFile.fromPath('./test/servers.dat');
+        await nbtFile.readFile();
 
-      await nbtFile.writeFile(
-          file: File('./test/servers2.dat'),
-          nbtCompression: nbtFile.compression ?? NbtCompression.none);
+        await nbtFile.writeFile(
+            file: File('./test/servers2.dat'),
+            nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
-      expect(await compareFiles('./test/servers.dat', './test/servers2.dat'),
-          isTrue);
+        expect(await compareFiles('./test/servers.dat', './test/servers2.dat'),
+            isTrue);
+      } on NbtException catch (e) {
+        print(e);
+      }
     });
 
     test('Rewrite bigtest.dat', () async {
-      final nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
-      await nbtFile.readFile();
+      var nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
+      try {
+        await nbtFile.readFile();
 
-      await nbtFile.writeFile(
-          file: File('./test/bigtest2.nbt'),
-          nbtCompression: nbtFile.compression ?? NbtCompression.none);
+        await nbtFile.writeFile(
+            file: File('./test/bigtest2.nbt'),
+            nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
-      await nbtFile.readFile(file: File('./test/bigtest2.nbt'));
+        await nbtFile.readFile(file: File('./test/bigtest2.nbt'));
 
-      expect(await compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'),
-          isTrue);
+        expect(await compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'),
+            isTrue);
+      } on NbtException catch (e) {
+        print(e);
+      }
     });
 
     test('Rewrite level.dat', () async {
       final nbtFile = NbtFile.fromPath('./test/level.dat');
-      await nbtFile.readFile();
+      try {
+        await nbtFile.readFile();
 
-      await nbtFile.writeFile(
-          file: File('./test/level2.dat'),
-          nbtCompression: nbtFile.compression ?? NbtCompression.none);
+        await nbtFile.writeFile(
+            file: File('./test/level2.dat'),
+            nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
-      expect(
-          await compareFiles('./test/level.dat', './test/level2.dat'), isTrue);
+        expect(
+            await compareFiles('./test/level.dat', './test/level2.dat'), isTrue);
+      } on NbtException catch (e) {
+        print(e);
+      }
     });
   });
 
@@ -139,14 +173,18 @@ void main() {
       ],
     );
 
-    // Write the data to the file.
-    await nbtFile.writeFile(nbtCompression: NbtCompression.gzip);
+    try {
+      // Write the data to the file.
+      await nbtFile.writeFile(nbtCompression: NbtCompression.gzip);
 
-    // Re-read the file from disk.
-    await nbtFile.readFile();
+      // Re-read the file from disk.
+      await nbtFile.readFile();
 
-    expect(nbtFile.root, isNotNull);
-    expect(nbtFile.root!.children[0].value, equals(5430834));
-    expect(nbtFile.root!.children[1].value, equals('This is a String test!'));
+      expect(nbtFile.root, isNotNull);
+      expect(nbtFile.root!.children[0].value, equals(5430834));
+      expect(nbtFile.root!.children[1].value, equals('This is a String test!'));
+    } on NbtException catch (e) {
+      print(e);
+    }
   });
 }

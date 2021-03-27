@@ -1,5 +1,7 @@
-class NbtFileReadException implements Exception {
-  /// A human-readable descriptive error message.
+import 'package:dart_minecraft/src/exceptions/nbt_exception.dart';
+
+class NbtFileReadException implements NbtException {
+  @override
   final String message;
 
   /// A Exception representing some exception when
