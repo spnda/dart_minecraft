@@ -208,40 +208,4 @@ class Mojang {
     }
     return ret;
   }
-
-  /// Authenticates a user with given credentials [username] and [password].
-  @Deprecated('Use Yggradsil#authenticate instead')
-  static Future<MojangAccount> authenticate(
-      String username, String password) async {
-    return Yggdrasil.authenticate(username, password);
-  }
-
-  /// Refreshes the [account]. The [account] data will be overridden with the new
-  /// refreshed data. The return value is also the same [account] object.
-  @Deprecated('Use Yggradsil#refresh instead')
-  static Future<MojangAccount> refresh(MojangAccount account) async {
-    return Yggdrasil.refresh(account);
-  }
-
-  /// Checks if given [accessToken] and [clientToken] are still valid.
-  ///
-  /// [clientToken] is optional, though if provided should match the client token
-  /// that was used to obtained given [accessToken].
-  @Deprecated('Use Yggradsil#validate instead')
-  static Future<bool> validate(String accessToken,
-      {String? clientToken}) async {
-    return Yggdrasil.validate(accessToken, clientToken: clientToken);
-  }
-
-  /// Signs the user out and invalidates the accessToken.
-  @Deprecated('Use Yggradsil#signout instead')
-  static Future<bool> signout(String username, String password) async {
-    return Yggdrasil.signout(username, password);
-  }
-
-  /// Invalidates the accessToken of given [mojangAccount].
-  @Deprecated('Use Yggradsil#invalidate instead')
-  static Future<bool> invalidate(MojangAccount mojangAccount) async {
-    return Yggdrasil.invalidate(mojangAccount);
-  }
 }
