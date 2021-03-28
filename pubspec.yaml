@@ -1,6 +1,6 @@
 name: dart_minecraft
 description: Utilities for Minecraft and Mojang Web-APIs and reading/writing NBT Files. 
-version: 0.3.1
+version: 0.3.2
 homepage: https://github.com/spnda/dart_minecraft
 
 environment:
