@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2
+
+- Custom NBT File exceptions
+- More exceptions for Mojang functions
+- Implement MinecraftPatchType
+
 ## 0.3.1
 
 - Fix critical NBT_STRING write issue.
