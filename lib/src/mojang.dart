@@ -4,13 +4,11 @@ import 'dart:io';
 import 'exceptions/auth_exception.dart';
 import 'minecraft/blocked_server.dart';
 import 'minecraft/minecraft_statistics.dart';
-import 'mojang/mojang_account.dart';
 import 'mojang/mojang_status.dart';
 import 'mojang/name.dart';
 import 'mojang/profile.dart';
 import 'utilities/pair.dart';
 import 'utilities/web_util.dart';
-import 'yggdrasil.dart';
 
 /// Mojang API specific functionality.
 ///
@@ -25,7 +23,7 @@ class Mojang {
   static Future<MojangStatus> checkStatus() async {
     final response = await WebUtil.get(_statusApi, 'check');
     final list = await WebUtil.getJsonFromResponse(response);
-    if (!(list is List)) {
+    if (list is! List) {
       throw Exception(
           'Content returned from the server is in an unexpected format.');
     } else {
@@ -44,15 +42,17 @@ class Mojang {
     final response = await WebUtil.get(
         _mojangApi, 'users/profiles/minecraft/$username$time');
     final map = await WebUtil.getJsonFromResponse(response);
-    if (map == null) {
-      throw ArgumentError.value(
-          username, 'username', 'No user was found for given username');
-    }
-    if (!(map is Map)) {
+    if (map == null || map is! Map) {
       throw Exception(
           'Content returned from the server is in an unexpected format.');
     }
-    if (map['error'] != null) throw Exception(map['errorMessage']);
+    if (map['error'] != null) {
+      if (response.statusCode == 404) {
+        throw ArgumentError.value(
+            username, 'username', 'No user was found for given username');
+      }
+      throw Exception(map['errorMessage']);
+    }
     return Pair<String, String>(username, map['id']);
   }
 
@@ -64,7 +64,7 @@ class Mojang {
     final response = await WebUtil.post(_mojangApi, 'profiles/minecraft',
         usernames, {HttpHeaders.contentTypeHeader: 'application/json'});
     final list = await WebUtil.getJsonFromResponse(response);
-    if (!(list is List<Map>)) {
+    if (list is! List<Map>) {
       throw Exception(
           'Content returned from the server is in an unexpected format.');
     } else {
@@ -78,7 +78,10 @@ class Mojang {
   /// Returns the name history for the account with [uuid].
   static Future<List<Name>> getNameHistory(String uuid) async {
     final response = await WebUtil.get(_mojangApi, 'user/profiles/$uuid/names');
-    final list = await WebUtil.getJsonFromResponse(response) as List;
+    final list = await WebUtil.getJsonFromResponse(response);
+    if (list == null || list is! List || response.statusCode == 404) {
+      throw ArgumentError.value(uuid, 'uuid', 'User for given UUID could not be found');
+    }
     return Future.value(list.map((dynamic v) => Name.fromJson(v)).toList());
   }
 
@@ -89,6 +92,9 @@ class Mojang {
     final response =
         await WebUtil.get(_sessionApi, 'session/minecraft/profile/$uuid');
     final map = await WebUtil.getJsonFromResponse(response);
+    if (map == null || map is! Map<String, dynamic> || response.statusCode == 404) {
+      throw ArgumentError.value(uuid, 'uuid', 'User for given UUID could not be found');
+    }
     return Profile.fromJson(map);
   }
 

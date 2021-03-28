@@ -57,8 +57,7 @@ void main() {
       final nbtFile = NbtFile.fromPath('./test/level.dat');
       try {
         await nbtFile.readFile();
-      } on NbtException catch (e) {
-        print(e);
+      } on NbtException {
         return;
       }
       final root = nbtFile.root;
@@ -78,8 +77,7 @@ void main() {
       final nbtFile = NbtFile.fromPath('./test/NaN-value.nbt');
       try {
         await nbtFile.readFile();
-      } on NbtException catch (e) {
-        print(e);
+      } on NbtException {
         return;
       }
 
@@ -119,8 +117,8 @@ void main() {
 
         expect(await compareFiles('./test/servers.dat', './test/servers2.dat'),
             isTrue);
-      } on NbtException catch (e) {
-        print(e);
+      } on NbtException {
+        return;
       }
     });
 
@@ -137,8 +135,8 @@ void main() {
 
         expect(await compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'),
             isTrue);
-      } on NbtException catch (e) {
-        print(e);
+      } on NbtException {
+        return;
       }
     });
 
@@ -153,8 +151,8 @@ void main() {
 
         expect(
             await compareFiles('./test/level.dat', './test/level2.dat'), isTrue);
-      } on NbtException catch (e) {
-        print(e);
+      } on NbtException {
+        return;
       }
     });
   });
@@ -182,8 +180,8 @@ void main() {
       expect(nbtFile.root, isNotNull);
       expect(nbtFile.root!.children[0].value, equals(5430834));
       expect(nbtFile.root!.children[1].value, equals('This is a String test!'));
-    } on NbtException catch (e) {
-      print(e);
+    } on NbtException {
+      return;
     }
   });
 }
