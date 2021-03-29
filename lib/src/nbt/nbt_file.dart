@@ -18,10 +18,10 @@ class NbtFile {
   final File _file;
 
   /// The [NbtFileReader] of this file.
-  NbtFileReader _nbtFileReader;
+  late NbtFileReader _nbtFileReader;
 
   /// The [NbtFileWriter] of this file.
-  NbtFileWriter _nbtFileWriter;
+  late NbtFileWriter _nbtFileWriter;
 
   /// The root node of this file.
   NbtCompound? root;
@@ -29,28 +29,27 @@ class NbtFile {
   /// Create a [NbtFile] from a String path.
   /// May throw [FileSystemException].
   NbtFile.fromPath(String path)
-      : _file = File(path),
-        fileName = basename(path),
-        _nbtFileReader = NbtFileReader(),
-        _nbtFileWriter = NbtFileWriter();
+      : _file = File(path)..createSync(),
+        fileName = basename(path) {
+    _nbtFileReader = NbtFileReader(_file);
+    _nbtFileWriter = NbtFileWriter(_file);
+  }
 
   /// Creates a [NbtFile] from a [File].
   /// May throw [FileSystemException].
   NbtFile.fromFile(this._file)
       : fileName = '',
-        _nbtFileReader = NbtFileReader(),
-        _nbtFileWriter = NbtFileWriter() {
+        _nbtFileReader = NbtFileReader(_file),
+        _nbtFileWriter = NbtFileWriter(_file) {
     fileName = basename(_file.path);
   }
 
   /// Read the file and read all data to the [root] node.
-  Future<bool> readFile({File? file}) async {
-    file ??= _file;
-    if (!file.existsSync()) {
+  Future<bool> readFile() async {
+    if (!_file.existsSync()) {
       throw NbtFileReadException('File does not exist.');
     }
-    _nbtFileReader = NbtFileReader();
-    final val = await _nbtFileReader.beginRead(file);
+    final val = await _nbtFileReader.read();
     // Save a copy of the read root NbtCompound.
     root = _nbtFileReader.root;
     return val;
@@ -60,13 +59,12 @@ class NbtFile {
   /// This will override any data stored in that file.
   Future<bool> writeFile(
       {File? file, NbtCompression nbtCompression = NbtCompression.none}) async {
-    _nbtFileWriter = NbtFileWriter();
     file ??= _file;
     if (root == null) {
       throw NbtFileWriteException('Cannot write file, root is not defined.');
     }
-    return _nbtFileWriter.beginWrite(root!, file,
-        nbtCompression: nbtCompression);
+    _nbtFileWriter.nbtCompression = nbtCompression;
+    return _nbtFileWriter.write(root!, file: file);
   }
 
   /// Get the compression from the last read file. If no file has been read,

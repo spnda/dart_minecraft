@@ -7,14 +7,13 @@ import 'package:test/test.dart';
 void main() {
   group('Read files and check for values', () {
     test('Read servers.dat', () async {
-      final nbtFile = NbtFile.fromPath('./test/servers.dat');
-      // As we have not yet called [readFile], the root node should be null.
-      expect(nbtFile.root, isNull);
-
+      var nbtFile;
       try {
+        nbtFile = NbtFile.fromPath('./test/servers.dat');
+        // As we have not yet called [readFile], the root node should be null.
+        expect(nbtFile.root, isNull);
         await nbtFile.readFile();
-      } on NbtException catch (e) {
-        print(e);
+      } on NbtException {
         return;
       }
       final root = nbtFile.root;
@@ -31,11 +30,11 @@ void main() {
     test('Read bigtest.nbt', () async {
       // bigtest.nbt is GZIP compressed and is therefore a special test file.
       // You can get bigtest.nbt from https://raw.github.com/Dav1dde/nbd/master/test/bigtest.nbt.
-      final nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
+      var nbtFile;
       try {
+        nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
         await nbtFile.readFile();
-      } on NbtException catch (e) {
-        print(e);
+      } on NbtException {
         return;
       }
       final root = nbtFile.root;
@@ -54,8 +53,9 @@ void main() {
 
     test('Read level.dat', () async {
       // level.dat is simply any main minecraft world file.
-      final nbtFile = NbtFile.fromPath('./test/level.dat');
+      var nbtFile;
       try {
+        nbtFile = NbtFile.fromPath('./test/level.dat');
         await nbtFile.readFile();
       } on NbtException {
         return;
@@ -74,8 +74,9 @@ void main() {
     test('Read NaN double value', () async {
       // Player-nan-value.dat is a NBT file with a TAG_Double with a NaN (Not a Number).
       // This checks if the parser can detect this issue and handles the value accordingly.
-      final nbtFile = NbtFile.fromPath('./test/NaN-value.nbt');
+      var nbtFile;
       try {
+        nbtFile = NbtFile.fromPath('./test/NaN-value.nbt');
         await nbtFile.readFile();
       } on NbtException {
         return;
@@ -123,15 +124,13 @@ void main() {
     });
 
     test('Rewrite bigtest.dat', () async {
-      var nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
       try {
+        var nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
         await nbtFile.readFile();
 
         await nbtFile.writeFile(
             file: File('./test/bigtest2.nbt'),
             nbtCompression: nbtFile.compression ?? NbtCompression.none);
-
-        await nbtFile.readFile(file: File('./test/bigtest2.nbt'));
 
         expect(await compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'),
             isTrue);
@@ -141,8 +140,8 @@ void main() {
     });
 
     test('Rewrite level.dat', () async {
-      final nbtFile = NbtFile.fromPath('./test/level.dat');
       try {
+        final nbtFile = NbtFile.fromPath('./test/level.dat');
         await nbtFile.readFile();
 
         await nbtFile.writeFile(
@@ -158,19 +157,19 @@ void main() {
   });
 
   test('Write test.nbt', () async {
-    final nbtFile = NbtFile.fromPath('./test/test.nbt');
-    nbtFile.root = NbtCompound(
-      name: 'rootCompound',
-      children: <NbtTag>[
-        NbtInt(
-          name: 'intTest',
-          value: 5430834,
-        ),
-        NbtString(name: 'stringTest', value: 'This is a String test!'),
-      ],
-    );
-
     try {
+      final nbtFile = NbtFile.fromPath('./test/test.nbt');
+      nbtFile.root = NbtCompound(
+        name: 'rootCompound',
+        children: <NbtTag>[
+          NbtInt(
+            name: 'intTest',
+            value: 5430834,
+          ),
+          NbtString(name: 'stringTest', value: 'This is a String test!'),
+        ],
+      );
+
       // Write the data to the file.
       await nbtFile.writeFile(nbtCompression: NbtCompression.gzip);
 
