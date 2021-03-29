@@ -131,8 +131,6 @@ void main() {
             file: File('./test/bigtest2.nbt'),
             nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
-        await nbtFile.readFile(file: File('./test/bigtest2.nbt'));
-
         expect(await compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'),
             isTrue);
       } on NbtException {
