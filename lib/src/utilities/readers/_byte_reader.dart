@@ -48,11 +48,11 @@ abstract class ByteReader<T> {
 
   /// Reads a 8 byte variable length long starting at [readPosition].
   int readVarLong({bool signed = false}) {
-    final index = readPosition;
+    var index = readPosition;
     final value = () {
       var result = 0;
       for (var i = 0; i < 64; i += 7) {
-        final byte = readByteData!.getUint8(index);
+        final byte = readByteData!.getUint8(index++);
         result |= (0x7F & byte) << i;
         if (0x80 & byte == 0) break;
       }

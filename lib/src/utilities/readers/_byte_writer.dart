@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 abstract class ByteWriter<T> {
+  static const megaByte = 1048576;
+
   int writePosition = 0;
 
   late BytesBuilder bytesBuilder;
@@ -13,7 +15,7 @@ abstract class ByteWriter<T> {
   /// Allocate a new [ByteData] with 1Megabyte of data.
   void allocate() {
     // 1048576 Uint8 = 1048576 Bytes = 1MB
-    writeByteData = ByteData(1048576);
+    writeByteData = ByteData(megaByte);
   }
 
   /// Flush the data inside of [_curByteData] into the [_bytesBuilder] and
@@ -68,7 +70,7 @@ abstract class ByteWriter<T> {
 
   /// Write a single 8 byte variable length long.
   void writeVarLong(int value, {bool signed = false}) {
-    if (signed) {
+    if (signed || value < 0) {
       if (value < 0) {
         return writeVarLong(-2 * value - 1, signed: false);
       } else {
