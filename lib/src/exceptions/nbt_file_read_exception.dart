@@ -1,4 +1,4 @@
-import 'package:dart_minecraft/src/exceptions/nbt_exception.dart';
+import 'nbt_exception.dart';
 
 class NbtFileReadException implements NbtException {
   @override

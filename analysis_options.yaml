@@ -10,3 +10,4 @@ linter:
   rules:
     lines_longer_than_80_chars: false
     prefer_relative_imports: true
+    directives_ordering: true

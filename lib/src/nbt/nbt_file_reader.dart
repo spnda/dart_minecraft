@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dart_minecraft/src/exceptions/nbt_file_read_exception.dart';
+import '../exceptions/nbt_file_read_exception.dart';
 
 import 'nbt_compression.dart';
 import 'tags/nbt_compound.dart';

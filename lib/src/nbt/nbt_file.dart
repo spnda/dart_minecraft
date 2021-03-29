@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 
+import '../exceptions/nbt_file_read_exception.dart';
+import '../exceptions/nbt_file_write_exception.dart';
 import 'nbt_compression.dart';
 import 'nbt_file_reader.dart';
 import 'nbt_file_writer.dart';
 import 'tags/nbt_compound.dart';
-import '../exceptions/nbt_file_read_exception.dart';
-import '../exceptions/nbt_file_write_exception.dart';
 
 /// Represents a NBT file.
 class NbtFile {
