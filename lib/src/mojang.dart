@@ -80,7 +80,8 @@ class Mojang {
     final response = await WebUtil.get(_mojangApi, 'user/profiles/$uuid/names');
     final list = await WebUtil.getJsonFromResponse(response);
     if (list == null || list is! List || response.statusCode == 404) {
-      throw ArgumentError.value(uuid, 'uuid', 'User for given UUID could not be found');
+      throw ArgumentError.value(
+          uuid, 'uuid', 'User for given UUID could not be found');
     }
     return Future.value(list.map((dynamic v) => Name.fromJson(v)).toList());
   }
@@ -92,8 +93,11 @@ class Mojang {
     final response =
         await WebUtil.get(_sessionApi, 'session/minecraft/profile/$uuid');
     final map = await WebUtil.getJsonFromResponse(response);
-    if (map == null || map is! Map<String, dynamic> || response.statusCode == 404) {
-      throw ArgumentError.value(uuid, 'uuid', 'User for given UUID could not be found');
+    if (map == null ||
+        map is! Map<String, dynamic> ||
+        response.statusCode == 404) {
+      throw ArgumentError.value(
+          uuid, 'uuid', 'User for given UUID could not be found');
     }
     return Profile.fromJson(map);
   }

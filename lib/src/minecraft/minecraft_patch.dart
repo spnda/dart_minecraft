@@ -29,7 +29,9 @@ class MinecraftPatch {
 
   MinecraftPatch.fromJson(Map<String, dynamic> data)
       : title = data['title'],
-        type = data['type'] == 'release' ? MinecraftPatchType.release : MinecraftPatchType.snapshot,
+        type = data['type'] == 'release'
+            ? MinecraftPatchType.release
+            : MinecraftPatchType.snapshot,
         version = data['version'],
         body = data['body'],
         id = data['id'],

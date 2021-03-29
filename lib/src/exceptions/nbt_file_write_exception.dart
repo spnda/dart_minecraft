@@ -4,7 +4,7 @@ class NbtFileWriteException implements NbtException {
   @override
   final String message;
 
-  /// Thrown when we encounter an issue writing 
+  /// Thrown when we encounter an issue writing
   /// NBT to a file.
   NbtFileWriteException(this.message);
 

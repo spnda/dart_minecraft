@@ -47,6 +47,7 @@ class Yggdrasil {
         case 'ForbiddenOperationException':
           throw AuthException(AuthException.invalidCredentialsMessage);
         case 'IllegalArgumentException':
+
           /// Throws when access or client token are invalid / already in use.
           throw ArgumentError(data['errorMessage']);
         default:

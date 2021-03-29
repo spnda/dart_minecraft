@@ -149,8 +149,8 @@ void main() {
             file: File('./test/level2.dat'),
             nbtCompression: nbtFile.compression ?? NbtCompression.none);
 
-        expect(
-            await compareFiles('./test/level.dat', './test/level2.dat'), isTrue);
+        expect(await compareFiles('./test/level.dat', './test/level2.dat'),
+            isTrue);
       } on NbtException {
         return;
       }

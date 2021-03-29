@@ -92,7 +92,8 @@ void main() async {
     test('Test if access token is valid', () async {
       try {
         if (user == null) return;
-        var valid = await Yggdrasil.validate(user!.accessToken, clientToken: user!.clientToken);
+        var valid = await Yggdrasil.validate(user!.accessToken,
+            clientToken: user!.clientToken);
         expect(valid, isTrue);
       } on Error catch (e) {
         print(e);
