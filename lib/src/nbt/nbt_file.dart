@@ -18,10 +18,10 @@ class NbtFile {
   final File _file;
 
   /// The [NbtFileReader] of this file.
-  late NbtFileReader _nbtFileReader;
+  NbtFileReader? _nbtFileReader;
 
   /// The [NbtFileWriter] of this file.
-  late NbtFileWriter _nbtFileWriter;
+  NbtFileWriter? _nbtFileWriter;
 
   /// The root node of this file.
   NbtCompound? root;
@@ -30,17 +30,12 @@ class NbtFile {
   /// May throw [FileSystemException].
   NbtFile.fromPath(String path)
       : _file = File(path)..createSync(),
-        fileName = basename(path) {
-    _nbtFileReader = NbtFileReader(_file);
-    _nbtFileWriter = NbtFileWriter(_file);
-  }
+        fileName = basename(path);
 
   /// Creates a [NbtFile] from a [File].
   /// May throw [FileSystemException].
   NbtFile.fromFile(this._file)
-      : fileName = '',
-        _nbtFileReader = NbtFileReader(_file),
-        _nbtFileWriter = NbtFileWriter(_file) {
+      : fileName = '' {
     fileName = basename(_file.path);
   }
 
@@ -49,9 +44,10 @@ class NbtFile {
     if (!_file.existsSync()) {
       throw NbtFileReadException('File does not exist.');
     }
-    final val = await _nbtFileReader.read();
+    _nbtFileReader = NbtFileReader(_file);
+    final val = await _nbtFileReader!.read();
     // Save a copy of the read root NbtCompound.
-    root = _nbtFileReader.root;
+    root = _nbtFileReader!.root;
     return val;
   }
 
@@ -63,11 +59,13 @@ class NbtFile {
     if (root == null) {
       throw NbtFileWriteException('Cannot write file, root is not defined.');
     }
-    _nbtFileWriter.nbtCompression = nbtCompression;
-    return _nbtFileWriter.write(root!, file: file);
+
+    _nbtFileWriter = NbtFileWriter(file);
+    _nbtFileWriter!.nbtCompression = nbtCompression;
+    return _nbtFileWriter!.write(root!, file: file);
   }
 
   /// Get the compression from the last read file. If no file has been read,
   /// this value will be null.
-  NbtCompression? get compression => _nbtFileReader.nbtCompression;
+  NbtCompression? get compression => _nbtFileReader?.nbtCompression;
 }

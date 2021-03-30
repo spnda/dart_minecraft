@@ -16,7 +16,7 @@ class NbtFileReader extends ByteReader<bool> {
   NbtCompound? root;
 
   /// The compression of [_file].
-  late NbtCompression nbtCompression;
+  NbtCompression? nbtCompression;
 
   /// Creates a [NbtFileReader].
   NbtFileReader(this._file) {
