@@ -38,15 +38,17 @@ abstract class ByteReader<T> {
   }
 
   /// Reads a 8 byte integer starting at [readPosition].
-  int readLong({bool signed = false}) {
+  int readLong({bool signed = false, Endian endian = Endian.big}) {
     final value = signed
-        ? readByteData!.getInt64(readPosition)
-        : readByteData!.getUint64(readPosition);
+        ? readByteData!.getInt64(readPosition, endian)
+        : readByteData!.getUint64(readPosition, endian);
     readPosition += 8;
     return value;
   }
 
   /// Reads a 8 byte variable length long starting at [readPosition].
+  /// The format of this long will be as to LEB128, or better what
+  /// Minecraft uses.
   int readVarLong({bool signed = false}) {
     var index = readPosition;
     final value = () {

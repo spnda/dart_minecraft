@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import '../utilities/readers/_byte_reader.dart';
+import 'packets/pong_packet.dart';
 import 'packets/response_packet.dart';
 import 'packets/server_packet.dart';
 
@@ -38,6 +39,8 @@ class PacketReader extends ByteReader<bool> {
     switch (id) {
       case 0:
         return ResponsePacket()..read(this);
+      case 1:
+        return PongPacket()..read(this);
       default:
         throw Exception('Encountered unexpected packet with ID $id');
     }
