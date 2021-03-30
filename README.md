@@ -46,13 +46,26 @@ void main() async {
 }
 ```
 
+### Pinging a server
+
+```dart
+void main() async {
+	/// Pinging a server and getting its basic information is 
+	/// as easy as that.
+	final server = await ping('mc.hypixel.net');
+	if (server == null || server.response == null) return;
+	print('Latency: ${server.ping}');
+	final players = ping.response!.players;
+	print('${players.online} / ${players.max}'); // e.g. 5 / 20
+}
+```
+
 Planned
 --------
 
 - [x] Support for all the Minecraft and Minecraft Launcher APIs.
 - [x] Support for reading and writing NBT files.
-- [ ] Support for launching Minecraft itself.
-- [ ] Support for seeing and joining a Minecraft Server.
+- [x] Support for seeing Minecraft Servers.
 
 License
 --------

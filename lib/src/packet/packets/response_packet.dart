@@ -10,7 +10,7 @@ import 'server_packet.dart';
 class ResponsePacket extends ServerPacket {
   /// The time in milliseconds that it took for the server to receive
   /// the first request packet. If the server returns the same timestamp,
-  /// this will instead be the time it took for the server to respond to 
+  /// this will instead be the time it took for the server to respond to
   /// the request.
   int? ping;
 
