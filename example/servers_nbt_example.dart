@@ -17,29 +17,17 @@ void main() async {
 
   /// If you have not supplied a servers.dat file to read from, we'll
   /// fill in some basic servers as an example.
-  nbtFile.root ??= NbtCompound(
-    name: '',
-    children: [
-      NbtList(
-        name: 'servers',
-        children: <NbtCompound>[
-          NbtCompound(
-            name: '',
-            children: [
-              NbtString(
-                name: 'ip',
-                value: 'mc.hypixel.net'
-              ),
-              NbtString(
-                name: 'name',
-                value: 'Hypixel'
-              ),
-            ]
-          ),
-        ],
-      )
-    ]
-  );
+  nbtFile.root ??= NbtCompound(name: '', children: [
+    NbtList(
+      name: 'servers',
+      children: <NbtCompound>[
+        NbtCompound(name: '', children: [
+          NbtString(name: 'ip', value: 'mc.hypixel.net'),
+          NbtString(name: 'name', value: 'Hypixel'),
+        ]),
+      ],
+    )
+  ]);
 
   /// As we now have NBT data stored in our [NbtFile], we
   /// will begin reading from it and pinging the first

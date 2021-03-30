@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.3
+
+- Implement server pinging
+- Generalized NBT file read/write internally.
+
 ## 0.3.2
 
 - Custom NBT File exceptions
