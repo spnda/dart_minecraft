@@ -8,9 +8,7 @@ class PingPacket extends ServerPacket {
   PingPacket(this.value) : super(1);
 
   @override
-  void read(PacketReader reader) {
-
-  }
+  void read(PacketReader reader) {}
 
   @override
   void writePacket(PacketWriter writer) {

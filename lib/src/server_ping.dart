@@ -58,8 +58,14 @@ Future<ResponsePacket?> ping(String serverUri, {int port = 25565}) async {
     final pongPacket = await _readPacket(stream) as PongPacket;
 
     await socket.close();
+    var ping = pongPacket.value! - pingPacket.value;
 
-    return responsePacket..ping = (pingPacket.value - pongPacket.value!);
+    /// If the ping is 0, we'll instead use the time it took
+    /// for the server to respond and the packet returning back home.
+    if (ping <= 0) {
+      ping = _now() - pingPacket.value;
+    }
+    return responsePacket..ping = ping;
   } on SocketException {
     throw PingException('Could not connect to $serverUri');
   } on RangeError {

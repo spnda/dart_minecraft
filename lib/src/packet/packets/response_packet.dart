@@ -8,6 +8,10 @@ import 'server_packet.dart';
 /// This packet contains various information like icon, description,
 /// current server count and the server's version and protocol version.
 class ResponsePacket extends ServerPacket {
+  /// The time in milliseconds that it took for the server to receive
+  /// the first request packet. If the server returns the same timestamp,
+  /// this will instead be the time it took for the server to respond to 
+  /// the request.
   int? ping;
 
   ServerResponse? response;

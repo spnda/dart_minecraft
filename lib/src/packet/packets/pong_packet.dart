@@ -13,7 +13,5 @@ class PongPacket extends ServerPacket {
   }
 
   @override
-  void writePacket(PacketWriter writer) {
-
-  }
+  void writePacket(PacketWriter writer) {}
 }
