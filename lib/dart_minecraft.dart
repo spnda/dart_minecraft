@@ -2,6 +2,7 @@ library minecraft;
 
 export 'src/exceptions/auth_exception.dart';
 export 'src/exceptions/nbt_file_read_exception.dart';
+export 'src/exceptions/nbt_file_write_exception.dart';
 export 'src/exceptions/ping_exception.dart';
 export 'src/minecraft.dart';
 export 'src/minecraft/minecraft_news.dart';

@@ -41,11 +41,20 @@ Future<ServerPacket> _readPacket(Stream<Uint8List> stream) async {
 
 int _now() => DateTime.now().millisecondsSinceEpoch;
 
+Future<ResponsePacket?> pingUri(String serverUri) async {
+  final split = serverUri.split(':');
+  if (split.length == 2) {
+    return ping(split[0], port: int.parse(split[1]));
+  } else {
+    return ping(split[0]);
+  }
+}
+
 /// Ping a single server. [port] will default to 25565 as that is the
 /// default Minecraft server port. This method is for post 1.6 servers.
-Future<ResponsePacket?> ping(String serverUri, {int port = 25565}) async {
+Future<ResponsePacket?> ping(String serverUri, {int port = 25565, Duration timeout = const Duration(seconds: 30)}) async {
   try {
-    final socket = await Socket.connect(serverUri, port);
+    final socket = await Socket.connect(serverUri, port, timeout: timeout);
     final stream = socket.asBroadcastStream();
 
     _writePacket(socket, HandshakePacket(serverAddress: serverUri));

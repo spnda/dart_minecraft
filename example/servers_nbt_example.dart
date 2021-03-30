@@ -54,7 +54,7 @@ void main() async {
     final ip = tag.getChildrenByName('ip');
 
     try {
-      final server = await ping(ip.first.value);
+      final server = await pingUri(ip.first.value);
       if (server == null || server.response == null) continue;
       final players = server.response!.players;
       print('Pinged ${ip.first.value}...');
