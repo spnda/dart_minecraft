@@ -8,6 +8,8 @@ import 'server_packet.dart';
 /// This packet contains various information like icon, description,
 /// current server count and the server's version and protocol version.
 class ResponsePacket extends ServerPacket {
+  int? ping;
+
   ServerResponse? response;
 
   ResponsePacket() : super(0x00);
@@ -71,7 +73,7 @@ class ServerDescription {
   final String description;
 
   ServerDescription.fromJson(Map<String, dynamic> json)
-      : description = json['description'];
+      : description = json['description'] ?? '';
 
   ServerDescription.fromString(String description) : description = description;
 }

@@ -6,8 +6,10 @@ Future<int> main() async {
   /// In this example we'll read content from a NBT File,
   /// which in its root compound has a single NBT_String that
   /// contains a UUID of a player, we'll get the skin texture from.
-  final nbtFile = NbtFile.fromPath('./example/data.nbt');
+  final file = File('./example/data.nbt');
+  NbtFile? nbtFile;
   try {
+    nbtFile = NbtFile.fromFile(file);
     await nbtFile.readFile();
   } on FileSystemException catch (e) {
     print(e);
@@ -15,6 +17,8 @@ Future<int> main() async {
   } on NbtFileReadException {
     print('Cannot read data.nbt');
   }
+
+  nbtFile ??= NbtFile.fromFile(file);
 
   /// If the file doesn't exist we'll replace the file with some example
   /// data. This is how one would create nbt data using this package.

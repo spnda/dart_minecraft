@@ -1,8 +1,8 @@
 import '../packet_reader.dart';
 import '../packet_writer.dart';
 
-/// The basis of each and every packet for
-/// post 1.6 servers.
+/// The basis of each and every packet for post 1.6
+/// servers.
 abstract class ServerPacket {
   /// The ID of this packet.
   final int id;
