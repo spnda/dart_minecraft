@@ -34,8 +34,7 @@ class NbtFile {
 
   /// Creates a [NbtFile] from a [File].
   /// May throw [FileSystemException].
-  NbtFile.fromFile(this._file)
-      : fileName = '' {
+  NbtFile.fromFile(this._file) : fileName = '' {
     fileName = basename(_file.path);
   }
 
