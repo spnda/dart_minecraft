@@ -28,11 +28,13 @@ class PacketWriter extends ByteWriter<bool> {
     return bytesBuilder.toBytes();
   }
 
+  /// Write a UTF8 encoded String with it's length
+  /// prefixed as a variable length long integer.
   @override
   void writeString(String? value) {
     if (value == null) return;
     final stringData = utf8.encode(value);
-    writeVarLong(value.length, signed: false);
+    writeVarLong(stringData.length, signed: false);
     writeBytes(stringData);
   }
 }
