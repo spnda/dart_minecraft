@@ -1,0 +1,4 @@
+enum PacketCompression {
+  none,
+  zlib,
+}

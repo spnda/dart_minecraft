@@ -32,6 +32,15 @@ abstract class ByteWriter<T> {
     }
   }
 
+  /// Flush and re-allocate new bytes, while
+  /// saving the old bytes and returning them.
+  Uint8List get getBytes {
+    flush(ByteWriter.megaByte);
+    var bytes = bytesBuilder.toBytes();
+    allocate();
+    return bytes;
+  }
+
   /// Write a single byte.
   void writeByte(int value, {bool signed = false}) {
     flush(1);

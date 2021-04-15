@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import '../pair.dart';
+
 abstract class ByteReader<T> {
   /// List of bytes to read.
   Uint8List? data;
@@ -11,6 +13,12 @@ abstract class ByteReader<T> {
 
   /// The current read position inside of [_byteData];
   int readPosition = 0;
+
+  void reset(Uint8List list) {
+    readPosition = 0;
+    data = list;
+    readByteData = data!.buffer.asByteData();
+  }
 
   /// Reads a single byte at [readPosition].
   int readByte({bool signed = false}) {
@@ -49,23 +57,24 @@ abstract class ByteReader<T> {
   /// Reads a 8 byte variable length long starting at [readPosition].
   /// The format of this long will be as to LEB128, or better what
   /// Minecraft uses.
-  int readVarLong({bool signed = false}) {
+  /// Returns a Pair, in which the first integer is the read value
+  /// and the second the length of the var-integer in bytes.
+  Pair<int, int> readVarLong({bool signed = false}) {
     var index = readPosition;
-    final value = () {
-      var result = 0;
-      for (var i = 0; i < 64; i += 7) {
-        final byte = readByteData!.getUint8(index++);
-        result |= (0x7F & byte) << i;
-        if (0x80 & byte == 0) break;
-      }
-      readPosition = index;
-      return result;
-    }.call();
+    var value = 0;
+    for (var i = 0; i < 64; i += 7) {
+      final byte = readByteData!.getUint8(index++);
+      value |= (0x7F & byte) << i;
+      if (0x80 & byte == 0) break;
+    }
+    var length = index - readPosition;
+    readPosition = index;
+
     if (signed) {
       final rem = value % 2;
-      return rem == 0 ? value ~/ 2 : (value ~/ -2) - 1;
+      return Pair(rem == 0 ? value ~/ 2 : (value ~/ -2) - 1, length);
     } else {
-      return value;
+      return Pair(value, length);
     }
   }
 

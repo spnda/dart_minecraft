@@ -30,7 +30,7 @@ Future<ServerPacket> _readPacket(Stream<Uint8List> stream) async {
     buffer.addAll(data);
 
     final packetReader = PacketReader.fromList(buffer);
-    final size = packetReader.readVarLong(signed: false);
+    final size = packetReader.readVarLong(signed: false).first;
 
     if (buffer.length >= size) break;
   }
