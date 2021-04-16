@@ -4,8 +4,6 @@ import 'dart:typed_data';
 
 import '../utilities/readers/_byte_reader.dart';
 import 'packet_compression.dart';
-import 'packets/pong_packet.dart';
-import 'packets/response_packet.dart';
 import 'packets/server_packet.dart';
 
 /// Reads different server packets from binary into objects.
@@ -25,7 +23,8 @@ class PacketReader extends ByteReader<bool> {
     return PacketReader(Uint8List.fromList(list));
   }
 
-  ServerPacket readPacket({PacketCompression compression = PacketCompression.none}) {
+  ServerPacket readPacket(
+      {PacketCompression compression = PacketCompression.none}) {
     Uint8List? payload;
     int? id;
     switch (compression) {
@@ -35,7 +34,8 @@ class PacketReader extends ByteReader<bool> {
 
         // Decompress the packet data.
         var size = packetSize - dataSize.second;
-        final compressedPayload = Uint8List(size); // This includes the packet ID.
+        final compressedPayload =
+            Uint8List(size); // This includes the packet ID.
         for (var i = 0; i < size - 1; i++) {
           compressedPayload[i] = readByte(signed: false);
         }
@@ -61,14 +61,11 @@ class PacketReader extends ByteReader<bool> {
 
     reset(payload);
 
-    switch (id) {
-      case 0:
-        return ResponsePacket()..read(this);
-      case 1:
-        return PongPacket()..read(this);
-      default:
-        throw Exception('Encountered unexpected packet with ID $id');
+    final packet = ServerPacket.readPacket(id, this);
+    if (packet == null) {
+      throw Exception('Encountered unexpected packet with ID $id');
     }
+    return packet;
   }
 
   /// Read a string where the length is encoded as a var long.

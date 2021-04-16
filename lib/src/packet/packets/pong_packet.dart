@@ -5,7 +5,10 @@ import 'server_packet.dart';
 class PongPacket extends ServerPacket {
   int? value;
 
-  PongPacket() : super(1);
+  PongPacket();
+
+  @override
+  int get getID => 1;
 
   @override
   void read(PacketReader reader) {
@@ -14,4 +17,9 @@ class PongPacket extends ServerPacket {
 
   @override
   void writePacket(PacketWriter writer) {}
+
+  @override
+  ServerPacket clone() {
+    return PongPacket();
+  }
 }

@@ -16,7 +16,10 @@ class ResponsePacket extends ServerPacket {
 
   ServerResponse? response;
 
-  ResponsePacket() : super(0x00);
+  ResponsePacket();
+
+  @override
+  int get getID => 0;
 
   @override
   Future<bool> read(PacketReader reader) async {
@@ -27,6 +30,11 @@ class ResponsePacket extends ServerPacket {
 
   @override
   void writePacket(PacketWriter writer) {}
+
+  @override
+  ServerPacket clone() {
+    return ResponsePacket();
+  }
 }
 
 class ServerResponse {

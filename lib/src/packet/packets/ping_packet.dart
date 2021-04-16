@@ -5,7 +5,10 @@ import 'server_packet.dart';
 class PingPacket extends ServerPacket {
   final int value;
 
-  PingPacket(this.value) : super(1);
+  PingPacket(this.value);
+
+  @override
+  int get getID => 1;
 
   @override
   void read(PacketReader reader) {}
@@ -13,5 +16,10 @@ class PingPacket extends ServerPacket {
   @override
   void writePacket(PacketWriter writer) {
     writer.writeLong(value, signed: true);
+  }
+
+  @override
+  ServerPacket clone() {
+    throw UnsupportedError('clone() is not supported on serverbound packets.');
   }
 }

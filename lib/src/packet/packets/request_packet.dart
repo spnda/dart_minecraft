@@ -5,7 +5,10 @@ import 'server_packet.dart';
 /// Packet without any fields indicating that the
 /// client is requesting basic server information.
 class RequestPacket extends ServerPacket {
-  RequestPacket() : super(0);
+  RequestPacket();
+
+  @override
+  int get getID => 0;
 
   @override
   Future<bool> read(PacketReader reader) async {
@@ -14,4 +17,9 @@ class RequestPacket extends ServerPacket {
 
   @override
   void writePacket(PacketWriter writer) {}
+
+  @override
+  ServerPacket clone() {
+    throw UnsupportedError('clone() is not supported on serverbound packets.');
+  }
 }

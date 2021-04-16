@@ -55,6 +55,10 @@ Future<ResponsePacket?> pingUri(String serverUri) async {
 Future<ResponsePacket?> ping(String serverUri,
     {int port = 25565, Duration timeout = const Duration(seconds: 30)}) async {
   try {
+    // Register the packets we will require
+    ServerPacket.registerClientboundPacket(ResponsePacket());
+    ServerPacket.registerClientboundPacket(PongPacket());
+
     final socket = await Socket.connect(serverUri, port, timeout: timeout);
     final stream = socket.asBroadcastStream();
 

@@ -15,21 +15,25 @@ class PacketWriter extends ByteWriter<bool> {
 
   /// Write a single server packet. This includes writing the
   /// length and packet id.
-  Uint8List writePacket(ServerPacket packet, {PacketCompression compression = PacketCompression.none}) {
-    if (compression == PacketCompression.zlib) writeVarLong(packet.id);
+  Uint8List writePacket(ServerPacket packet,
+      {PacketCompression compression = PacketCompression.none}) {
+    if (compression == PacketCompression.zlib) writeVarLong(packet.getID);
     packet.writePacket(this);
     var bytes = getBytes;
     bytesBuilder.clear(); // Clear our previous builder.
 
     switch (compression) {
       case PacketCompression.zlib:
+
         /// With ZLIB compression, packets have 4 fields:
         /// - Packet Length (VarInt), includes length of data length, packet ID and data.
         /// - Data Length (VarInt)
         /// - Packet ID (VarInt, compressed)
         /// - Data (Byte Array, compressed)
         final dataLength = bytes.lengthInBytes;
-        bytes = zlib.encode(bytes) as Uint8List; /// Bytes already includes the packet id.
+        bytes = zlib.encode(bytes) as Uint8List;
+
+        /// Bytes already includes the packet id.
 
         /// Write the data length as a var-long and then flush
         /// the bytes to get the single var-long in bytes.
@@ -39,21 +43,24 @@ class PacketWriter extends ByteWriter<bool> {
 
         writeVarLong(dataLengthInBytes.lengthInBytes + bytes.length);
         writeBytes(dataLengthInBytes);
-        writeBytes(bytes); /// Write the previously created packet ID and data.
+        writeBytes(bytes);
+
+        /// Write the previously created packet ID and data.
         return bytesBuilder.toBytes();
-        
+
       case PacketCompression.none:
       default:
+
         /// Without compression, packets have only 3 fields:
         /// - Length (VarInt)
         /// - Packet ID (VarInt)
         /// - Data (Byte Array)
         writeVarLong(bytes.length + 1, signed: false);
-        writeVarLong(packet.id, signed: false);
+        writeVarLong(packet.getID, signed: false);
         writeBytes(bytes);
         flush(ByteWriter.megaByte);
         return bytesBuilder.toBytes();
-      }
+    }
   }
 
   /// Write a UTF8 encoded String with it's length

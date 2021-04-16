@@ -24,7 +24,10 @@ class HandshakePacket extends ServerPacket {
     this.protocolVersion = -1,
     this.serverPort = 25565,
     this.nextState = 1,
-  }) : super(0); // handshake has ID 0x00
+  });
+
+  @override
+  int get getID => 0;
 
   @override
   Future<bool> read(PacketReader reader) async {
@@ -37,5 +40,10 @@ class HandshakePacket extends ServerPacket {
     writer.writeString(serverAddress);
     writer.writeShort(serverPort, signed: false);
     writer.writeVarLong(nextState, signed: false);
+  }
+
+  @override
+  ServerPacket clone() {
+    throw UnsupportedError('clone() is not supported on serverbound packets.');
   }
 }
