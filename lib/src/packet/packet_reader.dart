@@ -23,6 +23,33 @@ class PacketReader extends ByteReader<bool> {
     return PacketReader(Uint8List.fromList(list));
   }
 
+  /// Read a single packet from a Stream. This Stream will most likely
+  /// from a [Socket], though any Stream will work. This will read
+  /// multiple chunks from the Stream, until the initially sent packet
+  /// size is met.
+  static Future<ServerPacket> readPacketFromStream(
+      Stream<Uint8List> stream) async {
+    final buffer = <int>[];
+
+    /// As a single packet can be bigger than a single
+    /// chunk of data that is emitted, we'll add to
+    /// our [buffer] object and check if the length is
+    /// now as big as the packet's [size] says.
+    await for (final data in stream) {
+      if (data.isEmpty) continue;
+
+      buffer.addAll(data);
+
+      final packetReader = PacketReader.fromList(buffer);
+      final size = packetReader.readVarLong(signed: false).first;
+
+      if (buffer.length >= size) break;
+    }
+
+    final packetReader = PacketReader.fromList(buffer);
+    return packetReader.readPacket();
+  }
+
   ServerPacket readPacket(
       {PacketCompression compression = PacketCompression.none}) {
     Uint8List? payload;

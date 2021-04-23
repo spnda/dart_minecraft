@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'exceptions/ping_exception.dart';
 import 'packet/packet_reader.dart';
@@ -15,28 +14,6 @@ import 'packet/packets/server_packet.dart';
 void _writePacket(Socket socket, ServerPacket packet) async {
   final packetEncoded = PacketWriter().writePacket(packet);
   socket.add(packetEncoded);
-}
-
-Future<ServerPacket> _readPacket(Stream<Uint8List> stream) async {
-  final buffer = <int>[];
-
-  /// As a single packet can be bigger than a single
-  /// chunk of data that is emitted, we'll add to
-  /// our [buffer] object and check if the length is
-  /// now as big as the packet's [size] says.
-  await for (final data in stream) {
-    if (data.isEmpty) continue;
-
-    buffer.addAll(data);
-
-    final packetReader = PacketReader.fromList(buffer);
-    final size = packetReader.readVarLong(signed: false).first;
-
-    if (buffer.length >= size) break;
-  }
-
-  final packetReader = PacketReader.fromList(buffer);
-  return packetReader.readPacket();
 }
 
 int _now() => DateTime.now().millisecondsSinceEpoch;
@@ -65,11 +42,13 @@ Future<ResponsePacket?> ping(String serverUri,
     _writePacket(socket, HandshakePacket(serverAddress: serverUri));
     _writePacket(socket, RequestPacket());
 
-    final responsePacket = await _readPacket(stream) as ResponsePacket;
+    final responsePacket =
+        await PacketReader.readPacketFromStream(stream) as ResponsePacket;
 
     final pingPacket = PingPacket(_now());
     _writePacket(socket, pingPacket);
-    final pongPacket = await _readPacket(stream) as PongPacket;
+    final pongPacket =
+        await PacketReader.readPacketFromStream(stream) as PongPacket;
 
     await socket.close();
     var ping = pongPacket.value! - pingPacket.value;
