@@ -1,5 +1,4 @@
-dart_minecraft
-==============
+# dart_minecraft
 
 [![Pub Package](https://img.shields.io/pub/v/dart_minecraft.svg?style=for-the-badge&logo=Dart)](https://pub.dev/packages/dart_minecraft)
 [![GitHub Issues](https://img.shields.io/github/issues/spnda/dart_minecraft.svg?style=for-the-badge&logo=GitHub)](https://github.com/spnda/dart_minecraft/issues)
@@ -8,8 +7,7 @@ dart_minecraft
 
 A simple Dart library for interfacing with the Mojang and Minecraft APIs.
 
-Examples
---------
+## Examples
 
 ### Skin/Cape of a player
 
@@ -60,14 +58,12 @@ void main() async {
 }
 ```
 
-Planned
---------
+## Planned
 
 - [x] Support for all the Minecraft and Minecraft Launcher APIs.
 - [x] Support for reading and writing NBT files.
 - [x] Support for seeing Minecraft Servers.
 
-License
---------
+## License
 
 The MIT License, see [LICENSE](https://github.com/spnda/dart_minecraft/raw/main/LICENSE).
