@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.4
+
+- Add: You can now register custom clientbound packets and implement a custom PacketReader.
+- Fix: UTF-8 Values inside of any packet resulted in invalid data.
+
 ## 0.3.3
 
 - Implement server pinging
