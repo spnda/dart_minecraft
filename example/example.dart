@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:dart_minecraft/src/mojang_api.dart';
 
 Future<int> main() async {
   /// In this example we'll read content from a NBT File
@@ -34,7 +35,7 @@ Future<int> main() async {
   /// This will allow us to get their profile, which contains the
   /// textures.
   if (nbtString == null) return -1;
-  final profile = await Mojang.getProfile(nbtString.value);
+  final profile = await getProfile(nbtString.value);
   final skinUrl = profile.textures.getSkinUrl();
   print("Notch's Skin URL: $skinUrl"); // URL to Notch's skin texture.
 

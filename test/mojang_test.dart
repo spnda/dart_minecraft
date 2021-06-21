@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:dart_minecraft/src/mojang_api.dart';
 import 'package:dart_minecraft/src/mojang/mojang_account.dart';
+import 'package:dart_minecraft/src/yggdrasil_api.dart';
 import 'package:test/test.dart';
 
 void main() async {
@@ -21,7 +23,7 @@ void main() async {
 
   test('API should return UUID for username', () async {
     try {
-      var temp_uuid = (await Mojang.getUuid(username)).second;
+      var temp_uuid = (await getUuid(username)).second;
       expect(temp_uuid, equals(uuid));
     } on ArgumentError catch (e) {
       print(e);
@@ -29,13 +31,13 @@ void main() async {
   });
 
   test('API should return a list of pairs with the sites status.', () async {
-    final status = await Mojang.checkStatus();
+    final status = await getStatus();
     expect(status.minecraft, isA<MojangSiteStatus>());
   });
 
   test('API should return link to the skin of given player.', () async {
     try {
-      final profile = await Mojang.getProfile(uuid);
+      final profile = await getProfile(uuid);
       final skin = profile.textures.getSkinUrl();
       expect(skin, testData['skin_texture']);
     } on ArgumentError catch (e) {
@@ -44,7 +46,7 @@ void main() async {
   });
 
   test('Gets Minecraft sale statistics', () async {
-    final statistics = await Mojang.getStatistics([
+    final statistics = await getStatistics([
       MinecraftStatisticsItem.minecraftItemsSold,
       MinecraftStatisticsItem.minecraftPrepaidCardsRedeemed
     ]);
@@ -53,13 +55,13 @@ void main() async {
 
   test('Gets Minecraft Dungeons sale statistics', () async {
     final statistics =
-        await Mojang.getStatistics([MinecraftStatisticsItem.dungeonsItemsSold]);
+        await getStatistics([MinecraftStatisticsItem.dungeonsItemsSold]);
     expect(statistics.salesLast24h, isNotNull);
   });
 
   test('API should return a list of names', () async {
     try {
-      final nameHistory = await Mojang.getNameHistory(uuid);
+      final nameHistory = await getNameHistory(uuid);
       expect(nameHistory.first.name, equals(testData['first_username']));
       expect(nameHistory.last.name, equals(username));
     } on ArgumentError catch (e) {
@@ -68,7 +70,7 @@ void main() async {
   });
 
   test('Get list of blocked servers', () async {
-    final servers = await Mojang.getBlockedServers();
+    final servers = await getBlockedServers();
     expect(servers, isNotEmpty);
 
     expect(servers.where((server) => server.address != null), isNotEmpty);
@@ -79,9 +81,8 @@ void main() async {
 
     test('refresh test', () async {
       try {
-        user = await Yggdrasil.authenticate(
-            testData['email'], testData['password']);
-        await Yggdrasil.refresh(user!);
+        user = await authenticate(testData['email'], testData['password']);
+        await refresh(user!);
       } on AuthException catch (e) {
         print(e);
       } on Error catch (e) {
@@ -92,8 +93,8 @@ void main() async {
     test('Test if access token is valid', () async {
       try {
         if (user == null) return;
-        var valid = await Yggdrasil.validate(user!.accessToken,
-            clientToken: user!.clientToken);
+        var valid =
+            await validate(user!.accessToken, clientToken: user!.clientToken);
         expect(valid, isTrue);
       } on Error catch (e) {
         print(e);
