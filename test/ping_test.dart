@@ -5,12 +5,17 @@ void main() {
   const uri = 'mc.hypixel.net';
 
   test('Test if ping picks up server.', () async {
-    final serverInfo = await ping(uri);
-    expect(serverInfo, isNotNull);
-    if (serverInfo!.response == null) return;
-    print('Players online on $uri:');
-    print(
-        '${serverInfo.response!.players.online} / ${serverInfo.response!.players.max}');
-    print('Latency: ${serverInfo.ping}');
+    try {
+      final serverInfo = await ping(uri);
+      expect(serverInfo, isNotNull);
+      if (serverInfo!.response == null) return;
+      print('Players online on $uri:');
+      print(
+          '${serverInfo.response!.players.online} / ${serverInfo.response!.players.max}');
+      print('Latency: ${serverInfo.ping}');
+    } on PingException catch (e) {
+      print('Failed to ping the server.');
+      print(e);
+    }
   });
 }
