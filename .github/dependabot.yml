@@ -1,0 +1,10 @@
+# Dependabot config file
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: "monthly"
+  # TODO: Add the Dart package ecosystem as soon as https://github.com/dependabot/dependabot-core/pull/3438
+  # gets merged.
