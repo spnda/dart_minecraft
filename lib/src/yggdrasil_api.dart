@@ -1,10 +1,11 @@
 import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
 
 import 'exceptions/auth_exception.dart';
 import 'mojang/mojang_account.dart';
 import 'utilities/web_util.dart';
 
-const String _authServerApi = 'https://authserver.mojang.com/';
+const String _authServerApi = 'authserver.mojang.com';
 
 /// Authenticates a user with given credentials [username] and [password].
 ///
@@ -20,9 +21,10 @@ Future<MojangAccount> authenticate(String username, String password,
     'clientToken': clientToken ?? Uuid().v4(),
     'requestUser': true
   };
-  final response =
-      await WebUtil.post(_authServerApi, 'authenticate', payload, {});
-  final data = await WebUtil.getJsonFromResponse(response);
+  final response = await requestBody(
+      http.post, _authServerApi, 'authenticate', payload,
+      headers: {});
+  final data = parseResponseMap(response);
   if (data['error'] != null) throw AuthException(data['errorMessage']);
   return MojangAccount.fromJson(data);
 }
@@ -39,8 +41,10 @@ Future<MojangAccount> refresh(MojangAccount account) async {
     },
     'requestUser': true,
   };
-  final response = await WebUtil.post(_authServerApi, 'refresh', payload, {});
-  final data = await WebUtil.getJsonFromResponse(response);
+  final response = await requestBody(
+      http.post, _authServerApi, 'refresh', payload,
+      headers: {});
+  final data = parseResponseMap(response);
   if (data['error'] != null) {
     switch (data['error']) {
       case 'ForbiddenOperationException':
@@ -88,7 +92,9 @@ Future<bool> validate(String accessToken, {String? clientToken}) async {
   if (clientToken != null) {
     payload.putIfAbsent('clientToken', () => clientToken);
   }
-  final response = await WebUtil.post(_authServerApi, 'validate', payload, {});
+  final response = await requestBody(
+      http.post, _authServerApi, 'validate', payload,
+      headers: {});
   return response.statusCode == 204;
 }
 
@@ -98,8 +104,10 @@ Future<bool> signout(String username, String password) async {
     'username': username,
     'password': password,
   };
-  final response = await WebUtil.post(_authServerApi, 'signout', payload, {});
-  final data = await WebUtil.getResponseBody(response);
+  final response = await requestBody(
+      http.post, _authServerApi, 'signout', payload,
+      headers: {});
+  final data = parseResponseMap(response);
   return data.isEmpty;
 }
 
@@ -109,8 +117,9 @@ Future<bool> invalidate(MojangAccount mojangAccount) async {
     'accessToken': mojangAccount.accessToken,
     'clientToken': mojangAccount.clientToken,
   };
-  final response =
-      await WebUtil.post(_authServerApi, 'invalidate', payload, {});
-  final data = await WebUtil.getResponseBody(response);
+  final response = await requestBody(
+      http.post, _authServerApi, 'invalidate', payload,
+      headers: {});
+  final data = parseResponseMap(response);
   return data.isEmpty;
 }

@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:http/http.dart' as http;
 
 import '../dart_minecraft.dart';
 import 'minecraft/blocked_server.dart';
@@ -6,21 +6,16 @@ import 'utilities/web_util.dart';
 
 typedef PlayerUuid = Pair<String, String>;
 
-const String _statusApi = 'https://status.mojang.com/';
-const String _mojangApi = 'https://api.mojang.com/';
-const String _sessionApi = 'https://sessionserver.mojang.com/';
-const String _minecraftServicesApi = 'https://api.minecraftservices.com/';
+const String _statusApi = 'status.mojang.com';
+const String _mojangApi = 'api.mojang.com';
+const String _sessionApi = 'sessionserver.mojang.com';
+const String _minecraftServicesApi = 'api.minecraftservices.com';
 
 /// Returns the Mojang and Minecraft API and website status
 Future<MojangStatus> getStatus() async {
-  final response = await WebUtil.get(_statusApi, 'check');
-  final list = await WebUtil.getJsonFromResponse(response);
-  if (list is! List) {
-    throw Exception(
-        'Content returned from the server is in an unexpected format.');
-  } else {
-    return MojangStatus.fromJson(list);
-  }
+  final response = await request(http.get, _statusApi, 'check');
+  final list = parseResponseList(response);
+  return MojangStatus.fromJson(list);
 }
 
 /// Returns the UUID for player [username].
@@ -31,15 +26,10 @@ Future<PlayerUuid> getUuid(String username, {DateTime? timestamp}) async {
   final time =
       timestamp == null ? '' : '?at=${timestamp.millisecondsSinceEpoch}';
 
-  final response = await WebUtil.get(
-    _mojangApi,
-    'users/profiles/minecraft/$username$time',
-  );
-  final map = await WebUtil.getJsonFromResponse(response);
-  if (map == null || map is! Map) {
-    throw Exception(
-        'Content returned from the server is in an unexpected format.');
-  } else if (map['error'] != null) {
+  final response = await request(
+      http.get, _mojangApi, 'users/profiles/minecraft/$username$time');
+  final map = parseResponseMap(response);
+  if (map['error'] != null) {
     if (response.statusCode == 404) {
       throw ArgumentError.value(
           username, 'username', 'No user was found for given username');
@@ -54,22 +44,19 @@ Future<PlayerUuid> getUuid(String username, {DateTime? timestamp}) async {
 ///
 /// Usernames are not case sensitive and ones which are invalid or not found are omitted.
 Future<List<PlayerUuid>> getUuids(List<String> usernames) async {
-  final response = await WebUtil.post(_mojangApi, 'profiles/minecraft',
-      usernames, {HttpHeaders.contentTypeHeader: 'application/json'});
-  final list = await WebUtil.getJsonFromResponse(response);
-  if (list is! List<Map>) {
-    throw Exception(
-        'Content returned from the server is in an unexpected format.');
-  } else {
-    return list.map<PlayerUuid>((v) => PlayerUuid(v['name'], v['id'])).toList();
-  }
+  final response = await requestBody(
+      http.post, _mojangApi, 'profiles/minecraft', usernames,
+      headers: {'content-type': 'application/json'});
+  final list = parseResponseList(response);
+  return list.map<PlayerUuid>((v) => PlayerUuid(v['name'], v['id'])).toList();
 }
 
 /// Returns the name history for the account with [uuid].
 Future<List<Name>> getNameHistory(String uuid) async {
-  final response = await WebUtil.get(_mojangApi, 'user/profiles/$uuid/names');
-  final list = await WebUtil.getJsonFromResponse(response);
-  if (list == null || list is! List || response.statusCode == 404) {
+  final response =
+      await request(http.get, _mojangApi, 'user/profiles/$uuid/names');
+  final list = parseResponseList(response);
+  if (response.statusCode == 404) {
     throw ArgumentError.value(
         uuid, 'uuid', 'User for given UUID could not be found');
   }
@@ -81,11 +68,9 @@ Future<List<Name>> getNameHistory(String uuid) async {
 /// Using [getProfile(uuid).getTextures] both skin and cape textures can be obtained.
 Future<Profile> getProfile(String uuid) async {
   final response =
-      await WebUtil.get(_sessionApi, 'session/minecraft/profile/$uuid');
-  final map = await WebUtil.getJsonFromResponse(response);
-  if (map == null ||
-      map is! Map<String, dynamic> ||
-      response.statusCode == 404) {
+      await request(http.get, _sessionApi, 'session/minecraft/profile/$uuid');
+  final map = parseResponseMap(response);
+  if (response.statusCode == 404) {
     throw ArgumentError.value(
         uuid, 'uuid', 'User for given UUID could not be found');
   }
@@ -97,11 +82,13 @@ Future<bool> changeName(
     String uuid, String newName, String accessToken, String password) async {
   final body = <String, String>{'name': newName, 'password': password};
   final headers = <String, String>{
-    HttpHeaders.authorizationHeader: 'Bearer $accessToken',
-    HttpHeaders.contentTypeHeader: 'application/json'
+    'authorization': 'Bearer $accessToken',
+    'content-type': 'application/json'
   };
-  final response = await WebUtil.post(
-      _minecraftServicesApi, 'user/profile/$uuid/name', body, headers);
+  final response = await requestBody(
+      http.post, _minecraftServicesApi, 'user/profile/$uuid/name', body,
+      headers: headers);
+
   if (response.statusCode != 200) {
     /// https://wiki.vg/Mojang_API#Change_Name for details on the
     /// possibly errors.
@@ -128,11 +115,12 @@ Future<bool> changeName(
 // TODO: Improved return type including error message. Or just throw an error?
 Future<bool> reserveName(String newName, String accessToken) async {
   final headers = {
-    HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+    'authorization': 'Bearer $accessToken',
     'Origin': 'https://checkout.minecraft.net',
   };
-  final response = await WebUtil.put(
-      _mojangApi, 'user/profile/agent/minecraft/name/$newName', {}, headers);
+  final response = await requestBody(
+      http.put, _mojangApi, 'user/profile/agent/minecraft/name/$newName', {},
+      headers: headers);
   if (response.statusCode != 204) {
     return false;
     /* switch (response.statusCode) {
@@ -150,23 +138,25 @@ Future<bool> reserveName(String newName, String accessToken) async {
 /// Reset's the player's skin.
 Future<void> resetSkin(String uuid, String accessToken) async {
   final headers = {
-    HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+    'authorization': 'Bearer $accessToken',
   };
-  await WebUtil.delete(_mojangApi, 'user/profile/$uuid/skin', headers);
+  await request(http.delete, _mojangApi, 'user/profile/$uuid/skin',
+      headers: headers);
 }
 
 /// Change the skin with the texture of the skin at [skinUrl].
 Future<bool> changeSkin(Uri skinUrl, String accessToken,
     [SkinModel skinModel = SkinModel.classic]) async {
   final headers = {
-    HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+    'authorization': 'Bearer $accessToken',
   };
   final data = {
     'variant': skinModel.toString().replaceFirst('SkinModel', ''),
     'url': skinUrl,
   };
-  final response = await WebUtil.post(
-      _minecraftServicesApi, 'minecraft/profile/skins', data, headers);
+  final response = await requestBody(
+      http.post, _minecraftServicesApi, 'minecraft/profile/skins', data,
+      headers: headers);
   switch (response.statusCode) {
     case 401:
       throw AuthException(AuthException.invalidCredentialsMessage);
@@ -189,19 +179,18 @@ Future<MinecraftStatistics> getStatistics(
       for (MinecraftStatisticsItem item in items) item.name,
     ]
   };
-  final headers = <String, String>{
-    HttpHeaders.contentTypeHeader: 'application/json'
-  };
-  final response =
-      await WebUtil.post(_mojangApi, 'orders/statistics', payload, headers);
-  final data = await WebUtil.getJsonFromResponse(response);
+  final headers = <String, String>{'content-type': 'application/json'};
+  final response = await requestBody(
+      http.post, _mojangApi, 'orders/statistics', payload,
+      headers: headers);
+  final data = parseResponseMap(response);
   return MinecraftStatistics.fromJson(data);
 }
 
 /// Returns a list of blocked servers.
 Future<List<BlockedServer>> getBlockedServers() async {
-  final response = await WebUtil.get(_sessionApi, 'blockedservers');
-  final data = (await WebUtil.getResponseBody(response)).split('\n');
+  final response = await request(http.get, _sessionApi, 'blockedservers');
+  final data = response.body.split('\n');
   final ret = <BlockedServer>[];
   for (final server in data) {
     ret.add(BlockedServer.parse(server));

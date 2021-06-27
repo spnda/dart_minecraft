@@ -1,78 +1,49 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
-// ignore: avoid_classes_with_only_static_members
-/// Web utility for making HTTP requests
-class WebUtil {
-  static final HttpClient _client = HttpClient();
+import 'package:http/http.dart' as http;
 
-  /// HTTP GET request.
-  static Future<HttpClientResponse> get(String base, String api,
-      {Map<String, dynamic> headers = const {}}) async {
-    if (!base.endsWith('/')) base += '/';
-    final request = await _client.getUrl(Uri.parse('$base$api'));
-    for (final header in headers.entries) {
-      request.headers.add(header.key, header.value);
-    }
-    return request.close();
+typedef HttpRequestFunction = Future<http.Response> Function(Uri url,
+    {Map<String, String>? headers});
+typedef HttpRequestBodyFunction = Future<http.Response> Function(Uri url,
+    {Map<String, String>? headers, Object? body, Encoding? encoding});
+
+/// Quick and easy function to call a HTTP request using any function
+/// from the http package. Uses [Uri.https] to combine the Uri.
+Future<http.Response> request(HttpRequestFunction func, String base, String api,
+    {Map<String, String> headers = const {}}) {
+  return func(Uri.https(base, api), headers: headers);
+}
+
+/// Quick and easy function to call a HTTP request using any function
+/// from the http package that uses a body. Uses [Uri.https] to
+/// combine the Uri.
+Future<http.Response> requestBody(
+    HttpRequestBodyFunction func, String base, String api, dynamic body,
+    {Map<String, String> headers = const {}}) {
+  return func(Uri.https(base, api),
+      body: (headers.containsValue('application/json'))
+          ? json.encode(body)
+          : body,
+      headers: headers);
+}
+
+Map<String, dynamic> parseResponseMap(http.Response response) {
+  final map = json.decode(response.body);
+  if (map is! Map<String, dynamic>) {
+    throw Exception(
+        'Content returned from the server is in an unexpected format.');
+  } else {
+    return map;
   }
+}
 
-  /// HTTP POST request.
-  static Future<HttpClientResponse> post(String base, String api, dynamic body,
-      [Map<String, dynamic> headers = const {}]) async {
-    if (!base.endsWith('/')) base += '/';
-    if (!(body is List) && !(body is Map)) {
-      throw ArgumentError.value(
-          body.runtimeType, 'body', 'body must be a List or Map');
-    }
-    final request = await _client.postUrl(Uri.parse('$base$api'));
-    for (MapEntry e in headers.entries) {
-      request.headers.add(e.key, e.value);
-    }
-    request.add(utf8.encode(json.encode(body)));
-    return request.close();
-  }
-
-  /// HTTP PUT request.
-  static Future<HttpClientResponse> put(String base, String api, dynamic body,
-      [Map<String, dynamic> headers = const {}]) async {
-    if (!base.endsWith('/')) base += '/';
-    final request = await _client.putUrl(Uri.parse('$base$api'));
-    for (MapEntry e in headers.entries) {
-      request.headers.add(e.key, e.value);
-    }
-    request.add(utf8.encode(json.encode(body)));
-    return request.close();
-  }
-
-  /// HTTP DELETE request.
-  static Future<HttpClientResponse> delete(String base, String api,
-      [Map<String, dynamic> headers = const {}]) async {
-    if (!base.endsWith('/')) base += '/';
-    final request = await _client.deleteUrl(Uri.parse('$base$api'));
-    for (MapEntry e in headers.entries) {
-      request.headers.add(e.key, e.value);
-    }
-    return request.close();
-  }
-
-  /// Get's the payload of given [response] and returns it as a String.
-  static Future<String> getResponseBody(HttpClientResponse response) {
-    final contents = StringBuffer();
-    final completer = Completer<String>();
-    response.transform(utf8.decoder).listen(
-          contents.write,
-          onDone: () => completer.complete(contents.toString()),
-        );
-    return completer.future;
-  }
-
-  /// Parses the [response]'s body into a Map<String, dynamic> or List<dynamic>.
-  static Future<dynamic> getJsonFromResponse(
-      HttpClientResponse response) async {
-    var body = await getResponseBody(response);
-    if (body.isEmpty) return null; // Avoid throwing errors in json.decode
-    return json.decode(body);
+List<dynamic> parseResponseList(http.Response response) {
+  final list = json.decode(response.body);
+  if (list is! List) {
+    throw Exception(
+        'Content returned from the server is in an unexpected format.');
+  } else {
+    return list;
   }
 }

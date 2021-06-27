@@ -1,12 +1,13 @@
 import 'package:path/path.dart';
+import 'package:http/http.dart' as http;
 
 import 'minecraft/minecraft_news.dart';
 import 'minecraft/minecraft_patch.dart';
 import 'minecraft/version_manifest.dart';
 import 'utilities/web_util.dart';
 
-const String _launcherContentApi = 'https://launchercontent.mojang.com';
-const String _launcherMetaApi = 'https://launchermeta.mojang.com/';
+const String _launcherContentApi = 'launchercontent.mojang.com';
+const String _launcherMetaApi = 'launchermeta.mojang.com/';
 
 /// Be careful, this API only works with https://
 const String _librariesApi = 'https://libraries.minecraft.net/';
@@ -17,8 +18,9 @@ const String _resourcesApi = 'http://resources.download.minecraft.net/';
 /// This data can be found on the "News" page in the official
 /// Minecraft Launcher.
 Future<List<MinecraftNews>> getNews() async {
-  final response = (await WebUtil.get(_launcherContentApi, 'javaNews.json'));
-  final data = await WebUtil.getJsonFromResponse(response);
+  final response =
+      await request(http.get, _launcherContentApi, 'javaNews.json');
+  final data = parseResponseMap(response);
   final news = <MinecraftNews>[];
   for (Map<String, dynamic> e in data['entries']) {
     news.add(MinecraftNews.fromJson(e));
@@ -32,8 +34,8 @@ Future<List<MinecraftNews>> getNews() async {
 /// the "patch notes" page.
 Future<List<MinecraftPatch>> getPatchNotes() async {
   final response =
-      (await WebUtil.get(_launcherContentApi, 'javaPatchNotes.json'));
-  final data = await WebUtil.getJsonFromResponse(response);
+      await request(http.get, _launcherContentApi, 'javaPatchNotes.json');
+  final data = parseResponseMap(response);
   final patches = <MinecraftPatch>[];
   for (Map<String, dynamic> e in data['entries']) {
     patches.add(MinecraftPatch.fromJson(e));
@@ -44,9 +46,9 @@ Future<List<MinecraftPatch>> getPatchNotes() async {
 /// Returns a Manifest with all Minecraft: Java Edition Versions,
 /// including alpha/beta and snapshot versions.
 Future<VersionManifest> getVersions() async {
-  final response =
-      (await WebUtil.get(_launcherMetaApi, 'mc/game/version_manifest.json'));
-  final data = await WebUtil.getJsonFromResponse(response);
+  final response = await request(
+      http.get, _launcherMetaApi, 'mc/game/version_manifest.json');
+  final data = parseResponseMap(response);
   return VersionManifest.fromJson(data);
 }
 
