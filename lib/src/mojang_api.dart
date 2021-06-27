@@ -135,6 +135,20 @@ Future<bool> reserveName(String newName, String accessToken) async {
   }
 }
 
+/// Checks whether or not given [name] is available or not.
+/// If your access token is invalid, this will silently fail
+/// and return false.
+Future<bool> isNameAvailable(String name, String accessToken) async {
+  final response = await request(
+      http.get, _minecraftServicesApi, 'minecraft/profile/name/$name/available',
+      headers: {'authorization': 'Bearer $accessToken'});
+  if (response.statusCode == 401) return false;
+  final body = parseResponseMap(response);
+  // Can also be 'DUPLICATE' (already taken) or
+  // 'NOT_ALLOWED' (blocked by name filter).
+  return body['status'] == 'AVAILABLE';
+}
+
 /// Reset's the player's skin.
 Future<void> resetSkin(String uuid, String accessToken) async {
   final headers = {
