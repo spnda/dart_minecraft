@@ -23,9 +23,15 @@ Future<MojangAccount> authenticate(String username, String password,
   };
   final response = await requestBody(
       http.post, _authServerApi, 'authenticate', payload,
-      headers: {});
+      headers: {'content-type': 'application/json'});
   final data = parseResponseMap(response);
-  if (data['error'] != null) throw AuthException(data['errorMessage']);
+  if (data['error'] != null) {
+    if (response.statusCode == 403) {
+      throw AuthException(data['errorMessage']);
+    } else if (response.statusCode == 400) {
+      throw ArgumentError('Invalid username, password or client token.');
+    }
+  }
   return MojangAccount.fromJson(data);
 }
 
@@ -49,9 +55,9 @@ Future<MojangAccount> refresh(MojangAccount account) async {
     switch (data['error']) {
       case 'ForbiddenOperationException':
         throw AuthException(AuthException.invalidCredentialsMessage);
-      case 'IllegalArgumentException':
 
-        /// Throws when access or client token are invalid / already in use.
+      /// Throws when access or client token are invalid / already in use.
+      case 'IllegalArgumentException':
         throw ArgumentError(data['errorMessage']);
       default:
         throw Exception(data['errorMessage']);

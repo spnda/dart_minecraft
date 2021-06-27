@@ -82,10 +82,8 @@ void main() async {
     test('refresh test', () async {
       try {
         user = await authenticate(testData['email'], testData['password']);
-        await refresh(user!);
+        // await refresh(user!);
       } on AuthException catch (e) {
-        print(e);
-      } on Error catch (e) {
         print(e);
       }
     });

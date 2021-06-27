@@ -1,7 +1,13 @@
 import 'package:http/http.dart' as http;
 
-import '../dart_minecraft.dart';
+import 'exceptions/auth_exception.dart';
+import 'exceptions/too_many_requests_exception.dart';
 import 'minecraft/blocked_server.dart';
+import 'minecraft/minecraft_statistics.dart';
+import 'mojang/mojang_status.dart';
+import 'mojang/name.dart';
+import 'mojang/profile.dart';
+import 'utilities/pair.dart';
 import 'utilities/web_util.dart';
 
 typedef PlayerUuid = Pair<String, String>;
@@ -55,11 +61,13 @@ Future<List<PlayerUuid>> getUuids(List<String> usernames) async {
 Future<List<Name>> getNameHistory(String uuid) async {
   final response =
       await request(http.get, _mojangApi, 'user/profiles/$uuid/names');
-  final list = parseResponseList(response);
-  if (response.statusCode == 404) {
+  if (response.statusCode == 204 ||
+      response.statusCode == 400 ||
+      response.statusCode == 404) {
     throw ArgumentError.value(
-        uuid, 'uuid', 'User for given UUID could not be found');
+        uuid, 'uuid', 'User for given UUID could not be found or is invalid.');
   }
+  final list = parseResponseList(response);
   return Future.value(list.map((dynamic v) => Name.fromJson(v)).toList());
 }
 
@@ -70,9 +78,11 @@ Future<Profile> getProfile(String uuid) async {
   final response =
       await request(http.get, _sessionApi, 'session/minecraft/profile/$uuid');
   final map = parseResponseMap(response);
-  if (response.statusCode == 404) {
+  if (response.statusCode == 400 || response.statusCode == 404) {
     throw ArgumentError.value(
-        uuid, 'uuid', 'User for given UUID could not be found');
+        uuid, 'uuid', 'User for given UUID could not be found or is invalid.');
+  } else if (response.statusCode == 429 && map['error'] != null) {
+    throw TooManyRequestsException(map['errorMessage']);
   }
   return Profile.fromJson(map);
 }
@@ -136,6 +146,8 @@ Future<bool> reserveName(String newName, String accessToken) async {
 }
 
 /// Checks whether or not given [name] is available or not.
+/// A name must be at least 3 characters and at most 16 characters
+/// long and not include any invalid characters to be valid.
 /// If your access token is invalid, this will silently fail
 /// and return false.
 Future<bool> isNameAvailable(String name, String accessToken) async {
@@ -144,6 +156,9 @@ Future<bool> isNameAvailable(String name, String accessToken) async {
       headers: {'authorization': 'Bearer $accessToken'});
   if (response.statusCode == 401) return false;
   final body = parseResponseMap(response);
+  if (response.statusCode == 429) {
+    throw TooManyRequestsException(body['errorMessage']);
+  }
   // Can also be 'DUPLICATE' (already taken) or
   // 'NOT_ALLOWED' (blocked by name filter).
   return body['status'] == 'AVAILABLE';
@@ -154,8 +169,13 @@ Future<void> resetSkin(String uuid, String accessToken) async {
   final headers = {
     'authorization': 'Bearer $accessToken',
   };
-  await request(http.delete, _mojangApi, 'user/profile/$uuid/skin',
+  final response = await request(
+      http.delete, _mojangApi, 'user/profile/$uuid/skin',
       headers: headers);
+  if (response.statusCode == 401) {
+    final data = parseResponseMap(response);
+    throw AuthException(data['errorMessage']);
+  }
 }
 
 /// Change the skin with the texture of the skin at [skinUrl].
@@ -174,12 +194,8 @@ Future<bool> changeSkin(Uri skinUrl, String accessToken,
   switch (response.statusCode) {
     case 401:
       throw AuthException(AuthException.invalidCredentialsMessage);
-    default:
-      {
-        print(response);
-        return true;
-      }
   }
+  return true;
 }
 
 /// Get's Minecraft: Java Edition, Minecraft Dungeons, Cobalt and Scrolls purchase statistics.
@@ -188,6 +204,10 @@ Future<bool> changeSkin(Uri skinUrl, String accessToken,
 /// function for each MinecraftStatisticsItem or each game.
 Future<MinecraftStatistics> getStatistics(
     List<MinecraftStatisticsItem> items) async {
+  if (items.isEmpty) {
+    throw ArgumentError.value(
+        items, 'items', 'The list of MinecraftStatisticItems cannot be empty.');
+  }
   final payload = {
     'metricKeys': [
       for (MinecraftStatisticsItem item in items) item.name,
