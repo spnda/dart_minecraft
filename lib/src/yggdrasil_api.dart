@@ -5,6 +5,7 @@ import 'exceptions/auth_exception.dart';
 import 'mojang/mojang_account.dart';
 import 'utilities/web_util.dart';
 
+const String _mojangApi = 'api.mojang.com';
 const String _authServerApi = 'authserver.mojang.com';
 
 /// Authenticates a user with given credentials [username] and [password].
@@ -128,4 +129,45 @@ Future<bool> invalidate(MojangAccount mojangAccount) async {
       headers: {});
   final data = parseResponseMap(response);
   return data.isEmpty;
+}
+
+/// Changes the [currentPassword] to the new [newPassword]. This requires a valid
+/// [accessToken] and will throw a [ArgumentError] if it is not.
+/// Be careful to what values you pass into [newPassword], as the [accessToken] will
+/// get invalidated and you will need it to log into your account again.
+Future<bool> changePassword(
+    String currentPassword, String newPassword, String accessToken) async {
+  if (currentPassword.isEmpty) {
+    throw ArgumentError.value(currentPassword, 'currentPassword',
+        'The current password cannot be empty.');
+  } else if (newPassword.isEmpty) {
+    throw ArgumentError.value(
+        newPassword, 'newPassword', 'The new password cannot be empty.');
+  }
+
+  final payload = {
+    'authorization': accessToken,
+    'content-type': 'application/json'
+  };
+  final response =
+      await requestBody(http.put, _mojangApi, 'users/password', payload);
+  switch (response.statusCode) {
+    case 400:
+      {
+        final map = parseResponseMap(response);
+        if (map['error'] == 'IllegalArgumentException') {
+          throw ArgumentError.value(
+              currentPassword, 'currentPassword', map['errorMessage']);
+        }
+        return false;
+      }
+    case 401:
+      {
+        final map = parseResponseMap(response);
+        throw ArgumentError.value(
+            accessToken, 'accessToken', map['errorMessage']);
+      }
+  }
+
+  return response.statusCode == 204;
 }
