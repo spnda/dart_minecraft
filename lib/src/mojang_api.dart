@@ -57,6 +57,26 @@ Future<List<PlayerUuid>> getUuids(List<String> usernames) async {
   return list.map<PlayerUuid>((v) => PlayerUuid(v['name'], v['id'])).toList();
 }
 
+/// Get the name and UUID by a player's UUID.
+/// 
+/// If you exceed the rate limit, you will have to wait atleast 30 seconds
+/// before requesting again.
+Future<PlayerUuid> getName(String uuid) async {
+  final response = await request(http.get, _mojangApi, 'user/profile/$uuid');
+  switch (response.statusCode) {
+    case 204:
+      throw ArgumentError.value(uuid, 'uuid');
+    case 400:
+      throw ArgumentError.value(
+          uuid, 'uuid', parseResponseMap(response)['errorMessage']);
+    case 429:
+      throw TooManyRequestsException(
+          parseResponseMap(response)['errorMessage']);
+  }
+  final map = parseResponseMap(response);
+  return PlayerUuid(map['name'], map['id']);
+}
+
 /// Returns the name history for the account with [uuid].
 Future<List<Name>> getNameHistory(String uuid) async {
   final response =
