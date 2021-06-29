@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.5
+
+- Add: Change password API
+- Add: Get UUID by name API
+- Add: Name availability check API
+- Change: `Mojang`, `Minecraft` and `Yggdrasil` classes have been deprecated. Use the globally available functions instead.
+- Change: The API now catches and reports more and better exceptions
+- Change: Now uses dart-lang/http library.
+
 ## 0.3.4
 
 - Add: You can now register custom clientbound packets and implement a custom PacketReader.
