@@ -14,6 +14,7 @@ typedef PlayerUuid = Pair<String, String>;
 
 const String _statusApi = 'status.mojang.com';
 const String _mojangApi = 'api.mojang.com';
+const String _mojangAccountApi = 'account.mojang.com';
 const String _sessionApi = 'sessionserver.mojang.com';
 const String _minecraftServicesApi = 'api.minecraftservices.com';
 
@@ -58,7 +59,7 @@ Future<List<PlayerUuid>> getUuids(List<String> usernames) async {
 }
 
 /// Get the name and UUID by a player's UUID.
-/// 
+///
 /// If you exceed the rate limit, you will have to wait atleast 30 seconds
 /// before requesting again.
 Future<PlayerUuid> getName(String uuid) async {
@@ -163,6 +164,22 @@ Future<bool> reserveName(String newName, String accessToken) async {
   } else {
     return true;
   }
+}
+
+/// Essentially the same as [isNameAvailable], however
+/// this function does not require any authentication.
+/// It is not exactly accurate, however can be used to determine
+/// if a name was blocked by Mojang's name filter and/or the name
+/// is used on a empty Mojang account.
+///
+/// If a name is not valid, this will be false. This includes names
+/// shorter than 2 characters or longer than 16 characters or names
+/// that use invalid characters.
+Future<bool> isNameAvailableNoAuth(String name) async {
+  final response =
+      await request(http.get, _mojangAccountApi, 'available/minecraft/$name');
+  if (response.statusCode != 200) return false;
+  return response.body.trim() == 'AVAILABLE';
 }
 
 /// Checks whether or not given [name] is available or not.
