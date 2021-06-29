@@ -6,30 +6,51 @@
 [![GitHub License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge&logo=GitHub)](https://raw.githubusercontent.com/spnda/dart_minecraft/main/LICENSE)
 
 A simple Dart library for interfacing with the Mojang and Minecraft APIs.
+It also includes NBT read/write functionality and functions to ping Minecraft: Java Edition
+servers.
+
+You can simply import the library like this:
+```dart
+import 'package:dart_minecraft/dart_minecraft.dart';
+```
 
 ## Examples
 
+Below are some basic examples of the features included in this library. A better and more
+extensive example can be found [here](https://github.com/spnda/dart_minecraft/tree/main/example).
+
 ### Skin/Cape of a player
+
+Get the skin and/or cape texture URL of a player. This just requires the player's UUID or username.
 
 ```dart
 void main() async {
-    Pair player = await Mojang.getUuid('<your username>');
-    Profile profile = await Mojang.getProfile(player.getSecond);
+    // PlayerUUID is a Pair<String, String>
+    PlayerUuid player = await getUuid('<your username>');
+    Profile profile = await getProfile(player.second);
     String url = profile.textures.getSkinUrl();
 }
 ```
 
 ### Name history of a player
 
+Gets a list of all names the player has every taken, including the unix timestamp
+at which they were changed.
+
 ```dart
 void main() async {
-    Pair uuid = await Mojang.getUuid('<your username>');
-    List<Name> history = await Mojang.getNameHistory(uuid.getSecond);
+    // PlayerUUID is a Pair<String, String>
+    PlayerUuid uuid = await getUuid('<your username>');
+    List<Name> history = await getNameHistory(uuid.second);
     history.forEach((name) => print(name.name));
 }
 ```
 
 ### Reading NBT data
+
+Read NBT data from a local file. This supports the full NBT specification, however
+support for SNBT is not implemented yet. A full list of tags/types usable in this
+context can be found [here](https://github.com/spnda/dart_minecraft/tree/main/lib/src/nbt/tags).
 
 ```dart
 void main() async {
@@ -46,6 +67,10 @@ void main() async {
 
 ### Pinging a server
 
+Pings the Minecraft: Java Edition (1.6+) server at 'mc.hypixel.net'. You can use any
+DNS or IP Address to ping them. The server will provide basic information, as the player
+count, ping and MOTD.
+
 ```dart
 void main() async {
 	/// Pinging a server and getting its basic information is 
@@ -57,12 +82,6 @@ void main() async {
 	print('${players.online} / ${players.max}'); // e.g. 5 / 20
 }
 ```
-
-## Planned
-
-- [x] Support for all the Minecraft and Minecraft Launcher APIs.
-- [x] Support for reading and writing NBT files.
-- [x] Support for seeing Minecraft Servers.
 
 ## License
 
