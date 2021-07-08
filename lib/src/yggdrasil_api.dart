@@ -93,15 +93,19 @@ Future<MojangAccount> refresh(MojangAccount account) async {
 /// [clientToken] is optional, though if provided should match the client token
 /// that was used to obtained given [accessToken].
 Future<bool> validate(String accessToken, {String? clientToken}) async {
+  final headers = {
+    'content-type': 'application/json',
+  };
   final payload = {
     'accessToken': accessToken,
   };
   if (clientToken != null) {
     payload.putIfAbsent('clientToken', () => clientToken);
   }
+
   final response = await requestBody(
       http.post, _authServerApi, 'validate', payload,
-      headers: {});
+      headers: headers);
   return response.statusCode == 204;
 }
 
