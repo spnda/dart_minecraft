@@ -1,14 +1,14 @@
 import 'dart:io';
 
-import 'exceptions/ping_exception.dart';
-import 'packet/packet_reader.dart';
-import 'packet/packet_writer.dart';
-import 'packet/packets/handshake_packet.dart';
-import 'packet/packets/ping_packet.dart';
-import 'packet/packets/pong_packet.dart';
-import 'packet/packets/request_packet.dart';
-import 'packet/packets/response_packet.dart';
-import 'packet/packets/server_packet.dart';
+import '../exceptions/ping_exception.dart';
+import '../packet/packet_reader.dart';
+import '../packet/packet_writer.dart';
+import '../packet/packets/handshake_packet.dart';
+import '../packet/packets/ping_packet.dart';
+import '../packet/packets/pong_packet.dart';
+import '../packet/packets/request_packet.dart';
+import '../packet/packets/response_packet.dart';
+import '../packet/packets/server_packet.dart';
 
 /// Write a single package
 void _writePacket(Socket socket, ServerPacket packet) async {
