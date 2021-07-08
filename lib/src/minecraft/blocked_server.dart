@@ -113,5 +113,8 @@ class BlockedServer {
     BlockedServer('5ca81746337088b7617c851a1376e4f00d921d9e', '*.gotpvp.com'),
     BlockedServer(
         'a5944b9707fdb2cc95ed4ef188cf5f3151ac0525', '*.guildcraft.org'),
+    BlockedServer('e7210344ab0a2206da3bb21d03e406c0f1365981', '*.redesky.com'),
+    BlockedServer(
+        'de2cbbda331606a68ec2f88827f06e24cc5d0a24', '*.mushmc.com.br'),
   ];
 }
