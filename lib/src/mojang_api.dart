@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:http/http.dart' as http;
 
 import 'exceptions/auth_exception.dart';
@@ -19,10 +21,20 @@ const String _sessionApi = 'sessionserver.mojang.com';
 const String _minecraftServicesApi = 'api.minecraftservices.com';
 
 /// Returns the Mojang and Minecraft API and website status
+///
+/// Might throw a [Exception] if no data or invalid data was
+/// returned.
 Future<MojangStatus> getStatus() async {
   final response = await request(http.get, _statusApi, 'check');
-  final list = parseResponseList(response);
-  return MojangStatus.fromJson(list);
+  if (response.statusCode != 200) {
+    throw Exception('Failed to get Mojang API status.');
+  }
+  try {
+    final list = parseResponseList(response);
+    return MojangStatus.fromJson(list);
+  } on FormatException catch (_) {
+    return MojangStatus.empty();
+  }
 }
 
 /// Returns the UUID for player [username].

@@ -27,6 +27,8 @@ class MojangStatus {
       minecraftTextures,
       mojang;
 
+  MojangStatus.empty();
+
   /// Parse all [MojangSiteStatus]s from JSON data from the Web API.
   MojangStatus.fromJson(List data) {
     for (final element in data) {
