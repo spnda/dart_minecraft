@@ -1,109 +1,30 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import '../utilities/readers/_byte_reader.dart';
 import 'packet_compression.dart';
+import 'packet_reader_stub.dart' if (dart.library.io) 'packet_reader_io.dart';
 import 'packets/server_packet.dart';
 
 /// Reads different server packets from binary into objects.
-class PacketReader extends ByteReader<bool> {
-  PacketReader(Uint8List data) {
-    this.data = data;
-    readByteData = data.buffer.asByteData();
-  }
+abstract class PacketReader extends ByteReader<bool> {
+  PacketReader();
 
   /// Create a [PacketReader] from a integer [List].
   /// If [list] is not a [Uint8List], we will create
   /// one from given [list].
-  factory PacketReader.fromList(List<int> list) {
-    if (list is Uint8List) {
-      return PacketReader(list);
-    }
-    return PacketReader(Uint8List.fromList(list));
-  }
+  factory PacketReader.fromList(List<int> list) => fromList(list);
 
   /// Read a single packet from a Stream. This Stream will most likely
   /// from a [Socket], though any Stream will work. This will read
   /// multiple chunks from the Stream, until the initially sent packet
   /// size is met.
-  static Future<ServerPacket> readPacketFromStream(
-      Stream<Uint8List> stream) async {
-    final buffer = <int>[];
-
-    /// As a single packet can be bigger than a single
-    /// chunk of data that is emitted, we'll add to
-    /// our [buffer] object and check if the length is
-    /// now as big as the packet's [size] says.
-    await for (final data in stream) {
-      if (data.isEmpty) continue;
-
-      buffer.addAll(data);
-
-      final packetReader = PacketReader.fromList(buffer);
-      final size = packetReader.readVarLong(signed: false).first;
-
-      if (buffer.length >= size) break;
-    }
-
-    final packetReader = PacketReader.fromList(buffer);
-    return packetReader.readPacket();
-  }
+  static Future<ServerPacket> readPacketFromStream(Stream<Uint8List> stream) =>
+      fromStream(stream);
 
   ServerPacket readPacket(
-      {PacketCompression compression = PacketCompression.none}) {
-    Uint8List? payload;
-    int? id;
-    switch (compression) {
-      case PacketCompression.zlib:
-        final packetSize = readVarLong(signed: false).first;
-        final dataSize = readVarLong(signed: false);
-
-        // Decompress the packet data.
-        var size = packetSize - dataSize.second;
-        final compressedPayload =
-            Uint8List(size); // This includes the packet ID.
-        for (var i = 0; i < size - 1; i++) {
-          compressedPayload[i] = readByte(signed: false);
-        }
-        payload = zlib.decode(compressedPayload) as Uint8List;
-
-        // Reset the read data with our new payload to extract the ID.
-        reset(payload);
-        id = readVarLong(signed: false).first;
-        payload = payload.sublist(readPosition);
-        break;
-
-      case PacketCompression.none:
-      default:
-        final size = readVarLong(signed: false).first;
-        id = readVarLong(signed: false).first;
-
-        payload = Uint8List(size - 1);
-        for (var i = 0; i < size - 1; i++) {
-          payload[i] = readByte(signed: false);
-        }
-        break;
-    }
-
-    reset(payload);
-
-    final packet = ServerPacket.readPacket(id, this);
-    if (packet == null) {
-      throw Exception('Encountered unexpected packet with ID $id');
-    }
-    return packet;
-  }
+      {PacketCompression compression = PacketCompression.none});
 
   /// Read a string where the length is encoded as a var long.
   @override
-  String readString() {
-    final length = readVarLong(signed: false).first;
-    final str = utf8.decode(Uint8List.view(
-      readByteData!.buffer,
-      readByteData!.offsetInBytes + readPosition,
-      length,
-    ));
-    return str;
-  }
+  String readString();
 }

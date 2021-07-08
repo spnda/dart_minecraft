@@ -12,7 +12,7 @@ import '../packet/packets/server_packet.dart';
 
 /// Write a single package
 void _writePacket(Socket socket, ServerPacket packet) async {
-  final packetEncoded = PacketWriter().writePacket(packet);
+  final packetEncoded = PacketWriter.create().writePacket(packet);
   socket.add(packetEncoded);
 }
 
