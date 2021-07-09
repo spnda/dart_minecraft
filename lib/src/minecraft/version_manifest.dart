@@ -13,7 +13,9 @@ class VersionManifest {
   VersionManifest.fromJson(Map<String, dynamic> data)
       : latestRelease = data['latest']['release'],
         latestSnapshot = data['latest']['snapshot'],
-        versions = data['versions'].map((d) => Version.fromJson(d));
+        versions = (data['versions'] as List<dynamic>)
+            .map((d) => Version.fromJson(d))
+            .toList();
 }
 
 /// A Minecraft Version.
@@ -35,6 +37,17 @@ class Version {
   /// The time this version was release at.
   String releaseTime;
 
+  /// A SHA1 hash of the version package.
+  String sha1;
+
+  /// The level of compliance of this client. Used to indicate
+  /// version of player safety features.
+  ///
+  /// This value is 0 for all versions before 1.16.4-pre1,
+  /// as those all do not include the so called "player
+  /// safety features", and 1 for all versions since.
+  int complianceLevel;
+
   /// Some time that is usually just minutes after [releaseTime]
   /// as a DateTime object.
   DateTime get timeDateTime => DateTime.parse(time);
@@ -47,5 +60,7 @@ class Version {
         type = data['type'],
         url = data['url'],
         time = data['time'],
-        releaseTime = data['releaseTime'];
+        releaseTime = data['releaseTime'],
+        sha1 = data['sha1'],
+        complianceLevel = data['complianceLevel'];
 }

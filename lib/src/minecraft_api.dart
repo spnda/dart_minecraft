@@ -7,7 +7,7 @@ import 'minecraft/version_manifest.dart';
 import 'utilities/web_util.dart';
 
 const String _launcherContentApi = 'launchercontent.mojang.com';
-const String _launcherMetaApi = 'launchermeta.mojang.com/';
+const String _launcherMetaApi = 'launchermeta.mojang.com';
 
 /// Be careful, this API only works with https://
 const String _librariesApi = 'https://libraries.minecraft.net/';
@@ -47,7 +47,7 @@ Future<List<MinecraftPatch>> getPatchNotes() async {
 /// including alpha/beta and snapshot versions.
 Future<VersionManifest> getVersions() async {
   final response = await request(
-      http.get, _launcherMetaApi, 'mc/game/version_manifest.json');
+      http.get, _launcherMetaApi, 'mc/game/version_manifest_v2.json');
   final data = parseResponseMap(response);
   return VersionManifest.fromJson(data);
 }
