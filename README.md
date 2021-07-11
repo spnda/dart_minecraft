@@ -18,6 +18,8 @@ import 'package:dart_minecraft/dart_minecraft.dart';
 
 Below are some basic examples of the features included in this library. A better and more
 extensive example can be found [here](https://github.com/spnda/dart_minecraft/tree/main/example).
+However you should always keep in mind that there is a rate limit on all API, set at 600 requests
+per 10 minutes. You are expected to cache the results and this is **not** done by the library itself.
 
 ### Skin/Cape of a player
 
