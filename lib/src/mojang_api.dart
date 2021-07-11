@@ -41,7 +41,8 @@ Future<MojangStatus> getStatus() async {
 /// Returns the UUID for player [username].
 ///
 /// A [timestamp] can be passed to retrieve the UUID for the player with [username]
-/// at that point in time.
+/// at that point in time. **Warning**: Since November 2020, the [timestamp] is
+/// ignored, see [WEB-3367](https://bugs.mojang.com/browse/WEB-3367).
 Future<PlayerUuid> getUuid(String username, {DateTime? timestamp}) async {
   final time =
       timestamp == null ? '' : '?at=${timestamp.millisecondsSinceEpoch}';
@@ -53,6 +54,9 @@ Future<PlayerUuid> getUuid(String username, {DateTime? timestamp}) async {
     if (response.statusCode == 404) {
       throw ArgumentError.value(
           username, 'username', 'No user was found for given username');
+    } else if (response.statusCode == 400) {
+      throw ArgumentError.value(
+          timestamp, 'timestamp', 'The timestamp is invalid.');
     }
     throw Exception(map['errorMessage']);
   }
