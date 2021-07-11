@@ -9,6 +9,7 @@ import 'minecraft/minecraft_statistics.dart';
 import 'mojang/mojang_status.dart';
 import 'mojang/name.dart';
 import 'mojang/profile.dart';
+import 'mojang/security_challenges.dart';
 import 'utilities/pair.dart';
 import 'utilities/web_util.dart';
 
@@ -279,4 +280,61 @@ Future<List<BlockedServer>> getBlockedServers() async {
     ret.add(BlockedServer.parse(server));
   }
   return ret;
+}
+
+/// Checks whether or not the user has to answer the security challenges.
+/// This will return true if the current location is not verified and needs
+/// to be verified using [getSecurityChallenges] and [answerSecurityChallenges].
+Future<bool> areSecurityChallengesNeeded(String accessToken) async {
+  final headers = {
+    'authorization': 'Bearer $accessToken',
+  };
+  final response = await request(http.get, _mojangApi, 'user/security/location',
+      headers: headers);
+  return response.statusCode == 403;
+}
+
+/// Fetches the list of security challenges one must answer
+/// to access the account.
+/// Check if this is needed using [areSecurityChallengesNeeded].
+Future<List<SecurityChallenge>> getSecurityChallenges(
+    String accessToken) async {
+  final headers = {
+    'authorization': 'Bearer $accessToken',
+  };
+  final response = await request(
+      http.get, _mojangApi, 'user/security/challenges',
+      headers: headers);
+  if (response.statusCode == 401) {
+    throw AuthException(AuthException.invalidCredentialsMessage);
+  }
+  final list = parseResponseList(response);
+  return list.map((f) => SecurityChallenge.fromJson(f)).toList();
+}
+
+/// Allows an authenticated user to verify their location by
+/// answering their security questions.
+/// You can get the security challenges through [getSecurityChallenges].
+/// Also check if this is needed using [areSecurityChallengesNeeded].
+Future<bool> answerSecurityChallenges(
+    String accessToken, List<SecurityChallenge> answers) async {
+  /// Verify we have enough answers passed.
+  if (answers.length != 3) {
+    throw ArgumentError.value(
+        answers, 'answers', 'We require at least 3 answers.');
+  }
+
+  final headers = {
+    'authorization': 'Bearer $accessToken',
+    'content-type': 'application/json',
+  };
+  final body = [for (final answer in answers) answer.asAnswerJson];
+  final response = await requestBody(
+      http.post, _mojangApi, 'user/security/location', body,
+      headers: headers);
+  if (response.statusCode == 403) {
+    throw ArgumentError.value(
+        answers, 'answers', 'At least one answer was incorrect.');
+  }
+  return response.statusCode == 204;
 }

@@ -98,5 +98,19 @@ void main() async {
         print(e);
       }
     });
+
+    var needed = false;
+    test('Check if security questions are required.', () async {
+      if (user == null) return;
+      needed = await areSecurityChallengesNeeded(user!.accessToken);
+      expect(needed, isNotNull);
+    });
+
+    test('Get security questions and answer them', () async {
+      if (user == null || !needed) return;
+      final challenges = await getSecurityChallenges(user!.accessToken);
+      expect(challenges, isList);
+      expect(challenges, hasLength(3)); // There should always be 3 challenges.
+    });
   });
 }
