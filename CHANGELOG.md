@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0
+
+- Add: Dart JS support (NBT, Server ping and packets do not work on JS.)
+- Add: API for Security Challenges
+- Update: Added new blocked servers
+- Change: We now use Minecraft version manifest Version 2
+- Fix: Yggdrasil's authenticate function did not work
+- Fix: Catch more errors in getStatus()
+
 ## 0.3.5
 
 - Add: Change password API
