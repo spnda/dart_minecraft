@@ -1,6 +1,6 @@
-import '../nbt_file_reader.dart';
-import '../nbt_file_writer.dart';
+import '../nbt_reader.dart';
 import '../nbt_tags.dart';
+import '../nbt_writer.dart';
 import 'nbt_tag.dart';
 
 /// Represents a String inside a NBT File.
@@ -16,21 +16,21 @@ class NbtString extends NbtTag {
         super(name, NbtTagType.TAG_STRING);
 
   @override
-  NbtString readTag(NbtFileReader fileReader, {bool withName = true}) {
-    final name = withName ? fileReader.readString() : 'None';
-    final value = fileReader.readString();
+  NbtString readTag(NbtReader nbtReader, {bool withName = true}) {
+    final name = withName ? nbtReader.readString() : 'None';
+    final value = nbtReader.readString();
     return this
       ..name = name
       .._value = value;
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter,
+  void writeTag(NbtWriter nbtWriter,
       {bool withName = true, bool withType = true}) {
-    if (withType) fileWriter.writeByte(nbtTagType.index);
+    if (withType) nbtWriter.writeByte(nbtTagType.index);
     if (withName) {
-      fileWriter.writeString(name);
+      nbtWriter.writeString(name);
     }
-    fileWriter.writeString(_value);
+    nbtWriter.writeString(_value);
   }
 }

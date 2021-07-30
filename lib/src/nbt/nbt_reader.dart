@@ -1,58 +1,45 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import '../exceptions/nbt_file_read_exception.dart';
 import '../utilities/readers/_byte_reader.dart';
+import 'file/nbt_file.dart' if (dart.library.io) 'file/nbt_file_io.dart';
 import 'nbt_compression.dart';
 import 'tags/nbt_compound.dart';
 import 'tags/nbt_tag.dart';
 
-/// A file reader to read nbt data from a binary file.
-class NbtFileReader extends ByteReader<bool> {
-  /// The file that gets read from.
-  final File _file;
+class NbtReader extends ByteReader<bool> {
+  NbtCompression nbtCompression = NbtCompression.none;
 
-  /// The root compound of this file.
   NbtCompound? root;
 
-  /// The compression of [_file].
-  NbtCompression? nbtCompression;
-
-  /// Creates a [NbtFileReader].
-  NbtFileReader(this._file) {
-    data = _file.readAsBytesSync();
+  NbtReader(Uint8List list) {
+    data = list;
     nbtCompression = _detectCompression();
-    data = decompressData(data!);
+    data = nbtCompression.decompressData(data!);
     readByteData = data!.buffer.asByteData();
   }
 
-  /// Begin reading the NBT data.
-  Future<bool> read() async {
+  /// Reads the file at [path] in bytes and constructs a new reader
+  /// with that data. This method only works on native platforms,
+  /// so every platform that includes support for 'dart:io'.
+  ///
+  /// Throws a [FileSystemException] if the file could not be found.
+  factory NbtReader.fromFile(String path) => NbtReader(fromFile(path));
+
+  /// Reads the NBT data from the byte list.
+  /// Throws [NbtFileReadException] if an issue occured.
+  NbtCompound read() {
     try {
       root = NbtTag.readNewTag(this, null, withName: true) as NbtCompound;
-    } on Exception {
-      throw NbtFileReadException('Could not read file.');
-    } finally {
-      return true;
+    } on Exception catch (e) {
+      if (e is NbtFileReadException) rethrow;
+      throw NbtFileReadException('Failed to read file.');
     }
+    if (root == null) throw NbtFileReadException('Failed to read file');
+    return root!;
   }
 
-  Uint8List decompressData(Uint8List data) {
-    switch (nbtCompression) {
-      case NbtCompression.gzip:
-        return Uint8List.fromList(gzip.decode(data));
-      case NbtCompression.zlib:
-        return Uint8List.fromList(zlib.decode(data));
-      case NbtCompression.unknown:
-        throw Exception('Invalid NBT File.');
-      case NbtCompression.none:
-      default:
-        // Don't need to do anything for no compression.
-        return data;
-    }
-  }
-
-  /// Tries to detect the compression, whether this file was
+  /// Tries to detect the compression, whether the data was
   /// compressed with GZIP, ZLIB or wasn't compressed at all.
   NbtCompression _detectCompression() {
     final firstByte;

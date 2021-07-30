@@ -1,6 +1,6 @@
-import '../nbt_file_reader.dart';
-import '../nbt_file_writer.dart';
+import '../nbt_reader.dart';
 import '../nbt_tags.dart';
+import '../nbt_writer.dart';
 import 'nbt_array.dart';
 import 'nbt_tag.dart';
 
@@ -53,15 +53,15 @@ class NbtList<T extends NbtTag> extends NbtArray<T> {
   }
 
   @override
-  NbtList readTag(NbtFileReader fileReader, {bool withName = true}) {
+  NbtList readTag(NbtReader nbtReader, {bool withName = true}) {
     final name = withName
-        ? fileReader.readString()
+        ? nbtReader.readString()
         : 'None'; // On the root node, this should be a empty string
-    final tagType = fileReader.readByte();
+    final tagType = nbtReader.readByte();
     childrenTagType = NbtTagType.values[tagType];
-    final length = fileReader.readInt(signed: true);
+    final length = nbtReader.readInt(signed: true);
     for (var i = 0; i < length; i++) {
-      final tag = NbtTag.readTagForType(fileReader, tagType,
+      final tag = NbtTag.readTagForType(nbtReader, tagType,
           parent: this, withName: false);
       if (tag != null && tag is T) add(tag);
     }
@@ -69,16 +69,16 @@ class NbtList<T extends NbtTag> extends NbtArray<T> {
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter,
+  void writeTag(NbtWriter nbtWriter,
       {bool withName = true, bool withType = true}) {
-    if (withType) fileWriter.writeByte(nbtTagType.index);
+    if (withType) nbtWriter.writeByte(nbtTagType.index);
     if (withName) {
-      fileWriter.writeString(name);
+      nbtWriter.writeString(name);
     }
-    fileWriter.writeByte(childrenTagType.index);
-    fileWriter.writeInt(children.length, signed: true);
+    nbtWriter.writeByte(childrenTagType.index);
+    nbtWriter.writeInt(children.length, signed: true);
     for (final val in children) {
-      val.writeTag(fileWriter, withName: false, withType: false);
+      val.writeTag(nbtWriter, withName: false, withType: false);
     }
   }
 }

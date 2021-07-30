@@ -2,12 +2,40 @@ import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:dart_minecraft/src/exceptions/nbt_exception.dart';
+import 'package:dart_minecraft/src/nbt/nbt_reader.dart';
+import 'package:dart_minecraft/src/nbt/nbt_writer.dart';
 import 'package:test/test.dart';
+
+class NbtFile {
+  File file;
+
+  NbtCompound? root;
+
+  NbtCompression? nbtCompression;
+
+  NbtFile.fromPath(String path) : file = File(path) {
+    if (!file.existsSync()) file.createSync();
+  }
+
+  Future<void> readFile() async {
+    var reader = NbtReader.fromFile(file.path);
+    reader.read();
+    root = reader.root;
+    nbtCompression = reader.nbtCompression;
+  }
+
+  Future<void> writeFile(
+      {File? file, NbtCompression nbtCompression = NbtCompression.none}) async {
+    if (file != null) this.file = file;
+    if (root == null) return;
+    await NbtWriter().writeFile(this.file.path, root!);
+  }
+}
 
 void main() {
   group('Read files and check for values', () {
     test('Read servers.dat', () async {
-      var nbtFile;
+      NbtFile nbtFile;
       try {
         nbtFile = NbtFile.fromPath('./test/servers.dat');
         // As we have not yet called [readFile], the root node should be null.
@@ -30,7 +58,7 @@ void main() {
     test('Read bigtest.nbt', () async {
       // bigtest.nbt is GZIP compressed and is therefore a special test file.
       // You can get bigtest.nbt from https://raw.github.com/Dav1dde/nbd/master/test/bigtest.nbt.
-      var nbtFile;
+      NbtFile nbtFile;
       try {
         nbtFile = NbtFile.fromPath('./test/bigtest.nbt');
         await nbtFile.readFile();
@@ -114,7 +142,7 @@ void main() {
 
         await nbtFile.writeFile(
             file: File('./test/servers2.dat'),
-            nbtCompression: nbtFile.compression ?? NbtCompression.none);
+            nbtCompression: nbtFile.nbtCompression ?? NbtCompression.none);
 
         expect(await compareFiles('./test/servers.dat', './test/servers2.dat'),
             isTrue);
@@ -130,7 +158,7 @@ void main() {
 
         await nbtFile.writeFile(
             file: File('./test/bigtest2.nbt'),
-            nbtCompression: nbtFile.compression ?? NbtCompression.none);
+            nbtCompression: nbtFile.nbtCompression ?? NbtCompression.none);
 
         expect(await compareFiles('./test/bigtest.nbt', './test/bigtest2.nbt'),
             isTrue);
@@ -146,7 +174,7 @@ void main() {
 
         await nbtFile.writeFile(
             file: File('./test/level2.dat'),
-            nbtCompression: nbtFile.compression ?? NbtCompression.none);
+            nbtCompression: nbtFile.nbtCompression ?? NbtCompression.none);
 
         expect(await compareFiles('./test/level.dat', './test/level2.dat'),
             isTrue);

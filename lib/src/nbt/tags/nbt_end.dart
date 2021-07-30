@@ -1,6 +1,6 @@
-import '../nbt_file_reader.dart';
-import '../nbt_file_writer.dart';
+import '../nbt_reader.dart';
 import '../nbt_tags.dart';
+import '../nbt_writer.dart';
 import 'nbt_compound.dart';
 import 'nbt_tag.dart';
 
@@ -20,14 +20,14 @@ class NbtEnd extends NbtTag {
   }
 
   @override
-  NbtTag readTag(NbtFileReader fileReader, {bool withName = true}) {
-    if (fileReader.readByte() != 0x00) throw Exception('Cannot read end tag.');
+  NbtTag readTag(NbtReader nbtReader, {bool withName = true}) {
+    if (nbtReader.readByte() != 0x00) throw Exception('Cannot read end tag.');
     return this;
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter,
+  void writeTag(NbtWriter nbtWriter,
       {bool withName = true, bool withType = true}) {
-    fileWriter.writeByte(0x00);
+    nbtWriter.writeByte(0x00);
   }
 }

@@ -1,6 +1,6 @@
-import '../nbt_file_reader.dart';
-import '../nbt_file_writer.dart';
+import '../nbt_reader.dart';
 import '../nbt_tags.dart';
+import '../nbt_writer.dart';
 import 'nbt_tag.dart';
 
 /// Represents a 4 byte single precision floating point number in a NBT file.
@@ -16,21 +16,21 @@ class NbtFloat extends NbtTag {
         super(name, NbtTagType.TAG_FLOAT);
 
   @override
-  NbtFloat readTag(NbtFileReader fileReader, {bool withName = true}) {
-    final name = withName ? fileReader.readString() : 'None';
-    final value = fileReader.readFloat();
+  NbtFloat readTag(NbtReader nbtReader, {bool withName = true}) {
+    final name = withName ? nbtReader.readString() : 'None';
+    final value = nbtReader.readFloat();
     return this
       ..name = name
       .._value = value;
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter,
+  void writeTag(NbtWriter nbtWriter,
       {bool withName = true, bool withType = true}) {
-    if (withType) fileWriter.writeByte(nbtTagType.index);
+    if (withType) nbtWriter.writeByte(nbtTagType.index);
     if (withName) {
-      fileWriter.writeString(name);
+      nbtWriter.writeString(name);
     }
-    fileWriter.writeFloat(_value);
+    nbtWriter.writeFloat(_value);
   }
 }

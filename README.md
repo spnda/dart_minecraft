@@ -58,12 +58,14 @@ context can be found [here](https://github.com/spnda/dart_minecraft/tree/main/li
 void main() async {
     // You can create a NbtFile object from a File object or
     // from a String path.
-    final nbtFile = NbtFile.fromFile(File('yourfile.nbt'));
-    await nbtFile.readFile();
-    NbtCompound rootNode = nbtFile.root;
+    final nbtReader = NbtReader.fromFile('yourfile.nbt');
+    await nbtReader.read();
+    NbtCompound rootNode = nbtReader.root;
     // You can now read information from your [rootNode].
     // for example, rootNode[0] will return the first child,
     // if present.
+    print(rootNode.first);
+    print(rootNode.getChildrenByTag(NbtTagType.TAG_STRING));
 }
 ```
 

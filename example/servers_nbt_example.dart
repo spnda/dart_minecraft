@@ -8,9 +8,9 @@ void main() async {
   /// and use the server's resource pack. We will read this file and
   /// go over each server and ping that server, using the ping() method
   /// from this package.
-  final nbtFile = NbtFile.fromPath('./example/servers.dat');
+  final nbtFile = NbtReader.fromFile('./example/servers.dat');
   try {
-    await nbtFile.readFile();
+    nbtFile.read();
   } on NbtFileReadException {
     print('Cannot read servers.dat');
   }

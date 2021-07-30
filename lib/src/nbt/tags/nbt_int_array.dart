@@ -1,6 +1,6 @@
-import '../nbt_file_reader.dart';
-import '../nbt_file_writer.dart';
+import '../nbt_reader.dart';
 import '../nbt_tags.dart';
+import '../nbt_writer.dart';
 import 'nbt_array.dart';
 
 /// Represents a array of 4 byte integers in a NBT file.
@@ -12,25 +12,25 @@ class NbtIntArray extends NbtArray<int> {
   }
 
   @override
-  NbtIntArray readTag(NbtFileReader fileReader, {bool withName = true}) {
-    final name = withName ? fileReader.readString() : 'None';
-    final length = fileReader.readInt(signed: true);
+  NbtIntArray readTag(NbtReader nbtReader, {bool withName = true}) {
+    final name = withName ? nbtReader.readString() : 'None';
+    final length = nbtReader.readInt(signed: true);
     for (var i = 0; i < length; i++) {
-      add(fileReader.readInt(signed: true));
+      add(nbtReader.readInt(signed: true));
     }
     return this..name = name;
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter,
+  void writeTag(NbtWriter nbtWriter,
       {bool withName = true, bool withType = true}) {
-    if (withType) fileWriter.writeByte(nbtTagType.index);
+    if (withType) nbtWriter.writeByte(nbtTagType.index);
     if (withName) {
-      fileWriter.writeString(name);
+      nbtWriter.writeString(name);
     }
-    fileWriter.writeInt(children.length, signed: true);
+    nbtWriter.writeInt(children.length, signed: true);
     for (final val in children) {
-      fileWriter.writeInt(val, signed: true);
+      nbtWriter.writeInt(val, signed: true);
     }
   }
 }

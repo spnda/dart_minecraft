@@ -1,6 +1,6 @@
-import '../nbt_file_reader.dart';
-import '../nbt_file_writer.dart';
+import '../nbt_reader.dart';
 import '../nbt_tags.dart';
+import '../nbt_writer.dart';
 import 'nbt_end.dart';
 import 'nbt_list.dart';
 import 'nbt_tag.dart';
@@ -24,30 +24,30 @@ class NbtCompound<T extends NbtTag> extends NbtList<T> {
             nbtTagType: NbtTagType.TAG_COMPOUND);
 
   @override
-  NbtCompound readTag(NbtFileReader fileReader, {bool withName = true}) {
-    final name = withName ? fileReader.readString() : 'None';
+  NbtCompound readTag(NbtReader nbtReader, {bool withName = true}) {
+    final name = withName ? nbtReader.readString() : 'None';
     var tag =
-        NbtTag.readTagForType(fileReader, fileReader.readByte(), parent: this);
+        NbtTag.readTagForType(nbtReader, nbtReader.readByte(), parent: this);
 
     while (tag != null && tag.nbtTagType != NbtTagType.TAG_END) {
       if (tag is T) add(tag);
-      tag = NbtTag.readTagForType(fileReader, fileReader.readByte(),
-          parent: this);
+      tag =
+          NbtTag.readTagForType(nbtReader, nbtReader.readByte(), parent: this);
     }
     return this..name = name;
   }
 
   @override
-  void writeTag(NbtFileWriter fileWriter,
+  void writeTag(NbtWriter nbtWriter,
       {bool withName = true, bool withType = true}) {
-    if (withType) fileWriter.writeByte(nbtTagType.index);
+    if (withType) nbtWriter.writeByte(nbtTagType.index);
     if (withName) {
-      fileWriter.writeString(name);
+      nbtWriter.writeString(name);
     }
     for (final val in children) {
-      val.writeTag(fileWriter, withName: true, withType: true);
+      val.writeTag(nbtWriter, withName: true, withType: true);
     }
     // Write the last NbtEnd tag as well, this one is not included in [children].
-    NbtEnd(this).writeTag(fileWriter);
+    NbtEnd(this).writeTag(nbtWriter);
   }
 }
