@@ -9,6 +9,12 @@ void main() {
       final serverInfo = await ping(uri);
       expect(serverInfo, isNotNull);
       if (serverInfo!.response == null) return;
+
+      print('Modt: ${serverInfo.response!.description.description}');
+      expect(serverInfo.response!.description.description, isNotNull);
+      // A bit hacky, cannot expect for the MODT to never change
+      expect(serverInfo.response!.description.description, contains('Hypixel'));
+      
       print('Players online on $uri:');
       print(
           '${serverInfo.response!.players.online} / ${serverInfo.response!.players.max}');
