@@ -85,7 +85,7 @@ class ServerDescription {
   final String description;
 
   ServerDescription.fromJson(Map<String, dynamic> json)
-      : description = json['description'] ?? '';
+      : description = json['text'] ?? '';
 
   ServerDescription.fromString(String description) : description = description;
 }
