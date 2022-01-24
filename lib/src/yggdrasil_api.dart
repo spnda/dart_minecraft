@@ -31,6 +31,11 @@ Future<MojangAccount> authenticate(String username, String password,
       throw AuthException(data['errorMessage']);
     } else if (response.statusCode == 400) {
       throw ArgumentError('Invalid username, password or client token.');
+    } else if (data['error'] == 'GoneException') {
+      // The account was migrated to a Microsoft account.
+      throw Exception('The account has been migrated to a Microsoft account.');
+    } else {
+      throw Exception(data['errorMessage']);
     }
   }
   return MojangAccount.fromJson(data);
