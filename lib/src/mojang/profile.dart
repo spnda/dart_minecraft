@@ -55,7 +55,7 @@ class Profile {
   }
 
   /// This is a yggdrasil-server-only feature. It is basically useless towards a player or dev.
-  String get _signature =>
+  String get signature =>
       _signatures == null ? '' : utf8.decode(base64.decode(_signatures!));
 
   List<ProfileTexture> get getCapes {

@@ -14,7 +14,7 @@ void main() {
       expect(serverInfo.response!.description.description, isNotNull);
       // A bit hacky, cannot expect for the MODT to never change
       expect(serverInfo.response!.description.description, contains('Hypixel'));
-      
+
       print('Players online on $uri:');
       print(
           '${serverInfo.response!.players.online} / ${serverInfo.response!.players.max}');

@@ -1,5 +1,5 @@
-import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 import 'exceptions/auth_exception.dart';
 import 'mojang/mojang_account.dart';

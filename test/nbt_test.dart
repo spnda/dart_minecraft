@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:dart_minecraft/src/exceptions/nbt_exception.dart';
-import 'package:dart_minecraft/src/nbt/nbt_reader.dart';
-import 'package:dart_minecraft/src/nbt/nbt_writer.dart';
 import 'package:test/test.dart';
 
 class NbtFile {

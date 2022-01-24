@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_minecraft/dart_minecraft.dart';
-import 'package:dart_minecraft/src/mojang_api.dart';
 import 'package:dart_minecraft/src/mojang/mojang_account.dart';
-import 'package:dart_minecraft/src/yggdrasil_api.dart';
 import 'package:test/test.dart';
 
 void main() async {
