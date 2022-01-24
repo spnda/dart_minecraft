@@ -4,14 +4,40 @@ import 'dart:convert';
 class Profile {
   final String _id;
   final String _name;
-  final String _textures;
-  final String _signatures;
+  late List<dynamic> _capes;
+  late List<dynamic> _skins;
+  final String? _textures;
+  final String? _signatures;
 
+  /// Parses profile JSON returned from authenticated profile
+  /// queries.
   Profile.fromJson(Map<String, dynamic> json)
       : _id = json['id'],
         _name = json['name'],
+        _textures = null,
+        _signatures = null {
+    if (json['capes'] is List<dynamic>) {
+      _capes = json['capes'];
+    } else {
+      _capes = List.empty();
+    }
+    if (json['skins'] is List<dynamic>) {
+      _skins = json['skins'];
+    } else {
+      _skins = List.empty();
+    }
+  }
+
+  /// Parses the profile from a legacy JSON response. This is
+  /// commonly used for unauthenticated profile queries.
+  Profile.fromLegacyJson(Map<String, dynamic> json)
+      : _id = json['id'],
+        _name = json['name'],
         _textures = json['properties'][0]['value'],
-        _signatures = json['properties'][0]['signature'] ?? '';
+        _signatures = json['properties'][0]['signature'] ?? '' {
+    _capes = List.empty();
+    _skins = List.empty();
+  }
 
   /// The UUID of this player.
   String get uuid => _id;
@@ -20,18 +46,91 @@ class Profile {
   String get name => _name;
 
   /// Returns a ProfileTextures including this players' skin and cape textures.
-  ProfileTextures get textures => ProfileTextures.fromJson(
-      json.decode(utf8.decode(base64.decode(_textures))));
+  LegacyProfileTextures get _getTextures {
+    if (_textures == null) {
+      throw Exception("Can't read textures from new profile");
+    }
+    return LegacyProfileTextures.fromJson(
+        json.decode(utf8.decode(base64.decode(_textures!))));
+  }
 
   /// This is a yggdrasil-server-only feature. It is basically useless towards a player or dev.
-  String get signature => utf8.decode(base64.decode(_signatures));
+  String get _signature =>
+      _signatures == null ? '' : utf8.decode(base64.decode(_signatures!));
+
+  List<ProfileTexture> get getCapes {
+    if (_capes.isNotEmpty) {
+      // We're not on a legacy profile.
+      return _capes
+          .map((element) {
+            if (element is Map<String, dynamic>) {
+              return ProfileTexture(
+                  element['id'], element['url'], element['alias']);
+            }
+          })
+          .where((t) => t != null)
+          .cast<ProfileTexture>()
+          .toList();
+    } else {
+      // Legacy profile, convert using LegacyProfileTextures.
+      // They also only have a single texture.
+      final tex = _getTextures;
+      return [ProfileTexture(tex._profileId, tex.capeUrl(), null, null)];
+    }
+  }
+
+  List<ProfileTexture> get getSkins {
+    if (_skins.isNotEmpty) {
+      // We're not on a legacy profile.
+      return _skins
+          .map((element) {
+            if (element is Map<String, dynamic>) {
+              return ProfileTexture(
+                  element['id'],
+                  element['url'],
+                  element['alias'],
+                  element['variant'] == 'CLASSIC'
+                      ? SkinModel.classic
+                      : SkinModel.slim);
+            }
+          })
+          .where((t) => t != null)
+          .cast<ProfileTexture>()
+          .toList();
+    } else {
+      // Legacy profile, convert using LegacyProfileTextures.
+      // They also only have a single texture.
+      final tex = _getTextures;
+      return [
+        ProfileTexture(tex._profileId, tex.skinUrl(), null, tex.skinModel)
+      ];
+    }
+  }
 }
 
 /// The skin model of a texture
 enum SkinModel { classic, slim }
 
-/// Represents all textures for a minecraft profile.
-class ProfileTextures {
+/// Represents a single texture for a minecraft profile.
+/// Could be a cape or skin.
+class ProfileTexture {
+  /// The ID of the texture or the profile.
+  String id;
+
+  /// The skin model of this texture. Might be null if this is a cape.
+  SkinModel? model;
+  String url;
+  String? alias;
+
+  ProfileTexture(String id, String url, [String? alias, SkinModel? model])
+      : id = id,
+        model = model,
+        url = url,
+        alias = alias;
+}
+
+/// Represents all textures for a legacy minecraft profile.
+class LegacyProfileTextures {
   late int _timestamp;
   late String _profileId;
   late String _profileName;
@@ -41,7 +140,7 @@ class ProfileTextures {
 
   late SkinModel _skinModel;
 
-  ProfileTextures.fromJson(Map<String, dynamic> json) {
+  LegacyProfileTextures.fromJson(Map<String, dynamic> json) {
     Map skin = json['textures']['SKIN'] ?? {},
         cape = json['textures']['CAPE'] ?? {};
     this
@@ -58,7 +157,7 @@ class ProfileTextures {
 
   /// Get the Url for the skin of this player.
   /// If the player does not have a skin, this function will return the link to the steve or alex skin.
-  String getSkinUrl() {
+  String skinUrl() {
     if (_skinUrl != '') {
       return _skinUrl;
     } else {

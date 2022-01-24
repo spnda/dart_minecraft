@@ -33,8 +33,9 @@ void main() async {
   test('API should return link to the skin of given player.', () async {
     try {
       final profile = await getProfile(uuid);
-      final skin = profile.textures.getSkinUrl();
-      expect(skin, testData['skin_texture']);
+      final skins = profile.getSkins;
+      expect(skins, isNotEmpty);
+      expect(skins.first.url, testData['skin_texture']);
     } on ArgumentError catch (e) {
       print(e);
     }
@@ -71,7 +72,7 @@ void main() async {
     expect(servers.where((server) => server.address != null), isNotEmpty);
   });
 
-  group('Yggdrasil Tests', () {
+  group('Yggdrasil Tests:', () {
     MojangAccount? user;
 
     test('refresh test', () async {
@@ -89,6 +90,18 @@ void main() async {
         var valid =
             await validate(user!.accessToken, clientToken: user!.clientToken);
         expect(valid, isTrue);
+      } on Error catch (e) {
+        print(e);
+      }
+    });
+
+    test('Get user profile with authentication', () async {
+      try {
+        if (user == null) return;
+        final profile = await getCurrentProfile(user!.accessToken);
+        final skins = profile.getSkins;
+        expect(skins, isNotEmpty);
+        expect(skins.first.url, testData['skin_texture']);
       } on Error catch (e) {
         print(e);
       }

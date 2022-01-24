@@ -106,7 +106,8 @@ Future<List<Name>> getNameHistory(String uuid) async {
   return Future.value(list.map((dynamic v) => Name.fromJson(v)).toList());
 }
 
-/// Returns the user profile including skin/cape information.
+/// Returns the user profile including skin/cape information. Does
+/// not require authentication.
 ///
 /// Using [getProfile(uuid).getTextures] both skin and cape textures can be obtained.
 Future<Profile> getProfile(String uuid) async {
@@ -118,6 +119,29 @@ Future<Profile> getProfile(String uuid) async {
         uuid, 'uuid', 'User for given UUID could not be found or is invalid.');
   } else if (response.statusCode == 429 && map['error'] != null) {
     throw TooManyRequestsException(map['errorMessage']);
+  }
+  return Profile.fromLegacyJson(map);
+}
+
+/// Get's the Minecraft profile for the currently logged
+/// in user. This requires a valid access token.
+Future<Profile> getCurrentProfile(String accessToken) async {
+  final response = await request(
+      http.get, _minecraftServicesApi, 'minecraft/profile',
+      headers: {
+        'authorization': 'Bearer $accessToken',
+      });
+  if (response.statusCode == 401) {
+    throw AuthException(AuthException.invalidCredentialsMessage);
+  }
+
+  final map = parseResponseMap(response);
+  if (map['error'] != null) {
+    if (map['error'] == 'NOT_FOUND') {
+      throw Exception('The player does not own the game.');
+    } else {
+      throw Exception(map['error'] as String);
+    }
   }
   return Profile.fromJson(map);
 }
