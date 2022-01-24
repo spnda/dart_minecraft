@@ -1,10 +1,13 @@
+/// A JWT access token used for authentication in Minecraft.
+typedef AccessToken = String;
+
 /// A MojangAccount with data as returned by /authenticate.
 class MojangAccount {
   /// The access token used to access APIs and authenticate to Minecraft Servers.
   ///
   /// This token is a replacement for logging in using a username and password each time,
   /// so keep good track of it!
-  String accessToken;
+  AccessToken accessToken;
 
   /// This account's client token.
   String clientToken;

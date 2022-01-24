@@ -6,6 +6,7 @@ import 'exceptions/auth_exception.dart';
 import 'exceptions/too_many_requests_exception.dart';
 import 'minecraft/blocked_server.dart';
 import 'minecraft/minecraft_statistics.dart';
+import 'mojang/mojang_account.dart';
 import 'mojang/mojang_status.dart';
 import 'mojang/name.dart';
 import 'mojang/profile.dart';
@@ -126,7 +127,7 @@ Future<Profile> getProfile(String uuid) async {
 
 /// Get's the Minecraft profile for the currently logged
 /// in user. This requires a valid access token.
-Future<Profile> getCurrentProfile(String accessToken) async {
+Future<Profile> getCurrentProfile(AccessToken accessToken) async {
   final response = await request(
       http.get, _minecraftServicesApi, 'minecraft/profile',
       headers: {
@@ -148,8 +149,8 @@ Future<Profile> getCurrentProfile(String accessToken) async {
 }
 
 /// Changes the Mojang account name to [newName].
-Future<bool> changeName(
-    String uuid, String newName, String accessToken, String password) async {
+Future<bool> changeName(String uuid, String newName, AccessToken accessToken,
+    String password) async {
   final body = <String, String>{'name': newName, 'password': password};
   final headers = <String, String>{
     'authorization': 'Bearer $accessToken',
@@ -183,7 +184,7 @@ Future<bool> changeName(
 
 /// Reserves the [newName] for this Mojang Account.
 // TODO: Improved return type including error message. Or just throw an error?
-Future<bool> reserveName(String newName, String accessToken) async {
+Future<bool> reserveName(String newName, AccessToken accessToken) async {
   final headers = {
     'authorization': 'Bearer $accessToken',
     'Origin': 'https://checkout.minecraft.net',
@@ -226,7 +227,7 @@ Future<bool> isNameAvailableNoAuth(String name) async {
 /// long and not include any invalid characters to be valid.
 /// If your access token is invalid, this will silently fail
 /// and return false.
-Future<bool> isNameAvailable(String name, String accessToken) async {
+Future<bool> isNameAvailable(String name, AccessToken accessToken) async {
   final response = await request(
       http.get, _minecraftServicesApi, 'minecraft/profile/name/$name/available',
       headers: {'authorization': 'Bearer $accessToken'});
@@ -241,7 +242,7 @@ Future<bool> isNameAvailable(String name, String accessToken) async {
 }
 
 /// Reset's the player's skin.
-Future<void> resetSkin(String uuid, String accessToken) async {
+Future<void> resetSkin(String uuid, AccessToken accessToken) async {
   final headers = {
     'authorization': 'Bearer $accessToken',
   };
@@ -255,7 +256,7 @@ Future<void> resetSkin(String uuid, String accessToken) async {
 }
 
 /// Change the skin with the texture of the skin at [skinUrl].
-Future<bool> changeSkin(Uri skinUrl, String accessToken,
+Future<bool> changeSkin(Uri skinUrl, AccessToken accessToken,
     [SkinModel skinModel = SkinModel.classic]) async {
   final headers = {
     'authorization': 'Bearer $accessToken',
@@ -311,7 +312,7 @@ Future<List<BlockedServer>> getBlockedServers() async {
 /// Checks whether or not the user has to answer the security challenges.
 /// This will return true if the current location is not verified and needs
 /// to be verified using [getSecurityChallenges] and [answerSecurityChallenges].
-Future<bool> areSecurityChallengesNeeded(String accessToken) async {
+Future<bool> areSecurityChallengesNeeded(AccessToken accessToken) async {
   final headers = {
     'authorization': 'Bearer $accessToken',
   };
@@ -324,7 +325,7 @@ Future<bool> areSecurityChallengesNeeded(String accessToken) async {
 /// to access the account.
 /// Check if this is needed using [areSecurityChallengesNeeded].
 Future<List<SecurityChallenge>> getSecurityChallenges(
-    String accessToken) async {
+    AccessToken accessToken) async {
   final headers = {
     'authorization': 'Bearer $accessToken',
   };
@@ -343,7 +344,7 @@ Future<List<SecurityChallenge>> getSecurityChallenges(
 /// You can get the security challenges through [getSecurityChallenges].
 /// Also check if this is needed using [areSecurityChallengesNeeded].
 Future<bool> answerSecurityChallenges(
-    String accessToken, List<SecurityChallenge> answers) async {
+    AccessToken accessToken, List<SecurityChallenge> answers) async {
   /// Verify we have enough answers passed.
   if (answers.length != 3) {
     throw ArgumentError.value(
@@ -369,7 +370,7 @@ Future<bool> answerSecurityChallenges(
 /// from a Mojang account to a Microsoft account. This function
 /// will simply return 'false' if the access token is invalid
 /// or expired.
-Future<bool> canMigrate(String accessToken) async {
+Future<bool> canMigrate(AccessToken accessToken) async {
   final response = await request(
       http.get, _minecraftServicesApi, 'rollout/v1/msamigration',
       headers: {

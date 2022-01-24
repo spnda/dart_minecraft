@@ -99,7 +99,7 @@ Future<MojangAccount> refresh(MojangAccount account) async {
 ///
 /// [clientToken] is optional, though if provided should match the client token
 /// that was used to obtained given [accessToken].
-Future<bool> validate(String accessToken, {String? clientToken}) async {
+Future<bool> validate(AccessToken accessToken, {String? clientToken}) async {
   final headers = {
     'content-type': 'application/json',
   };
@@ -147,7 +147,7 @@ Future<bool> invalidate(MojangAccount mojangAccount) async {
 /// Be careful to what values you pass into [newPassword], as the [accessToken] will
 /// get invalidated and you will need it to log into your account again.
 Future<bool> changePassword(
-    String currentPassword, String newPassword, String accessToken) async {
+    String currentPassword, String newPassword, AccessToken accessToken) async {
   if (currentPassword.isEmpty) {
     throw ArgumentError.value(currentPassword, 'currentPassword',
         'The current password cannot be empty.');
