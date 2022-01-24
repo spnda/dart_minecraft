@@ -30,11 +30,6 @@ void main() async {
     }
   });
 
-  test('API should return a list of pairs with the sites status.', () async {
-    final status = await getStatus();
-    expect(status.minecraft, isA<MojangSiteStatus>());
-  });
-
   test('API should return link to the skin of given player.', () async {
     try {
       final profile = await getProfile(uuid);

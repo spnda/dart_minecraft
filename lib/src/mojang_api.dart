@@ -15,27 +15,24 @@ import 'utilities/web_util.dart';
 
 typedef PlayerUuid = Pair<String, String>;
 
-const String _statusApi = 'status.mojang.com';
 const String _mojangApi = 'api.mojang.com';
 const String _mojangAccountApi = 'account.mojang.com';
 const String _sessionApi = 'sessionserver.mojang.com';
 const String _minecraftServicesApi = 'api.minecraftservices.com';
 
-/// Returns the Mojang and Minecraft API and website status
+/// Returns the Mojang and Minecraft API and website status.
+///
+/// This service was closed down by Mojang on 8 October 2021 due
+/// to incorrect status responses, saying "it was a legacy system
+/// running that we (as you might have noticed) did not update
+/// correctly, or held an accurate representation of our services".
+/// See https://bugs.mojang.com/browse/WEB-2303
 ///
 /// Might throw a [Exception] if no data or invalid data was
 /// returned.
+@deprecated
 Future<MojangStatus> getStatus() async {
-  final response = await request(http.get, _statusApi, 'check');
-  if (response.statusCode != 200) {
-    throw Exception('Failed to get Mojang API status.');
-  }
-  try {
-    final list = parseResponseList(response);
-    return MojangStatus.fromJson(list);
-  } on FormatException catch (_) {
-    return MojangStatus.empty();
-  }
+  return MojangStatus.empty();
 }
 
 /// Returns the UUID for player [username].
