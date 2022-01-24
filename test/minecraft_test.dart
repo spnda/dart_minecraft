@@ -8,6 +8,9 @@ void main() async {
     final versionManifest = await getVersions();
     expect(versionManifest, isA<VersionManifest>());
     expect(versionManifest.versions, isNotEmpty);
+    expect(versionManifest.versions.where((v) {
+      return v.id == '1.18.1';
+    }), isNotEmpty);
   });
 
   test('Test if the patch notes are empty or not.', () async {
@@ -19,5 +22,10 @@ void main() async {
     /// is not getting shorter anytime soon.
     expect(patchNotes.first.version,
         (String item) => item.isNotEmpty && item.length >= 4);
+  });
+
+  test('Test if Minecraft news exists', () async {
+    final news = await getNews();
+    expect(news, isNotEmpty);
   });
 }

@@ -18,8 +18,7 @@ const String _resourcesApi = 'http://resources.download.minecraft.net/';
 /// This data can be found on the "News" page in the official
 /// Minecraft Launcher.
 Future<List<MinecraftNews>> getNews() async {
-  final response =
-      await request(http.get, _launcherContentApi, 'javaNews.json');
+  final response = await request(http.get, _launcherContentApi, 'news.json');
   final data = parseResponseMap(response);
   final news = <MinecraftNews>[];
   for (Map<String, dynamic> e in data['entries']) {
