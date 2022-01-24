@@ -84,6 +84,16 @@ void main() async {
       }
     });
 
+    test('Test if the player can migrate', () async {
+      try {
+        if (user == null) return;
+        var migrate = await canMigrate(user!.accessToken);
+        print('The player can migrate: $migrate');
+      } on Error catch (e) {
+        print(e);
+      }
+    });
+
     test('Test if access token is valid', () async {
       try {
         if (user == null) return;

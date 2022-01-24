@@ -5,6 +5,7 @@ export 'src/exceptions/nbt_file_read_exception.dart';
 export 'src/exceptions/nbt_file_write_exception.dart';
 export 'src/exceptions/ping_exception.dart';
 export 'src/exceptions/too_many_requests_exception.dart';
+export 'src/microsoft_api.dart';
 export 'src/minecraft.dart';
 export 'src/minecraft/blocked_server.dart';
 export 'src/minecraft/minecraft_news.dart';

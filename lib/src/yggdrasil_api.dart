@@ -9,6 +9,8 @@ const String _mojangApi = 'api.mojang.com';
 const String _authServerApi = 'authserver.mojang.com';
 
 /// Authenticates a user with given credentials [username] and [password].
+/// This *only* works with Mojang accounts and does not work with
+/// migrated Microsoft accounts.
 ///
 /// [clientToken] should be identical for each request, otherwise old
 /// access tokens will be invalidated. If omitted, a randomly generated

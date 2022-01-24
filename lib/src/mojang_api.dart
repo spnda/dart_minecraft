@@ -12,6 +12,7 @@ import 'mojang/profile.dart';
 import 'mojang/security_challenges.dart';
 import 'utilities/pair.dart';
 import 'utilities/web_util.dart';
+import 'yggdrasil_api.dart';
 
 typedef PlayerUuid = Pair<String, String>;
 
@@ -362,4 +363,54 @@ Future<bool> answerSecurityChallenges(
         answers, 'answers', 'At least one answer was incorrect.');
   }
   return response.statusCode == 204;
+}
+
+/// Checks whether this user can already migrate their account
+/// from a Mojang account to a Microsoft account. This function
+/// will simply return 'false' if the access token is invalid
+/// or expired.
+Future<bool> canMigrate(String accessToken) async {
+  final response = await request(
+      http.get, _minecraftServicesApi, 'rollout/v1/msamigration',
+      headers: {
+        'authorization': 'Bearer $accessToken',
+      });
+  if (response.statusCode == 401) {
+    return false;
+  }
+
+  final map = parseResponseMap(response);
+  return map['rollout'] != null && map['rollout'] as bool;
+}
+
+/// Perform a login with a previously acquired XSTS Token. This returns
+/// a classic Minecraft access token which can be used in the Minecraft
+/// client to authenticate itself.
+///
+/// This is essentially the replacement for [authenticate], which got the
+/// JWT access token through Yggdrasil.
+///
+/// The XSTS Token can be obtained by going through the
+/// [Microsoft Authentication Scheme](https://wiki.vg/Microsoft_Authentication_Scheme),
+/// for which some endpoints have been provided in `microsoft_api.dart`.
+///
+/// However, I have not implemented the Azure OAuth flow but I'd love
+/// if anyone wanted to do it and opened a PR with the feature at
+/// https://github.com/spnda/dart_minecraft/pulls.
+Future<String> authenticateWithXBOX(String xstsToken, String userHash) async {
+  final headers = {
+    'content-type': 'application/json',
+  };
+  final response = await requestBody(
+      http.post,
+      _minecraftServicesApi,
+      'authentication/login_with_xbox',
+      {
+        'identityToken': 'XBL3.0 x=$userHash;$xstsToken',
+      },
+      headers: headers);
+  if (response.statusCode == 401) {
+    throw AuthException('Unauthorized (XSTS token expired or invalid)');
+  }
+  return parseResponseMap(response)['access_token'];
 }
