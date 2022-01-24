@@ -1,4 +1,5 @@
 import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:dart_minecraft/dart_nbt.dart';
 
 Future<int> main() async {
   /// In this example we'll read content from a NBT File

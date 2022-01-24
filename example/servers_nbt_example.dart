@@ -1,4 +1,5 @@
 import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:dart_minecraft/dart_nbt.dart';
 
 void main() async {
   /// In this example we will read from a "servers.dat" file,
@@ -46,7 +47,7 @@ void main() async {
       if (server == null || server.response == null) continue;
       final players = server.response!.players;
       print('Pinged ${ip.first.value}...');
-      print('${players.online} / ${players.max}');
+      print('${players.online} / ${players.max}. ${server.ping}ms.');
     } on PingException {
       /// If we were unable to connect to the IP we found,
       /// a [PingException] is thrown. In our case, we will

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dart_minecraft/dart_minecraft.dart';
+import 'package:dart_minecraft/dart_nbt.dart';
 import 'package:dart_minecraft/src/exceptions/nbt_exception.dart';
 import 'package:test/test.dart';
 
