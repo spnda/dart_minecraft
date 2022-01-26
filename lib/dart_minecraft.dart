@@ -1,3 +1,8 @@
+/// The core dart_minecraft library with Mojang, Minecraft
+/// and Microsoft APIs. It wraps authentication APIs, content
+/// APIs and account management APIs. Furthermore, there are
+/// server pinging features to get the status of any
+/// Minecraft: Java Edition server.
 library minecraft;
 
 export 'src/exceptions/auth_exception.dart';

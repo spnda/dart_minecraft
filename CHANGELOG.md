@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0
+- Add: Microsoft authentication endpoints (Note that these are not complete!)
+- Change: Deprecate getStatus API as it got removed by Mojang
+- Change: Move NBT functionality to separate library (same package though)
+- Change: Remove deprecated API classes
+- Change: Use new profile endpoint for profile queries and update profile API
+- Fix: Server modt was invalid (thanks @TheKingDave)
+- Fix: Catch auth errors when account has migrated
+- Fix: The News endpoint changed
+
 ## 0.4.0
 
 - Add: Dart JS support (NBT, Server ping and packets do not work on JS.)

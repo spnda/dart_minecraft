@@ -1,5 +1,5 @@
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 
 import 'minecraft/minecraft_news.dart';
 import 'minecraft/minecraft_patch.dart';
@@ -57,10 +57,10 @@ String getLibraryUrl(String package, String name, String version,
     {String? os}) {
   var jarFileName =
       os == null ? '$name-$version.jar' : '$name-$version-natives-$os';
-  return join(_librariesApi, package, name, version, jarFileName);
+  return path.join(_librariesApi, package, name, version, jarFileName);
 }
 
 /// Get the resource URL for a given [hash].
 String getResourceUrl(String hash) {
-  return join(_resourcesApi, hash.substring(0, 2), hash);
+  return path.join(_resourcesApi, hash.substring(0, 2), hash);
 }
