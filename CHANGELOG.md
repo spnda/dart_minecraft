@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.1
+- Add #5: Support little endianness in NBT files
+- Add: Blocked player list API
+- Add: Name change info API
+- Change: Deprecate getStatistics as endpoint was removed
+- Change: Switch to lints & update deps
+
 ## 0.5.0
 - Add: Microsoft authentication endpoints (Note that these are not complete!)
 - Change: Deprecate getStatus API as it got removed by Mojang
