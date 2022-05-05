@@ -118,5 +118,11 @@ void main() async {
       expect(challenges, isList);
       expect(challenges, hasLength(3)); // There should always be 3 challenges.
     });
+
+    test('Get name change info', () async {
+      if (user == null) return;
+      final info = await getNameChangeInfo(user!.accessToken);
+      print(info.createdAt.toString());
+    });
   });
 }

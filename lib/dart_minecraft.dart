@@ -17,6 +17,7 @@ export 'src/minecraft/version_manifest.dart';
 export 'src/minecraft_api.dart';
 export 'src/mojang/mojang_status.dart';
 export 'src/mojang/name.dart';
+export 'src/mojang/profile_namechange.dart';
 export 'src/mojang/profile.dart';
 export 'src/mojang_api.dart';
 export 'src/packet/packet_compression.dart';

@@ -10,6 +10,7 @@ import 'mojang/mojang_account.dart';
 import 'mojang/mojang_status.dart';
 import 'mojang/name.dart';
 import 'mojang/profile.dart';
+import 'mojang/profile_namechange.dart';
 import 'mojang/security_challenges.dart';
 import 'utilities/pair.dart';
 import 'utilities/web_util.dart';
@@ -402,4 +403,20 @@ Future<String> authenticateWithXBOX(String xstsToken, String userHash) async {
     throw AuthException('Unauthorized (XSTS token expired or invalid)');
   }
   return parseResponseMap(response)['access_token'];
+}
+
+Future<ProfileNameChangeInfo> getNameChangeInfo(String accessToken) async {
+  final headers = {
+    'authorization': 'Bearer $accessToken',
+  };
+  final response = await request(
+      http.get, _minecraftServicesApi, '/minecraft/profile/namechange',
+      headers: headers);
+
+  if (response.statusCode == 401) {
+    throw AuthException('Unauthorized');
+  }
+  final map = parseResponseMap(response);
+  return ProfileNameChangeInfo(DateTime.parse(map['changedAt']),
+      DateTime.parse(map['createdAt']), map['nameChangeAllowed']);
 }
