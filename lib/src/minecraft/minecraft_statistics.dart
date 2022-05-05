@@ -3,10 +3,10 @@ class MinecraftStatistics {
   final int _total, _last24h;
   final double _salesPerSecond;
 
-  MinecraftStatistics.fromJson(Map response)
-      : _total = response['total'],
-        _last24h = response['last24h'],
-        _salesPerSecond = response['saleVelocityPerSeconds'];
+  MinecraftStatistics()
+      : _total = 0,
+        _last24h = 0,
+        _salesPerSecond = 0;
 
   /// The total amount of sales since release.
   int get totalSales => _total;

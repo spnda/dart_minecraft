@@ -2,7 +2,7 @@
 /// "Named Binary Tag" file format. Minecraft world files
 /// and other storage files related to Minecraft: Java Edition
 /// are stored in this file format.
-/// 
+///
 /// The format allows for compression with gzip or zlib. However,
 /// using dart2js will currently lead to exceptions while reading
 /// or writing as the platform does not include a implementation

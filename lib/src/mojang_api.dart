@@ -29,9 +29,6 @@ const String _minecraftServicesApi = 'api.minecraftservices.com';
 /// running that we (as you might have noticed) did not update
 /// correctly, or held an accurate representation of our services".
 /// See https://bugs.mojang.com/browse/WEB-2303
-///
-/// Might throw a [Exception] if no data or invalid data was
-/// returned.
 @deprecated
 Future<MojangStatus> getStatus() async {
   return MojangStatus.empty();
@@ -279,23 +276,14 @@ Future<bool> changeSkin(Uri skinUrl, AccessToken accessToken,
 ///
 /// Returns total statistics for ALL games included. To get individual statistics, call this
 /// function for each MinecraftStatisticsItem or each game.
+///
+/// This service was closed down by Mojang on 8 March 2022 because it didn't represent the total
+/// sales of Minecraft. The counter stopped at 45.6M Minecraft Java and 305k Minecraft Dungeons
+/// sales. See https://twitter.com/Mojang_Ined/status/1501541417784852484
+@deprecated
 Future<MinecraftStatistics> getStatistics(
     List<MinecraftStatisticsItem> items) async {
-  if (items.isEmpty) {
-    throw ArgumentError.value(
-        items, 'items', 'The list of MinecraftStatisticItems cannot be empty.');
-  }
-  final payload = {
-    'metricKeys': [
-      for (MinecraftStatisticsItem item in items) item.name,
-    ]
-  };
-  final headers = <String, String>{'content-type': 'application/json'};
-  final response = await requestBody(
-      http.post, _mojangApi, 'orders/statistics', payload,
-      headers: headers);
-  final data = parseResponseMap(response);
-  return MinecraftStatistics.fromJson(data);
+  return MinecraftStatistics();
 }
 
 /// Returns a list of blocked servers.

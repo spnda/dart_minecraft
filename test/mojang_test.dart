@@ -43,20 +43,6 @@ void main() async {
     }
   });
 
-  test('Gets Minecraft sale statistics', () async {
-    final statistics = await getStatistics([
-      MinecraftStatisticsItem.minecraftItemsSold,
-      MinecraftStatisticsItem.minecraftPrepaidCardsRedeemed
-    ]);
-    expect(statistics.salesLast24h, isNotNull);
-  });
-
-  test('Gets Minecraft Dungeons sale statistics', () async {
-    final statistics =
-        await getStatistics([MinecraftStatisticsItem.dungeonsItemsSold]);
-    expect(statistics.salesLast24h, isNotNull);
-  });
-
   test('API should return a list of names', () async {
     try {
       final nameHistory = await getNameHistory(uuid);
