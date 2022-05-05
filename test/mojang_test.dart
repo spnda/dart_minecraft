@@ -19,6 +19,10 @@ void main() async {
   final username = testData['username'];
   final uuid = testData['uuid'];
 
+  if (uuid is! String || uuid.isEmpty) {
+    throw TestFailure('test_data.json not filled.');
+  }
+
   test('API should return UUID for username', () async {
     try {
       var temp_uuid = (await getUuid(username)).second;

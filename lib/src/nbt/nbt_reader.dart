@@ -15,7 +15,9 @@ class NbtReader extends ByteReader<bool> {
   NbtReader(Uint8List list) {
     data = list;
     nbtCompression = _detectCompression();
-    data = nbtCompression.decompressData(data!);
+    if (nbtCompression != NbtCompression.none) {
+      data = nbtCompression.decompressData(data!);
+    }
     readByteData = data!.buffer.asByteData();
   }
 
@@ -63,5 +65,9 @@ class NbtReader extends ByteReader<bool> {
       default:
         return NbtCompression.unknown;
     }
+  }
+
+  Endian getContentEndian() {
+    return Endian.big;
   }
 }

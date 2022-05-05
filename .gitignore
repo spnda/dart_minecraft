@@ -13,3 +13,5 @@ doc/api/
 # NBT Files for testing
 *.nbt
 *.dat
+
+**/.DS_Store

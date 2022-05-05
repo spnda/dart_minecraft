@@ -20,7 +20,8 @@ class NbtWriter extends ByteWriter<bool> {
 
   /// Write the given [data] compound into a list of
   /// bytes. See [writeFile] on how to quickly write
-  /// to a file.
+  /// to a file. Remember that on Bedrock, all NBT files
+  /// will have to be written with Endian.little.
   List<int> write(NbtCompound data) {
     _root ??= data;
 

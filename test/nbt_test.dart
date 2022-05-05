@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dart_minecraft/dart_nbt.dart';
 import 'package:dart_minecraft/src/exceptions/nbt_exception.dart';
@@ -15,18 +16,23 @@ class NbtFile {
     if (!file.existsSync()) file.createSync();
   }
 
-  Future<void> readFile() async {
+  Future<void> readFile({Endian endian = Endian.big}) async {
     var reader = NbtReader.fromFile(file.path);
+    reader.setEndianness = endian;
     reader.read();
     root = reader.root;
     nbtCompression = reader.nbtCompression;
   }
 
   Future<void> writeFile(
-      {File? file, NbtCompression nbtCompression = NbtCompression.none}) async {
+      {File? file,
+      NbtCompression nbtCompression = NbtCompression.none,
+      Endian endian = Endian.big}) async {
     if (file != null) this.file = file;
     if (root == null) return;
-    await NbtWriter().writeFile(this.file.path, root!);
+    var writer = NbtWriter();
+    writer.setEndianness = endian;
+    await writer.writeFile(this.file.path, root!);
   }
 }
 
@@ -205,6 +211,28 @@ void main() {
       expect(nbtFile.root, isNotNull);
       expect(nbtFile.root!.children[0].value, equals(5430834));
       expect(nbtFile.root!.children[1].value, equals('This is a String test!'));
+    } on NbtException {
+      return;
+    }
+  });
+
+  test('Write/read with proper endianness', () async {
+    try {
+      final file = NbtFile.fromPath('./test/endianness_test.nbt');
+      file.root = NbtCompound(
+        name: 'root',
+        children: <NbtTag>[
+          NbtLong(name: 'int', value: 0xFFFF), // This should be the first byte.
+        ],
+      );
+      await file.writeFile(
+          endian: Endian.little, nbtCompression: NbtCompression.none);
+
+      // Now we try and read that integer again. With big Endian, we'd likely get
+      // a RangeError somewhere in the code.
+      file.root = null;
+      await file.readFile(endian: Endian.little);
+      expect(file.root?.children[0].value, equals(0xFFFF));
     } on NbtException {
       return;
     }

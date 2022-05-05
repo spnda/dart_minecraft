@@ -11,6 +11,9 @@ abstract class ByteWriter<T> {
 
   late ByteData writeByteData;
 
+  /// The endianness to use when writing the data.
+  Endian _endianness = Endian.big;
+
   /// Allocate a new [ByteData] with 1Megabyte of data.
   void allocate() {
     // 1048576 Uint8 = 1048576 Bytes = 1MB
@@ -40,6 +43,10 @@ abstract class ByteWriter<T> {
     return bytes;
   }
 
+  set setEndianness(Endian endian) {
+    _endianness = endian;
+  }
+
   /// Write a single byte.
   void writeByte(int value, {bool signed = false}) {
     flush(1);
@@ -49,30 +56,29 @@ abstract class ByteWriter<T> {
   }
 
   /// Write a single 2 byte short.
-  void writeShort(int value,
-      {bool signed = false, Endian endian = Endian.big}) {
+  void writeShort(int value, {bool signed = false}) {
     flush(2);
     signed
-        ? writeByteData.setInt16(writePosition, value, endian)
-        : writeByteData.setUint16(writePosition, value, endian);
+        ? writeByteData.setInt16(writePosition, value, _endianness)
+        : writeByteData.setUint16(writePosition, value, _endianness);
     writePosition += 2;
   }
 
   /// Write a single 4 byte integer.
-  void writeInt(int value, {bool signed = false, Endian endian = Endian.big}) {
+  void writeInt(int value, {bool signed = false}) {
     flush(4);
     signed
-        ? writeByteData.setInt32(writePosition, value, endian)
-        : writeByteData.setUint32(writePosition, value, endian);
+        ? writeByteData.setInt32(writePosition, value, _endianness)
+        : writeByteData.setUint32(writePosition, value, _endianness);
     writePosition += 4;
   }
 
   /// Write a single 8 byte long.
-  void writeLong(int value, {bool signed = false, Endian endian = Endian.big}) {
+  void writeLong(int value, {bool signed = false}) {
     flush(8);
     signed
-        ? writeByteData.setInt64(writePosition, value, endian)
-        : writeByteData.setUint64(writePosition, value, endian);
+        ? writeByteData.setInt64(writePosition, value, _endianness)
+        : writeByteData.setUint64(writePosition, value, _endianness);
     writePosition += 8;
   }
 
@@ -98,16 +104,16 @@ abstract class ByteWriter<T> {
   }
 
   /// Write a single 4 byte single precision floating point number.
-  void writeFloat(double value, {Endian endian = Endian.big}) {
+  void writeFloat(double value) {
     flush(4);
-    writeByteData.setFloat32(writePosition, value, endian);
+    writeByteData.setFloat32(writePosition, value, _endianness);
     writePosition += 4;
   }
 
   /// Write a single 8 byte double precision floating point number.
-  void writeDouble(double value, {Endian endian = Endian.big}) {
+  void writeDouble(double value) {
     flush(8);
-    writeByteData.setFloat64(writePosition, value, endian);
+    writeByteData.setFloat64(writePosition, value, _endianness);
     writePosition += 8;
   }
 

@@ -14,6 +14,16 @@ abstract class ByteReader<T> {
   /// The current read position inside of [_byteData];
   int readPosition = 0;
 
+  Endian _endianness = Endian.big;
+
+  set setEndianness(Endian endian) {
+    _endianness = endian;
+  }
+
+  void resetPosition() {
+    readPosition = 0;
+  }
+
   void reset(Uint8List list) {
     readPosition = 0;
     data = list;
@@ -30,8 +40,8 @@ abstract class ByteReader<T> {
   /// Reads a 2 byte short starting at [readPosition].
   int readShort({bool signed = false}) {
     final value = signed
-        ? readByteData!.getInt16(readPosition)
-        : readByteData!.getUint16(readPosition);
+        ? readByteData!.getInt16(readPosition, _endianness)
+        : readByteData!.getUint16(readPosition, _endianness);
     readPosition += 2;
     return value;
   }
@@ -39,17 +49,17 @@ abstract class ByteReader<T> {
   /// Reads a 4 byte integer starting at [readPosition].
   int readInt({bool signed = false}) {
     final value = signed
-        ? readByteData!.getInt32(readPosition)
-        : readByteData!.getUint32(readPosition);
+        ? readByteData!.getInt32(readPosition, _endianness)
+        : readByteData!.getUint32(readPosition, _endianness);
     readPosition += 4;
     return value;
   }
 
   /// Reads a 8 byte integer starting at [readPosition].
-  int readLong({bool signed = false, Endian endian = Endian.big}) {
+  int readLong({bool signed = false}) {
     final value = signed
-        ? readByteData!.getInt64(readPosition, endian)
-        : readByteData!.getUint64(readPosition, endian);
+        ? readByteData!.getInt64(readPosition, _endianness)
+        : readByteData!.getUint64(readPosition, _endianness);
     readPosition += 8;
     return value;
   }
@@ -80,14 +90,14 @@ abstract class ByteReader<T> {
 
   /// Reads a 4 byte float starting at [readPosition].
   double readFloat({bool signed = false}) {
-    final value = readByteData!.getFloat32(readPosition);
+    final value = readByteData!.getFloat32(readPosition, _endianness);
     readPosition += 4;
     return value;
   }
 
   /// Reads a 8 byte double starting at [readPosition].
   double readDouble({bool signed = false}) {
-    final value = readByteData!.getFloat64(readPosition);
+    final value = readByteData!.getFloat64(readPosition, _endianness);
     readPosition += 8;
     return value;
   }
