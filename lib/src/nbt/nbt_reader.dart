@@ -44,7 +44,7 @@ class NbtReader extends ByteReader<bool> {
   /// Tries to detect the compression, whether the data was
   /// compressed with GZIP, ZLIB or wasn't compressed at all.
   NbtCompression _detectCompression() {
-    final firstByte;
+    final int firstByte;
     try {
       firstByte = data!.first;
     } on Error {

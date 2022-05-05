@@ -25,8 +25,8 @@ void main() async {
 
   test('API should return UUID for username', () async {
     try {
-      var temp_uuid = (await getUuid(username)).second;
-      expect(temp_uuid, equals(uuid));
+      var tempUuid = (await getUuid(username)).second;
+      expect(tempUuid, equals(uuid));
     } on ArgumentError catch (e) {
       print(e);
     }

@@ -122,11 +122,7 @@ class ProfileTexture {
   String url;
   String? alias;
 
-  ProfileTexture(String id, String url, [String? alias, SkinModel? model])
-      : id = id,
-        model = model,
-        url = url,
-        alias = alias;
+  ProfileTexture(this.id, this.url, [this.alias, this.model]);
 }
 
 /// Represents all textures for a legacy minecraft profile.

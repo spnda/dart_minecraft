@@ -140,7 +140,8 @@ abstract class NbtTag {
   }
 
   @override
-  bool operator ==(o) => o is NbtTag && name == o.name && value == o.value;
+  bool operator ==(Object other) =>
+      other is NbtTag && name == other.name && value == other.value;
 
   @override
   int get hashCode => value.hashCode;

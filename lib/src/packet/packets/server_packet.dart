@@ -7,7 +7,7 @@ import '../packet_writer.dart';
 /// servers.
 abstract class ServerPacket {
   /// Static Map to keep track of all existing [ServerPacket]s.
-  static final HashMap<int, ServerPacket> _clientbound_packets = HashMap();
+  static final HashMap<int, ServerPacket> _clientboundPackets = HashMap();
 
   /// The ID of this packet
   int get getID;
@@ -25,13 +25,13 @@ abstract class ServerPacket {
 
   /// Read a single packet by ID.
   static ServerPacket? readPacket(int id, PacketReader reader) {
-    return _clientbound_packets[id]?.clone()?..read(reader);
+    return _clientboundPackets[id]?.clone()?..read(reader);
   }
 
   /// Register a new clientbound packet. If a clientbound packet
   /// with given ID is already registered, [packet] will be
   /// ignored.
   static void registerClientboundPacket(ServerPacket packet) {
-    _clientbound_packets.putIfAbsent(packet.getID, () => packet);
+    _clientboundPackets.putIfAbsent(packet.getID, () => packet);
   }
 }

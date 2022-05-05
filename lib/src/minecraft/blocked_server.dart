@@ -33,13 +33,18 @@ class BlockedServer {
   int get hashCode => addressSha1.hashCode;
 
   @override
+  bool operator ==(Object other) {
+    return other.hashCode == hashCode;
+  }
+
+  @override
   String toString() {
     return (address != null) ? '$addressSha1:$address' : addressSha1;
   }
 
   /// A list of blocked servers with actual addresses that have been cracked.
   /// Parsed list from https://wiki.vg/Mojang_API#Blocked_Servers.
-  static const Set<BlockedServer> _knownCrackedServers = <BlockedServer>{
+  static final Set<BlockedServer> _knownCrackedServers = <BlockedServer>{
     BlockedServer('6f2520f8bd70a718c568ab5274c56bdbbfc14ef4', '*.minetime.com'),
     BlockedServer(
         '7ea72de5f8e70a2ac45f1aa17d43f0ca3cddeedd', '*.trollingbrandon.club'),

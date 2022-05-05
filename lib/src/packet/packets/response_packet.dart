@@ -87,7 +87,7 @@ class ServerDescription {
   ServerDescription.fromJson(Map<String, dynamic> json)
       : description = json['text'] ?? '';
 
-  ServerDescription.fromString(String description) : description = description;
+  ServerDescription.fromString(this.description);
 }
 
 class ServerPlayer {

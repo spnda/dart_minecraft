@@ -85,7 +85,7 @@ void main() {
 
     test('Read level.dat', () async {
       // level.dat is simply any main minecraft world file.
-      var nbtFile;
+      final NbtFile nbtFile;
       try {
         nbtFile = NbtFile.fromPath('./test/level.dat');
         await nbtFile.readFile();
@@ -106,7 +106,7 @@ void main() {
     test('Read NaN double value', () async {
       // Player-nan-value.dat is a NBT file with a TAG_Double with a NaN (Not a Number).
       // This checks if the parser can detect this issue and handles the value accordingly.
-      var nbtFile;
+      final NbtFile nbtFile;
       try {
         nbtFile = NbtFile.fromPath('./test/NaN-value.nbt');
         await nbtFile.readFile();

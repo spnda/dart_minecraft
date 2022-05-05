@@ -30,7 +30,7 @@ const String _minecraftServicesApi = 'api.minecraftservices.com';
 /// running that we (as you might have noticed) did not update
 /// correctly, or held an accurate representation of our services".
 /// See https://bugs.mojang.com/browse/WEB-2303
-@deprecated
+@Deprecated("The status endpoints were removed by Mojang in October 2021.")
 Future<MojangStatus> getStatus() async {
   return MojangStatus.empty();
 }
@@ -283,7 +283,7 @@ Future<bool> changeSkin(Uri skinUrl, AccessToken accessToken,
 /// This service was closed down by Mojang on 8 March 2022 because it didn't represent the total
 /// sales of Minecraft. The counter stopped at 45.6M Minecraft Java and 305k Minecraft Dungeons
 /// sales. See https://twitter.com/Mojang_Ined/status/1501541417784852484
-@deprecated
+@Deprecated("The statistics endpoints were removed by Mojang in March 2022.")
 Future<MinecraftStatistics> getStatistics(
     List<MinecraftStatisticsItem> items) async {
   return MinecraftStatistics();

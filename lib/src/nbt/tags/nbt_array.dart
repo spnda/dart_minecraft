@@ -44,10 +44,10 @@ abstract class NbtArray<T> extends NbtTag with ListMixin<T> {
   }
 
   @override
-  bool operator ==(o) {
-    if (!(o is NbtArray)) return false;
-    if (!(name == o.name)) return false;
-    return const ListEquality().equals(children, o.children);
+  bool operator ==(Object other) {
+    if (other is! NbtArray) return false;
+    if (!(name == other.name)) return false;
+    return const ListEquality().equals(children, other.children);
   }
 
   @override
