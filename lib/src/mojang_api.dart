@@ -170,6 +170,8 @@ Future<bool> changeName(String uuid, String newName, AccessToken accessToken,
       case 403:
         throw Exception(
             'Name is unavailable (Either taken or has not become available).');
+      case 429:
+        throw TooManyRequestsException('Too many requests sent.');
       case 500:
         throw Exception('Timed out.');
       default:
@@ -414,9 +416,26 @@ Future<ProfileNameChangeInfo> getNameChangeInfo(String accessToken) async {
       headers: headers);
 
   if (response.statusCode == 401) {
-    throw AuthException('Unauthorized');
+    throw AuthException(AuthException.invalidCredentialsMessage);
   }
   final map = parseResponseMap(response);
   return ProfileNameChangeInfo(DateTime.parse(map['changedAt']),
       DateTime.parse(map['createdAt']), map['nameChangeAllowed']);
+}
+
+/// Gets the list of players this player has blocked. Chat messages or Realms
+/// notifications are hidden from blocked players.
+Future<List<String>> getBlockedPlayers(String accessToken) async {
+  final headers = {
+    'authorization': 'Bearer $accessToken',
+  };
+  final response = await request(
+      http.get, _minecraftServicesApi, '/privacy/blocklist',
+      headers: headers);
+
+  if (response.statusCode == 401) {
+    throw AuthException(AuthException.invalidCredentialsMessage);
+  }
+  final map = parseResponseMap(response);
+  return List<String>.from(map['blockedProfiles']);
 }
