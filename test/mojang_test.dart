@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:dart_minecraft/dart_minecraft.dart';
 import 'package:dart_minecraft/src/mojang/mojang_account.dart';
+import 'package:dart_minecraft/src/mojang/player_attributes.dart';
 import 'package:test/test.dart';
 
 void main() async {
@@ -123,6 +125,42 @@ void main() async {
       if (user == null) return;
       final info = await getNameChangeInfo(user!.accessToken);
       print(info.createdAt.toString());
+    });
+  });
+
+  // Player attributes test
+  group('Player attributes', () {
+    test('Check if PlayerAttributes parses correctly', () async {
+      final testPlayerAttributes = {
+        "privileges": {
+          "onlineChat": {"enabled": true},
+          "multiplayerServer": {"enabled": true},
+          "multiplayerRealms": {"enabled": true},
+          "telemetry": {"enabled": true}
+        },
+        "profanityFilterPreferences": {"profanityFilterOn": true},
+        "banStatus": {
+          "bannedScopes": {
+            "MULTIPLAYER": {
+              // Only present if the player is banned
+              "banId": "afc009f4c6aa45e89f53f1b53ad10d64",
+              "expires": 1655933932000,
+              "reason": "hate_speech",
+              "reasonMessage": ""
+            }
+          }
+        }
+      };
+      final attributes = PlayerAttributes(testPlayerAttributes);
+      expect(attributes.hasPrivilege('onlineChat'), isTrue);
+      expect(attributes.isProfanityFilterOn, isTrue);
+      expect(ListEquality().equals(attributes.banStatus, const ['MULTIPLAYER']),
+          isTrue);
+
+      final ban = attributes.getBan('MULTIPLAYER');
+      expect(
+          ban.getExpirationDate.millisecondsSinceEpoch, equals(1655933932000));
+      expect(ban.id, equals("afc009f4c6aa45e89f53f1b53ad10d64"));
     });
   });
 }

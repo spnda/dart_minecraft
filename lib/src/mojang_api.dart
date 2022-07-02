@@ -9,6 +9,7 @@ import 'minecraft/minecraft_statistics.dart';
 import 'mojang/mojang_account.dart';
 import 'mojang/mojang_status.dart';
 import 'mojang/name.dart';
+import 'mojang/player_attributes.dart';
 import 'mojang/profile.dart';
 import 'mojang/profile_namechange.dart';
 import 'mojang/security_challenges.dart';
@@ -54,6 +55,8 @@ Future<PlayerUuid> getUuid(String username, {DateTime? timestamp}) async {
     } else if (response.statusCode == 400) {
       throw ArgumentError.value(
           timestamp, 'timestamp', 'The timestamp is invalid.');
+    } else if (response.statusCode == 429) {
+      throw TooManyRequestsException(map['errorMessage']);
     }
     throw Exception(map['errorMessage']);
   }
@@ -438,4 +441,22 @@ Future<List<String>> getBlockedPlayers(String accessToken) async {
   }
   final map = parseResponseMap(response);
   return List<String>.from(map['blockedProfiles']);
+}
+
+/// Gets player attributes. Some attributes define gameplay features which are
+/// enabled through XBOX live, which are presumably also parental control features.
+/// Attributes also give information about the ban status of a player.
+Future<PlayerAttributes> getAttributes(String accessToken) async {
+  final headers = {
+    'authorization': 'Bearer $accessToken',
+  };
+  final response = await request(
+      http.get, _minecraftServicesApi, '/player/attributes',
+      headers: headers);
+
+  if (response.statusCode == 401) {
+    throw AuthException(AuthException.invalidCredentialsMessage);
+  }
+  final map = parseResponseMap(response);
+  return PlayerAttributes(map);
 }
