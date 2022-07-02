@@ -10,6 +10,7 @@ import 'mojang/mojang_account.dart';
 import 'mojang/mojang_status.dart';
 import 'mojang/name.dart';
 import 'mojang/player_attributes.dart';
+import 'mojang/player_certificates.dart';
 import 'mojang/profile.dart';
 import 'mojang/profile_namechange.dart';
 import 'mojang/security_challenges.dart';
@@ -459,4 +460,20 @@ Future<PlayerAttributes> getAttributes(String accessToken) async {
   }
   final map = parseResponseMap(response);
   return PlayerAttributes(map);
+}
+
+/// Gets certificates used to cryptographically sign chat messages since 1.19.
+Future<PlayerCertificates> getCertificates(String accessToken) async {
+  final headers = {
+    'authorization': 'Bearer $accessToken',
+  };
+  final response = await request(
+      http.post, _minecraftServicesApi, '/player/certificates',
+      headers: headers);
+
+  if (response.statusCode == 401) {
+    throw AuthException(AuthException.invalidCredentialsMessage);
+  }
+  final map = parseResponseMap(response);
+  return PlayerCertificates(map);
 }
