@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.2
+- Add: XBL authentication function
+- Add: Player certificate API
+- Add: Player attributes API
+- Add: Player entitlements API
+- Change: Deprecate getNameHistory as endpoint was removed
+
 ## 0.5.1
 - Add #5: Support little endianness in NBT files
 - Add: Blocked player list API

@@ -1,6 +1,6 @@
 name: dart_minecraft
 description: Utilities for Minecraft and Mojang Web-APIs, authentication, and using NBT Files. 
-version: 0.5.1
+version: 0.5.2
 homepage: https://github.com/spnda/dart_minecraft
 repository: https://github.com/spnda/dart_minecraft
 issue_tracker: https://github.com/spnda/dart_minecraft/issues
@@ -13,6 +13,7 @@ dependencies:
   collection: ^1.16.0
   http: ^0.13.4
   path: ^1.8.1
+  jwt_decoder: ^2.0.1
 dev_dependencies:
   lints: ^1.0.1
   test: ^1.21.1
