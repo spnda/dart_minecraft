@@ -34,20 +34,6 @@ void main() async {
 }
 ```
 
-### Name history of a player
-
-Gets a list of all names the player has every taken, including the unix timestamp
-at which they were changed.
-
-```dart
-void main() async {
-    // PlayerUUID is a Pair<String, String>
-    PlayerUuid uuid = await getUuid('<your username>');
-    List<Name> history = await getNameHistory(uuid.second);
-    history.forEach((name) => print(name.name));
-}
-```
-
 ### Reading NBT data
 
 Read NBT data from a local file. This supports the full NBT specification, however

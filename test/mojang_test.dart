@@ -45,16 +45,6 @@ void main() async {
     }
   });
 
-  test('API should return a list of names', () async {
-    try {
-      final nameHistory = await getNameHistory(uuid);
-      expect(nameHistory.first.name, equals(testData['first_username']));
-      expect(nameHistory.last.name, equals(username));
-    } on ArgumentError catch (e) {
-      print(e);
-    }
-  });
-
   test('Get list of blocked servers', () async {
     final servers = await getBlockedServers();
     expect(servers, isNotEmpty);

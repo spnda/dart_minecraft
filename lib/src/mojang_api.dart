@@ -97,17 +97,14 @@ Future<PlayerUuid> getName(String uuid) async {
 }
 
 /// Returns the name history for the account with [uuid].
+///
+/// This endpoint has been deprecated by Mojang and was removed on 13 September 2022 at 9:25 AM
+/// CET to "improve player safety and data privacy". Official announcement:
+/// https://help.minecraft.net/hc/en-us/articles/8969841895693-Username-History-API-Removal-FAQ-
+@Deprecated(
+    "The name history by UUID endpoints were removed by Mojang in September 2022")
 Future<List<Name>> getNameHistory(String uuid) async {
-  final response =
-      await request(http.get, _mojangApi, 'user/profiles/$uuid/names');
-  if (response.statusCode == 204 ||
-      response.statusCode == 400 ||
-      response.statusCode == 404) {
-    throw ArgumentError.value(
-        uuid, 'uuid', 'User for given UUID could not be found or is invalid.');
-  }
-  final list = parseResponseList(response);
-  return Future.value(list.map((dynamic v) => Name.fromJson(v)).toList());
+  return Future.value(const []);
 }
 
 /// Returns the user profile including skin/cape information. Does
