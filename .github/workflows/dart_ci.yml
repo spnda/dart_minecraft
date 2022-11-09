@@ -26,4 +26,4 @@ jobs:
         run: dart analyze --fatal-infos
 
       - name: Run tests
-        run: pub run test test/
+        run: dart pub run test test/
