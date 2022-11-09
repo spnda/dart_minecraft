@@ -21,6 +21,18 @@ extensive example can be found [here](https://github.com/spnda/dart_minecraft/tr
 However you should always keep in mind that there is a rate limit on all API, set at 600 requests
 per 10 minutes. You are expected to cache the results and this is **not** done by the library itself.
 
+### Authenticating with Mojang API
+
+dart_minecraft offers functionality to authenticate with the Mojang API called Yggdrasil.
+
+```dart
+void main() async {
+    // This authenticates, invalidates older tokens, and gets a new access
+    // and client token. Be sure to store them, but keep them safe.
+    MojangAccount account = authenticate("username", "password");
+}
+```
+
 ### Skin/Cape of a player
 
 Get the skin and/or cape texture URL of a player. This just requires the player's UUID or username.
