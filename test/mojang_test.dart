@@ -58,7 +58,7 @@ void main() async {
     test('Test if the player can migrate', () async {
       try {
         if (user == null) return;
-        var migrate = await canMigrate(user!.accessToken);
+        var migrate = await canMigrate(user.accessToken);
         print('The player can migrate: $migrate');
       } on Error catch (e) {
         print(e);
@@ -69,7 +69,7 @@ void main() async {
       try {
         if (user == null) return;
         var valid =
-            await validate(user!.accessToken, clientToken: user!.clientToken);
+            await validate(user.accessToken, clientToken: user.clientToken);
         expect(valid, isTrue);
       } on Error catch (e) {
         print(e);
@@ -79,7 +79,7 @@ void main() async {
     test('Get user profile with authentication', () async {
       try {
         if (user == null) return;
-        final profile = await getCurrentProfile(user!.accessToken);
+        final profile = await getCurrentProfile(user.accessToken);
         final skins = profile.getSkins;
         expect(skins, isNotEmpty);
         expect(skins.first.url, testData['skin_texture']);
@@ -91,20 +91,20 @@ void main() async {
     var needed = false;
     test('Check if security questions are required.', () async {
       if (user == null) return;
-      needed = await areSecurityChallengesNeeded(user!.accessToken);
+      needed = await areSecurityChallengesNeeded(user.accessToken);
       expect(needed, isNotNull);
     });
 
     test('Get security questions and answer them', () async {
       if (user == null || !needed) return;
-      final challenges = await getSecurityChallenges(user!.accessToken);
+      final challenges = await getSecurityChallenges(user.accessToken);
       expect(challenges, isList);
       expect(challenges, hasLength(3)); // There should always be 3 challenges.
     });
 
     test('Get name change info', () async {
       if (user == null) return;
-      final info = await getNameChangeInfo(user!.accessToken);
+      final info = await getNameChangeInfo(user.accessToken);
       print(info.createdAt.toString());
     });
   });
