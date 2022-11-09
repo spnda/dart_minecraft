@@ -55,15 +55,6 @@ void main() async {
   group('Yggdrasil Tests:', () {
     MojangAccount? user;
 
-    test('refresh test', () async {
-      try {
-        user = await authenticate(testData['email'], testData['password']);
-        // await refresh(user!);
-      } on AuthException catch (e) {
-        print(e);
-      }
-    });
-
     test('Test if the player can migrate', () async {
       try {
         if (user == null) return;
