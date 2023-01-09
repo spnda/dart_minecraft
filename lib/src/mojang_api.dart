@@ -39,15 +39,14 @@ Future<MojangStatus> getStatus() async {
 
 /// Returns the UUID for player [username].
 ///
-/// A [timestamp] can be passed to retrieve the UUID for the player with [username]
-/// at that point in time. **Warning**: Since November 2020, the [timestamp] is
-/// ignored, see [WEB-3367](https://bugs.mojang.com/browse/WEB-3367).
-Future<PlayerUuid> getUuid(String username, {DateTime? timestamp}) async {
-  final time =
-      timestamp == null ? '' : '?at=${timestamp.millisecondsSinceEpoch}';
-
-  final response = await request(
-      http.get, _mojangApi, 'users/profiles/minecraft/$username$time');
+/// The timestamp named parameter is unused as the API started to ignore it as of
+/// November 2020, see [WEB-3367](https://bugs.mojang.com/browse/WEB-3367).
+Future<PlayerUuid> getUuid(
+    String username,
+    {@Deprecated("The timestamp parameter is ignored, and therefore deprecated")
+        DateTime? timestamp}) async {
+  final response =
+      await request(http.get, _mojangApi, 'users/profiles/minecraft/$username');
   final map = parseResponseMap(response);
   if (map['error'] != null) {
     if (response.statusCode == 404) {
