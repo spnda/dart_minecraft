@@ -66,8 +66,4 @@ class NbtReader extends ByteReader<bool> {
         return NbtCompression.unknown;
     }
   }
-
-  Endian getContentEndian() {
-    return Endian.big;
-  }
 }
