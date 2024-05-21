@@ -5,10 +5,7 @@ import 'package:http/http.dart' as http;
 import 'exceptions/auth_exception.dart';
 import 'exceptions/too_many_requests_exception.dart';
 import 'minecraft/blocked_server.dart';
-import 'minecraft/minecraft_statistics.dart';
 import 'mojang/mojang_account.dart';
-import 'mojang/mojang_status.dart';
-import 'mojang/name.dart';
 import 'mojang/player_attributes.dart';
 import 'mojang/player_certificates.dart';
 import 'mojang/profile.dart';
@@ -25,36 +22,19 @@ const String _mojangAccountApi = 'account.mojang.com';
 const String _sessionApi = 'sessionserver.mojang.com';
 const String _minecraftServicesApi = 'api.minecraftservices.com';
 
-/// Returns the Mojang and Minecraft API and website status.
-///
-/// This service was closed down by Mojang on 8 October 2021 due
-/// to incorrect status responses, saying "it was a legacy system
-/// running that we (as you might have noticed) did not update
-/// correctly, or held an accurate representation of our services".
-/// See https://bugs.mojang.com/browse/WEB-2303
-@Deprecated("The status endpoints were removed by Mojang in October 2021.")
-Future<MojangStatus> getStatus() async {
-  return MojangStatus.empty();
-}
-
 /// Returns the UUID for player [username].
-///
-/// The timestamp named parameter is unused as the API started to ignore it as of
-/// November 2020, see [WEB-3367](https://bugs.mojang.com/browse/WEB-3367).
-Future<PlayerUuid> getUuid(
-    String username,
-    {@Deprecated("The timestamp parameter is ignored, and therefore deprecated")
-        DateTime? timestamp}) async {
+Future<PlayerUuid> getUuid(String username) async {
   final response =
       await request(http.get, _mojangApi, 'users/profiles/minecraft/$username');
+  if (response.body.isEmpty && response.statusCode == 204) {
+    throw ArgumentError.value(username, 'username', 'No user was found for given username');
+  }
+
   final map = parseResponseMap(response);
   if (map['error'] != null) {
     if (response.statusCode == 404) {
       throw ArgumentError.value(
           username, 'username', 'No user was found for given username');
-    } else if (response.statusCode == 400) {
-      throw ArgumentError.value(
-          timestamp, 'timestamp', 'The timestamp is invalid.');
     } else if (response.statusCode == 429) {
       throw TooManyRequestsException(map['errorMessage']);
     }
@@ -93,17 +73,6 @@ Future<PlayerUuid> getName(String uuid) async {
   }
   final map = parseResponseMap(response);
   return PlayerUuid(map['name'], map['id']);
-}
-
-/// Returns the name history for the account with [uuid].
-///
-/// This endpoint has been deprecated by Mojang and was removed on 13 September 2022 at 9:25 AM
-/// CET to "improve player safety and data privacy". Official announcement:
-/// https://help.minecraft.net/hc/en-us/articles/8969841895693-Username-History-API-Removal-FAQ-
-@Deprecated(
-    "The name history by UUID endpoints were removed by Mojang in September 2022")
-Future<List<Name>> getNameHistory(String uuid) async {
-  return Future.value(const []);
 }
 
 /// Returns the user profile including skin/cape information. Does
@@ -273,20 +242,6 @@ Future<bool> changeSkin(Uri skinUrl, AccessToken accessToken,
       throw AuthException(AuthException.invalidCredentialsMessage);
   }
   return true;
-}
-
-/// Get's Minecraft: Java Edition, Minecraft Dungeons, Cobalt and Scrolls purchase statistics.
-///
-/// Returns total statistics for ALL games included. To get individual statistics, call this
-/// function for each MinecraftStatisticsItem or each game.
-///
-/// This service was closed down by Mojang on 8 March 2022 because it didn't represent the total
-/// sales of Minecraft. The counter stopped at 45.6M Minecraft Java and 305k Minecraft Dungeons
-/// sales. See https://twitter.com/Mojang_Ined/status/1501541417784852484
-@Deprecated("The statistics endpoints were removed by Mojang in March 2022.")
-Future<MinecraftStatistics> getStatistics(
-    List<MinecraftStatisticsItem> items) async {
-  return MinecraftStatistics();
 }
 
 /// Returns a list of blocked servers.
