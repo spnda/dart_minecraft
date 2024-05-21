@@ -47,12 +47,13 @@ Future<PlayerUuid> getUuid(String username) async {
 /// Returns a List of player UUIDs by a List of player names.
 ///
 /// Usernames are not case sensitive and ones which are invalid or not found are omitted.
-Future<List<PlayerUuid>> getUuids(List<String> usernames) async {
+/// There's also an implicit limit of 10 usernames per lookup.
+Future<Map<String, String>> getUuids(List<String> usernames) async {
   final response = await requestBody(
-      http.post, _mojangApi, 'profiles/minecraft', usernames,
+      http.post, _minecraftServicesApi, 'minecraft/profile/lookup/bulk/byname', usernames,
       headers: {'content-type': 'application/json'});
   final list = parseResponseList(response);
-  return list.map<PlayerUuid>((v) => PlayerUuid(v['name'], v['id'])).toList();
+  return { for (var uuid in list) uuid['name']: uuid['id'] };
 }
 
 /// Get the name and UUID by a player's UUID.

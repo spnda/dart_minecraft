@@ -34,6 +34,15 @@ void main() async {
     }
   });
 
+  test('Bulk username to UUID lookup', () async {
+    try {
+      var uuids = await getUuids([username]);
+      expect(uuids[username], equals(uuid));
+    } on ArgumentError catch (e) {
+      print(e);
+    }
+  });
+
   test('API should return link to the skin of given player.', () async {
     try {
       final profile = await getProfile(uuid);
