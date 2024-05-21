@@ -21,7 +21,7 @@ class Pair<A, B> {
   /// hashCode, the two are equal.
   /// If [other] is not a Pair, they are not equal.
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       other is Pair && (other._a == _a && other._b == _b);
 
   /// Combines [a] and [b] into a String, like "a, b".

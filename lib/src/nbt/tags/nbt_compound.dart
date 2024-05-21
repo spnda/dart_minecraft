@@ -17,10 +17,8 @@ class NbtCompound<T extends NbtTag> extends NbtList<T> {
       where((tag) => tag.nbtTagType == tagType).toList();
 
   /// Create a [NbtCompound] with given [parent].
-  NbtCompound({required String name, required List<T> children})
+  NbtCompound({required super.name, required super.children})
       : super(
-            name: name,
-            children: children,
             nbtTagType: NbtTagType.TAG_COMPOUND);
 
   @override
