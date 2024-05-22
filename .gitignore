@@ -14,4 +14,7 @@ doc/api/
 *.nbt
 *.dat
 
+# OS/IDE files and folders
 **/.DS_Store
+.idea/
+.vscode/
