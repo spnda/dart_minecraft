@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+- Update to Dart 3
+- Change: Remove all deprecated API
+- Change: Bulk UUID lookup now uses new endpoint and returns a Map instead
+- Fix #12: Remove unused getContentEndian NBT function
+
 ## 0.5.2
 - Add: XBL authentication function
 - Add: Player certificate API
